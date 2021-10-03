@@ -1,0 +1,5 @@
+django
+# for Cross-Origin Resource Sharing
+django-cors-headers
+# restful api framework
+djangorestframework
