@@ -6,7 +6,7 @@ export class Layout extends Component {
   render() {
     return (
       <div>
-        <NavMenu is_logged_in={true} />
+        <NavMenu />
         <Container>{this.props.children}</Container>
       </div>
     );
