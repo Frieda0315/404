@@ -12,33 +12,51 @@ import {
   DropdownItem,
 } from "reactstrap";
 import React, { useState } from "react";
+import { Avatar } from "@mui/material";
+import img from "../static/musle.png";
+import { makeStyles } from "@material-ui/styles";
 
+const useStyles = makeStyles(() => ({
+  pic: {
+    marginLeft: "55px",
+  },
+  account: {
+    marginRight: "55px",
+  },
+  title: {
+    marginLeft: "25px",
+  },
+}));
 function NavMenu(is_logged_in) {
+  const styleClasses = useStyles();
+
   const [isOpen, setIsOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(is_logged_in);
   const login = () => setLoggedIn(!loggedIn);
   const toggle = () => setIsOpen(!isOpen);
   return (
     <Navbar color="dark" dark expand="md">
-      <NavbarBrand href="/"> Decentralized Social Networking</NavbarBrand>
+      <NavbarBrand href="/" className={styleClasses.title}>
+        Decentralized Social Networking
+      </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ms-auto" navbar>
           <UncontrolledDropdown nav inNavbar>
-            <DropdownToggle nav caret>
-              Account
-            </DropdownToggle>
             {loggedIn ? (
-              <DropdownMenu right>
-                <DropdownItem href="/profile/">Profile</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem onClick={login}>Sign out</DropdownItem>
-              </DropdownMenu>
-            ) : (
-              <DropdownMenu right>
-                <DropdownItem href="/profile/">Please Log in</DropdownItem>
-              </DropdownMenu>
-            )}
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret className={styleClasses.account}>
+                  Account
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <Avatar src={img} className={styleClasses.pic}></Avatar>
+                  <DropdownItem divider />
+                  <DropdownItem href="/profile/">Profile</DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem onClick={login}>Sign out</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            ) : null}
           </UncontrolledDropdown>
           {loggedIn ? null : (
             <Nav navbar>
