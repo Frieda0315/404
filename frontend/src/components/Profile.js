@@ -1,24 +1,22 @@
-import React, { useState } from "react";
-import { styled } from "@mui/material/styles";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import img from "../static/favicon2.ico";
 import axios from "axios";
+import { Form } from "reactstrap";
 
 import { makeStyles } from "@material-ui/styles";
-
 import {
   Button,
   CardActions,
   CardContent,
   Link,
+  Input,
   Typography,
   CardMedia,
 } from "@mui/material";
 const useStyles = makeStyles(() => ({
-  button: {
+  editbutton: {
     marginLeft: "-10px",
   },
   pic: {
@@ -27,58 +25,155 @@ const useStyles = makeStyles(() => ({
     marginBottom: "30px",
     borderRadius: "50%",
   },
+  button1: {
+    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+  },
+  grid: {
+    marginTop: "30px",
+  },
+  Divider: {
+    marginTop: "40px",
+  },
 }));
+
 export default function Profile() {
   const [url, seturl] = useState();
-  const styleClasses = useStyles();
+  const [isEdit, setIsEdit] = useState(false);
+  const edit = () => setIsEdit(true);
 
-  const github_user = "xius666";
+  const cancel = () => setIsEdit(false);
+
+  const [github_user, set_github_user] = useState("xius666");
+  const [username, setUserName] = useState("404notfound");
+  const [textinput1, setTextinput1] = useState(github_user);
+  const [textinput2, setTextinput2] = useState(username);
+
+  const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
-  const username = "404notfound";
+  console.log(isEdit);
+
+  useEffect(() => {
+    //TODO:handle 404 case
+    axios.get(`${baseUrl}/${github_user}`).then((res) => {
+      console.log(res.data["avatar_url"]);
+      seturl(res.data["avatar_url"]);
+    });
+  }, [github_user]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    set_github_user(textinput1);
+    setUserName(textinput2);
+    console.log("hll");
+    setIsEdit(false);
+  };
   //fetch the github profile image
-  axios.get(`${baseUrl}/${github_user}`).then((resp) => {
-    console.log(resp.data["avatar_url"]);
-    seturl(resp.data["avatar_url"]);
-  });
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid
-        container
-        spacing={2}
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Grid item>
-          <Card>
-            <CardContent>
-              <CardMedia
-                className={styleClasses.pic}
-                component="img"
-                image={url}
-                alt="no img"
-              />
-              <Typography variant="h4" component="div" gutterBottom>
-                Your Profile
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Your Username: {username}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mt-10>
-                Github Username:
-                <Link href={github_link}> {github_user}</Link>
-              </Typography>
-              <CardActions className={styleClasses.button}>
-                <Button variant="contained" size="small" color="primary">
-                  Edit
-                </Button>
-              </CardActions>
-            </CardContent>
-          </Card>
+    <Form onSubmit={handleSubmit}>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid
+          container
+          spacing={2}
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Grid item>
+            <Card>
+              <CardContent>
+                <CardMedia
+                  className={styleClasses.pic}
+                  component="img"
+                  image={url}
+                  alt="no img"
+                />
+                <Typography variant="h4" component="div" gutterBottom>
+                  Your Profile
+                </Typography>
+                {isEdit ? (
+                  <CardContent>
+                    <Grid
+                      className={styleClasses.Divider}
+                      spacing={2}
+                      container
+                      direction="row"
+                    >
+                      <Grid item>
+                        <Typography variant="body1" color="text.secondary">
+                          Username:
+                        </Typography>
+
+                        <Input
+                          defaultValue={username}
+                          onChange={(e) => setTextinput2(e.target.value)}
+                        />
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          mt-10
+                        >
+                          Github Username:
+                        </Typography>
+                        <Input
+                          defaultValue={github_user}
+                          onChange={(e) => setTextinput1(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          type="submit"
+                          className={styleClasses.button1}
+                          variant="contained"
+                          size="small"
+                        >
+                          Save
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button
+                          className={styleClasses.button1}
+                          variant="contained"
+                          size="small"
+                          onClick={cancel}
+                        >
+                          Cancel
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                ) : (
+                  <CardContent>
+                    <Typography variant="body1" color="text.secondary">
+                      Username:
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      {username}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" mt-10>
+                      Github Username:
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" mt-10>
+                      <Link href={github_link}> {github_user}</Link>
+                    </Typography>
+                    <CardActions className={styleClasses.editbutton}>
+                      <Button
+                        className={styleClasses.button1}
+                        variant="contained"
+                        size="small"
+                        onClick={edit}
+                      >
+                        Edit
+                      </Button>
+                    </CardActions>
+                  </CardContent>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </Form>
   );
 }
