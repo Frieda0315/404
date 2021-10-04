@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import img from "../static/musle.png";
 import axios from "axios";
 import { Form } from "reactstrap";
 
@@ -13,13 +10,10 @@ import {
   Button,
   CardActions,
   CardContent,
-  FormControl,
   Link,
   Input,
   Typography,
   CardMedia,
-  TextField,
-  Divider,
 } from "@mui/material";
 const useStyles = makeStyles(() => ({
   editbutton: {
@@ -47,9 +41,7 @@ export default function Profile() {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-  const save = () => {
-    setIsEdit(false);
-  };
+
   const cancel = () => setIsEdit(false);
 
   const [github_user, set_github_user] = useState("xius666");

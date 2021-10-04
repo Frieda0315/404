@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 import React, { useState } from "react";
 import { Avatar } from "@mui/material";
-import img from "../static/musle.png";
+import dummy_img from "../static/musle.png";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles(() => ({
@@ -49,7 +49,7 @@ function NavMenu(is_logged_in) {
                   Account
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <Avatar src={img} className={styleClasses.pic}></Avatar>
+                  <Avatar src={dummy_img} className={styleClasses.pic}></Avatar>
                   <DropdownItem divider />
                   <DropdownItem href="/profile/">Profile</DropdownItem>
                   <DropdownItem divider />
