@@ -17,6 +17,9 @@ This project's background, description and requirement are based on Abram Hindle
   </tr>
 </table>
 
+# Please use npm ci instead of npm install to install all the dependency for the front end
+
+
 # Backend Development Process(from root dir)
 ```
 cd ./backend
