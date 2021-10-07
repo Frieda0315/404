@@ -15,7 +15,12 @@ const useStyles = makeStyles(() =>({
         marginLeft: "100px"
     },
     postImage: {
-        width: "75px"
+        height: "95px", 
+        margin: "auto"
+    }, 
+    image: {
+        width: "100%", 
+        height: "100%", 
     }
 }));
 
@@ -52,10 +57,10 @@ function PostStream() {
             </Grid>
             <Card>
                 <Grid container>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} className={styleClasses.postImage}>
                         <CardMedia
                             component="img"
-                            className={styleClasses.postImage}
+                            className={styleClasses.image}
                             image={dummy_image}
                             alt="dummy"
                         />
