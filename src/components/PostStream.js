@@ -1,11 +1,12 @@
 
 import Grid from "@material-ui/core/Grid";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Button } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React from "react";
 import { CardMedia, CardActionArea, CardContent, Typography } from "@material-ui/core";
 import dummy_image from "../static/musle.png"
+import { margin } from "@material-ui/system";
 
 const useStyles = makeStyles(() =>({
     stream: {
@@ -21,6 +22,11 @@ const useStyles = makeStyles(() =>({
     image: {
         width: "100%", 
         height: "100%", 
+    }, 
+    voteButton: {
+        maxHeight: "20px",
+        maxWidth: "20px",
+        borderRadius: "100%",
     }
 }));
 
@@ -38,6 +44,9 @@ function PostStream() {
     const styleClasses = useStyles();
     const tempPostOnClick = (ev) => {
         console.log("clicked a post");
+    };
+    const vote = (ev) => {
+        console.log("vote clicked");
     };
     const tempSummary = "poster body summary";
     const postStream = postList.map((post) => 
@@ -65,7 +74,7 @@ function PostStream() {
                             alt="dummy"
                         />
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={8}>
                         <CardActionArea onClick={tempPostOnClick}>
                             <CardContent sx={{ flex: '1 0 auto' }}>
                                 <Typography component="div" variant="h5">
@@ -77,6 +86,7 @@ function PostStream() {
                             </CardContent> 
                         </CardActionArea>   
                     </Grid>
+                    
                 </Grid>
             </Card>
         </Grid>
