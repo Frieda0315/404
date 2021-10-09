@@ -10,7 +10,6 @@ import {
   CardContent,
   Typography,
 } from "@material-ui/core";
-import vote_icon from "../static/vote.png";
 
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
@@ -88,14 +87,15 @@ const tempPostList = [
   },
   {
     title: "I am just trying to make a stream",
-    content: "I am just trying to make a stream Content",
+    content: "I am just trying to make a stream ",
     author: "author2",
     date: "xxxx-xx-xx xx:xx",
     id: "2",
   },
   {
     title: "I mean, a really simple one",
-    content: "I mean, a really simple one Content",
+    content:
+      "I mean, a really simple one Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Content",
     author: "author3",
     date: "xxxx-xx-xx xx:xx",
     id: "3",
@@ -125,8 +125,8 @@ const tempPostList = [
 
 function PostStream() {
   const handleRemove = (e) => {
-    const id= e.id;
-    const newList = tempPostList1.filter(item => item.id !== id);
+    const id = e.id;
+    const newList = tempPostList1.filter((item) => item.id !== id);
     setTempPostList(newList);
   };
   const changePage = (ev, value) => {
@@ -137,7 +137,6 @@ function PostStream() {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
 
- 
   const postStream = tempPostList1.map((post) => (
     <Grid
       item
@@ -145,13 +144,19 @@ function PostStream() {
       className={styleClasses.postCard}
       key={post != null ? post.id : "123"}
     >
-      <Grid container>
-        <Grid item xs={1}>
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+      >
+        <Grid item>
           <IconButton onClick={tempViewProfile}>
             <Avatar src={dummy_image}></Avatar>
           </IconButton>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
           <Typography>{post != null ? post.date : "null date"}</Typography>
         </Grid>
@@ -176,12 +181,12 @@ function PostStream() {
                     </Grid>
                   )}
                   <Grid item xs>
-                    <CardContent className={styleClasses.postTitle}>
+                    <Typography variant="h5" component="div">
                       {post.title}
-                    </CardContent>
-                    <CardContent className={styleClasses.postBody}>
-                      {tempSummary}
-                    </CardContent>
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      {post.content}
+                    </Typography>
                   </Grid>
                 </Grid>
               ) : (
@@ -225,7 +230,8 @@ function PostStream() {
             <IconButton
               edge="end"
               aria-label="Delete"
-              onClick={() => handleRemove(post)}            >
+              onClick={() => handleRemove(post)}
+            >
               <Delete />
             </IconButton>
           </Grid>
@@ -235,7 +241,13 @@ function PostStream() {
   ));
   return (
     <div>
-      <Grid container spacing={2} className={styleClasses.stream}>
+      <Grid
+        container
+        spacing={2}
+        className={styleClasses.stream}
+        justifyContent="center"
+        alignItems="center"
+      >
         {postStream}
       </Grid>
       <Pagination
