@@ -1,6 +1,6 @@
 
 import Grid from "@material-ui/core/Grid";
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React from "react";
@@ -47,7 +47,8 @@ const tempPostList = [
     "I mean, a really simple one", 
     "so I decided to create some dummy strings", 
     "and this is one of them", 
-    "this is two of them"
+    "this is two of them", 
+    null
 ]
 const tempSummary = "poster body summary";
 const tempVoteCount = 0;
@@ -66,7 +67,10 @@ const dummyImages = [dummy_image, dummy_image1, null];
 
 function PostStream() {
     const styleClasses = useStyles();
-
+    const [page, setPage] = React.useState(1);
+    const changePage = (ev, value) => {
+        setPage(value);
+    }
     const postStream = tempPostList.map((post) => (
         <Grid item xs={8}>
             <Grid container>
@@ -88,13 +92,13 @@ function PostStream() {
                 <Grid item xs>
                     <Card>
                         <CardActionArea onClick={tempPostOnClick} className={styleClasses.clickBox}>
-                            <Grid container>
+                            {post != null ? (<Grid container>
                                 {dummyImages[post.length % 3] != null ? null : (
                                     <Grid item xs={2} className={styleClasses.postImage}>
                                         <CardMedia
                                             component="img"
                                             className={styleClasses.image}
-                                            image={dummyImages[0]}
+                                            image={dummyImages[1]}
                                             alt="dummy"
                                         />
                                     </Grid>
@@ -108,6 +112,14 @@ function PostStream() {
                                     </CardContent>      
                                 </Grid>
                             </Grid>
+                            ) : (
+                                <CardMedia
+                                    component="img"
+                                    className={styleClasses.image}
+                                    image={dummyImages[1]}
+                                    alt="dummy"
+                                />
+                            )}
                         </CardActionArea>
                     </Card>
                 </Grid>
@@ -129,9 +141,12 @@ function PostStream() {
         )
     );
     return (
-        <Grid container spacing={2} className={styleClasses.stream}>
-            {postStream}
-        </Grid>
+        <div>
+            <Grid container spacing={2} className={styleClasses.stream}>
+                {postStream}
+            </Grid>
+            <Pagination count={3} page={page} onChange={changePage}/>
+        </div>
     )
 }
 
