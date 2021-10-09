@@ -66,7 +66,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 // dummy val
-const tempPostList = [
+var tempPostList = [
   {
     title: "Hello world",
     content: "Hello world Content",
@@ -127,10 +127,15 @@ const dummyImages = [dummy_image, dummy_image1, null];
 function PostStream() {
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
+  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
+  function handleRemove(id) {
+    const newList = tempPostList1.filter((item) => item.id !== id);
+    setTempPostList(newList);
+  }
   const changePage = (ev, value) => {
     setPage(value);
   };
-  const postStream = tempPostList.map((post) => (
+  const postStream = tempPostList1.map((post) => (
     <Grid
       item
       xs={8}
@@ -214,7 +219,11 @@ function PostStream() {
             </IconButton>
           </Grid>
           <Grid item>
-            <IconButton edge="end" aria-label="Delete">
+            <IconButton
+              edge="end"
+              aria-label="Delete"
+              onClick={() => handleRemove(post.id)}
+            >
               <Delete />
             </IconButton>
           </Grid>
