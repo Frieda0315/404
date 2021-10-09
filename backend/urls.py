@@ -16,12 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from users import views
+from users import user_views
+from posts import post_views
+
+
 
 
 urlpatterns = [
-    path('users/', views.user_list, name='user_list'),
-    path('users/<uuid:id>', views.user_detail, name='user_detail'),
+    path('posts/', post_views.post_list, name='post_list'),
+    path('posts/<uuid:id>', post_views.post_detail, name='post_detail'),
+    path('users/', user_views.user_list, name='user_list'),
+    path('users/<uuid:id>', user_views.user_detail, name='user_detail'),
     path('admin/', admin.site.urls),
 ]
 
