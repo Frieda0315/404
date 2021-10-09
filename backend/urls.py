@@ -1,3 +1,4 @@
+
 """backend URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -23,3 +24,4 @@ urlpatterns = [
     path('users/<uuid:id>', views.user_detail, name='user_detail'),
     path('admin/', admin.site.urls),
 ]
+

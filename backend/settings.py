@@ -1,3 +1,4 @@
+
 """
 Django settings for backend project.
 
@@ -137,3 +138,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ]
 }
+
