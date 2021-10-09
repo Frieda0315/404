@@ -37,7 +37,7 @@ function NavMenu(is_logged_in) {
   return (
     <Navbar color="dark" dark expand="md">
       <NavbarBrand href="/" className={styleClasses.title}>
-        Decentralized Social Networking
+        I-Connect
       </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>

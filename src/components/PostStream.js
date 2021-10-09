@@ -4,23 +4,13 @@ import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React from "react";
-import {
-  CardMedia,
-  CardActionArea,
-  CardContent,
-  Typography,
-} from "@material-ui/core";
+import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import {
-  Delete,
-  ShareRounded,
-  ThumbUp,
-  MoreHorizIcon,
-  Comment,
-} from "@material-ui/icons";
-
+import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import Popup from "./Popup";
+import Profile from "./Profile";
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -66,7 +56,6 @@ const useStyles = makeStyles(() => ({
 
 // dummy val
 const tempSummary = "poster body summary";
-const tempVoteCount = 0;
 const tempPostOnClick = (ev) => {
   console.log("clicked a post");
 };
@@ -94,8 +83,7 @@ const tempPostList = [
   },
   {
     title: "I mean, a really simple one",
-    content:
-      "I mean, a really simple one Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Contentdecided to create some dummy strings Content",
+    content: "I mean, a really simple one",
     author: "author3",
     date: "xxxx-xx-xx xx:xx",
     id: "3",
@@ -132,10 +120,13 @@ function PostStream() {
   const changePage = (ev, value) => {
     setPage(value);
   };
+  const [vote, setVote] = React.useState(0);
 
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
+  const [openPopup, setOpenPopup] = React.useState(false);
+  const open = () => setOpenPopup(true);
 
   const postStream = tempPostList1.map((post) => (
     <Grid
@@ -153,7 +144,7 @@ function PostStream() {
       >
         <Grid item>
           <IconButton onClick={tempViewProfile}>
-            <Avatar src={dummy_image}></Avatar>
+            <Avatar src={dummy_image} onClick={open}></Avatar>
           </IconButton>
         </Grid>
         <Grid item>
@@ -208,12 +199,16 @@ function PostStream() {
           alignItems="flex-end"
         >
           <Grid item>
-            <IconButton edge="end" aria-label="thumbup">
+            <IconButton
+              edge="end"
+              aria-label="thumbup"
+              onClick={() => setVote(vote + 1)}
+            >
               <ThumbUp />
             </IconButton>
           </Grid>
           <Grid item>
-            <Typography>{tempVoteCount}</Typography>
+            <Typography>{vote}</Typography>
           </Grid>
 
           <Grid item>
@@ -241,6 +236,13 @@ function PostStream() {
   ));
   return (
     <div>
+      <Popup
+        title={"Profile"}
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      >
+        <Profile user={1} is_follow={true}></Profile>
+      </Popup>
       <Grid
         container
         spacing={2}
