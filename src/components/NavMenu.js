@@ -42,22 +42,20 @@ function NavMenu(is_logged_in) {
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ms-auto" navbar>
-          <UncontrolledDropdown nav inNavbar>
-            {loggedIn ? (
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret className={styleClasses.account}>
-                  Account
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <Avatar src={dummy_img} className={styleClasses.pic}></Avatar>
-                  <DropdownItem divider />
-                  <DropdownItem href="/profile/">Profile</DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={login}>Sign out</DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            ) : null}
-          </UncontrolledDropdown>
+          {loggedIn ? (
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret className={styleClasses.account}>
+                Account
+              </DropdownToggle>
+              <DropdownMenu right>
+                <Avatar src={dummy_img} className={styleClasses.pic}></Avatar>
+                <DropdownItem divider />
+                <DropdownItem href="/profile/">Profile</DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem onClick={login}>Sign out</DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          ) : null}
           {loggedIn ? null : (
             <Nav navbar>
               <NavItem>
