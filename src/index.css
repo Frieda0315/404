@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+h1 {
+  margin: 1rem 0 3rem 0;
+}
+
+.Layout {
+  background-color: #f6f6f6;
+}

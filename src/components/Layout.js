@@ -5,7 +5,7 @@ import NavMenu from "./NavMenu";
 export class Layout extends Component {
   render() {
     return (
-      <div>
+      <div className="Layout">
         <NavMenu />
         <Container>{this.props.children}</Container>
       </div>
