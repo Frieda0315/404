@@ -1,5 +1,6 @@
 
 import Grid from "@material-ui/core/Grid";
+
 import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
@@ -42,6 +43,7 @@ const useStyles = makeStyles(() =>({
 
 // dummy val
 const tempPostList = [
+
     "Hello world", 
     "I am just trying to make a stream", 
     "I mean, a really simple one", 
@@ -147,6 +149,7 @@ function PostStream() {
             </Grid>
             <Pagination count={3} page={page} onChange={changePage}/>
         </div>
+
     )
 }
 

@@ -1,4 +1,5 @@
 
+
 import PostStream from "./PostStream";
 
 function MainPage() {
@@ -11,3 +12,4 @@ function MainPage() {
 }
 
 export default MainPage;
+

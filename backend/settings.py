@@ -1,3 +1,4 @@
+
 """
 Django settings for backend project.
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -136,3 +138,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ]
 }
+
