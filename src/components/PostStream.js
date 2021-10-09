@@ -66,7 +66,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 // dummy val
-var tempPostList = [
+const tempSummary = "poster body summary";
+const tempVoteCount = 0;
+const tempPostOnClick = (ev) => {
+  console.log("clicked a post");
+};
+const tempVoteOnClick = (ev) => {
+  console.log("vote clicked");
+};
+const tempViewProfile = (ev) => {
+  console.log("view profile");
+};
+const dummyImages = [dummy_image, dummy_image1, null];
+const tempPostList = [
   {
     title: "Hello world",
     content: "Hello world Content",
@@ -109,32 +121,23 @@ var tempPostList = [
     date: "xxxx-xx-xx xx:xx",
     id: "6",
   },
-  null,
 ];
-const tempSummary = "poster body summary";
-const tempVoteCount = 0;
-const tempPostOnClick = (ev) => {
-  console.log("clicked a post");
-};
-const tempVoteOnClick = (ev) => {
-  console.log("vote clicked");
-};
-const tempViewProfile = (ev) => {
-  console.log("view profile");
-};
-const dummyImages = [dummy_image, dummy_image1, null];
 
 function PostStream() {
-  const styleClasses = useStyles();
-  const [page, setPage] = React.useState(1);
-  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
-  function handleRemove(id) {
-    const newList = tempPostList1.filter((item) => item.id !== id);
+  const handleRemove = (e) => {
+    const id= e.id;
+    const newList = tempPostList1.filter(item => item.id !== id);
     setTempPostList(newList);
-  }
+  };
   const changePage = (ev, value) => {
     setPage(value);
   };
+
+  const styleClasses = useStyles();
+  const [page, setPage] = React.useState(1);
+  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
+
+ 
   const postStream = tempPostList1.map((post) => (
     <Grid
       item
@@ -222,8 +225,7 @@ function PostStream() {
             <IconButton
               edge="end"
               aria-label="Delete"
-              onClick={() => handleRemove(post.id)}
-            >
+              onClick={() => handleRemove(post)}            >
               <Delete />
             </IconButton>
           </Grid>
