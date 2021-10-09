@@ -32,3 +32,7 @@ yarn-error.log*
 
 # editor
 .idea/
+
+
+# pycache
+*.pyc
