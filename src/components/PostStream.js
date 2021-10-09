@@ -1,6 +1,6 @@
 
 import Grid from "@material-ui/core/Grid";
-import { Avatar } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React from "react";
@@ -10,7 +10,6 @@ import vote_icon from "../static/vote.png"
 import dummy_image from "../static/musle.png"
 import dummy_image1 from "../static/arnold.png"
 
-
 const useStyles = makeStyles(() =>({
     stream: {
         marginLeft: "10px"
@@ -19,12 +18,14 @@ const useStyles = makeStyles(() =>({
         height: "100%"
     },
     postTitle: {
-        flex: '1 0 auto',
-        font: '25px Arial',
+        height: "28px",
+        font: '25px Italian',
     }, 
     postBody: {
         flex: '1 0 auto',
-        font: '16px Arial'
+        font: '16px Arial',
+        marginTop: "5px",
+        marginLeft: "5px"
     },
     postImage: {
         margin: "auto",
@@ -56,6 +57,9 @@ const tempPostOnClick = (ev) => {
 const tempVoteOnClick = (ev) => {
     console.log("vote clicked");
 };
+const tempViewProfile = (ev) => {
+    console.log("view profile");
+};
 const dummyUserName = "Xiu666";
 const dummyPostDate = "Date: xxxx-xx-xx xx:xx"
 const dummyImages = [dummy_image, dummy_image1, null];
@@ -67,7 +71,9 @@ function PostStream() {
         <Grid item xs={8}>
             <Grid container>
                 <Grid item xs={1}>
-                    <Avatar src={dummy_image}></Avatar>
+                    <IconButton onClick={tempViewProfile}>
+                        <Avatar src={dummy_image}></Avatar>
+                    </IconButton>
                 </Grid>
                 <Grid item xs={4}>
                     <Typography> 
@@ -88,7 +94,7 @@ function PostStream() {
                                         <CardMedia
                                             component="img"
                                             className={styleClasses.image}
-                                            image={dummyImages[1]}
+                                            image={dummyImages[0]}
                                             alt="dummy"
                                         />
                                     </Grid>
@@ -105,7 +111,7 @@ function PostStream() {
                         </CardActionArea>
                     </Card>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item>
                     <CardActionArea onClick={tempVoteOnClick}>
                         <CardMedia
                             component="img"
