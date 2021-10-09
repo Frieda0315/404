@@ -11,7 +11,7 @@ function App() {
           <MainPage></MainPage>
         </Route>
         <Route exact path="/profile/">
-          <Profile></Profile>
+          <Profile is_follow={false}></Profile>
         </Route>
       </Layout>
     </header>

@@ -143,9 +143,7 @@ function PostStream() {
         alignItems="flex-start"
       >
         <Grid item>
-          <IconButton onClick={tempViewProfile}>
-            <Avatar src={dummy_image} onClick={open}></Avatar>
-          </IconButton>
+          <Avatar src={dummy_image} onClick={open}></Avatar>
         </Grid>
         <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
