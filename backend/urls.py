@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import re_path
+from django.views.generic import TemplateView
 from users import user_views
 from posts import post_views
 
@@ -28,5 +30,6 @@ urlpatterns = [
     path('users/', user_views.user_list, name='user_list'),
     path('users/<uuid:id>', user_views.user_detail, name='user_detail'),
     path('admin/', admin.site.urls),
+    re_path('.*', TemplateView.as_view(template_name='index.html'))
 ]
 
