@@ -3,7 +3,7 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
+    id = serializers.UUIDField()
     user_name = serializers.CharField(required=True)
     github_name = serializers.CharField(required=True)
 
@@ -15,4 +15,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'uuid', 'user_name', 'github_name']
+        fields = ['id', 'user_name', 'github_name']

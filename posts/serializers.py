@@ -3,7 +3,7 @@ from .models import Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
+    id = serializers.UUIDField()
     title = serializers.CharField(required=True)
     content = serializers.CharField(required=True)
 
@@ -15,4 +15,4 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'uuid', 'title', 'content']
+        fields = ['id', 'title', 'content']
