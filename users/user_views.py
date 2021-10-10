@@ -28,7 +28,7 @@ def user_list(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, id):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a user profile info.
     """
     try:
         user = User.objects.get(pk=id)
@@ -39,13 +39,13 @@ def user_detail(request, id):
         serializer = UserSerializer(user)
         return JsonResponse(serializer.data)
 
-    # elif request.method == 'PUT':
-    #     serializer = SnippetSerializer(snippet, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'PUT':
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # elif request.method == 'DELETE':
-    #     snippet.delete()
+    #     user.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
