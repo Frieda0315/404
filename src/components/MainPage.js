@@ -1,5 +1,5 @@
 import PostStream from "./PostStream";
-import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 function MainPage() {
   return (

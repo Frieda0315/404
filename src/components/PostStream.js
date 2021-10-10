@@ -55,16 +55,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 // dummy val
-const tempSummary = "poster body summary";
 const tempPostOnClick = (ev) => {
   console.log("clicked a post");
 };
-const tempVoteOnClick = (ev) => {
-  console.log("vote clicked");
-};
-const tempViewProfile = (ev) => {
-  console.log("view profile");
-};
+
 const dummyImages = [dummy_image, dummy_image1, null];
 const tempPostList = [
   {
@@ -108,6 +102,13 @@ const tempPostList = [
     author: "author6",
     date: "xxxx-xx-xx xx:xx",
     id: "6",
+  },
+  {
+    title: "",
+    content: "this is two of them Content",
+    author: "author6",
+    date: "xxxx-xx-xx xx:xx",
+    id: "7",
   },
 ];
 
@@ -157,9 +158,9 @@ function PostStream() {
               onClick={tempPostOnClick}
               className={styleClasses.clickBox}
             >
-              {post != null ? (
+              {post.title.length > 0 ? (
                 <Grid container>
-                  {dummyImages[post.content.length % 3] != null ? null : (
+                  {dummyImages[post.title.length % 3] != null ? null : (
                     <Grid item xs={2} className={styleClasses.postImage}>
                       <CardMedia
                         component="img"
@@ -250,12 +251,12 @@ function PostStream() {
       >
         {postStream}
       </Grid>
-      <Pagination
+      {/* <Pagination
         count={3}
         page={page}
         onChange={changePage}
         className={styleClasses.pagination}
-      />
+      /> */}
     </div>
   );
 }
