@@ -4,7 +4,7 @@ from django.db.models import fields
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField()
+    uuid = serializers.UUIDField()
     user_name = serializers.CharField(required=True)
     github_name = serializers.CharField(required=True)
 
@@ -16,4 +16,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'user_name', 'github_name']
+        fields = ['uuid', 'user_name', 'github_name']
