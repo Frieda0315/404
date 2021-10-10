@@ -1,10 +1,10 @@
 import PostStream from "./PostStream";
-import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 function MainPage() {
   return (
     <div className="MainPage">
-      <Typography variant="h1">let's connect with your friends</Typography>
+      <h1>let's connect with your friends</h1>
       <div>
         <PostStream />
       </div>

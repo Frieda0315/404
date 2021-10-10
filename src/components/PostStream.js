@@ -27,16 +27,16 @@ const useStyles = makeStyles(() => ({
   clickBox: {
     height: "100%",
   },
-  postTitle: {
-    height: "28px",
-    font: "25px Italian",
-  },
-  postBody: {
-    flex: "1 0 auto",
-    font: "16px Arial",
-    marginTop: "5px",
-    marginLeft: "5px",
-  },
+  // postTitle: {
+  //   height: "28px",
+  //   font: "25px Italian",
+  // },
+  // postBody: {
+  //   flex: "1 0 auto",
+  //   font: "16px Arial",
+  //   marginTop: "5px",
+  //   marginLeft: "5px",
+  // },
   postImage: {
     margin: "auto",
   },
@@ -52,19 +52,18 @@ const useStyles = makeStyles(() => ({
     marginTop: "40px",
     paddingBottom: "40px",
   },
+
+  media: {
+    height: "300px",
+    paddingTop: "56.25%", // 16:9
+  },
 }));
 
 // dummy val
-const tempSummary = "poster body summary";
 const tempPostOnClick = (ev) => {
   console.log("clicked a post");
 };
-const tempVoteOnClick = (ev) => {
-  console.log("vote clicked");
-};
-const tempViewProfile = (ev) => {
-  console.log("view profile");
-};
+
 const dummyImages = [dummy_image, dummy_image1, null];
 const tempPostList = [
   {
@@ -109,6 +108,13 @@ const tempPostList = [
     date: "xxxx-xx-xx xx:xx",
     id: "6",
   },
+  {
+    title: "",
+    content: "this is two of them Content",
+    author: "author6",
+    date: "xxxx-xx-xx xx:xx",
+    id: "7",
+  },
 ];
 
 function PostStream() {
@@ -152,23 +158,32 @@ function PostStream() {
       </Grid>
       <Grid container>
         <Grid item xs>
+          {dummyImages[post.title.length % 3] != null ? null : (
+            <div
+              style={{
+                display: "flex",
+                alignItem: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CardMedia
+                style={{
+                  width: "auto",
+                  maxHeight: "200px",
+                }}
+                component="img"
+                image={dummyImages[0]}
+              />
+            </div>
+          )}
+
           <Card className={styleClasses.cardInPost}>
             <CardActionArea
               onClick={tempPostOnClick}
               className={styleClasses.clickBox}
             >
-              {post != null ? (
+              {post.title.length > 0 ? (
                 <Grid container>
-                  {dummyImages[post.content.length % 3] != null ? null : (
-                    <Grid item xs={2} className={styleClasses.postImage}>
-                      <CardMedia
-                        component="img"
-                        className={styleClasses.image}
-                        image={dummyImages[1]}
-                        alt="dummy"
-                      />
-                    </Grid>
-                  )}
                   <Grid item xs>
                     <Typography variant="h5" component="div">
                       {post.title}
@@ -179,55 +194,66 @@ function PostStream() {
                   </Grid>
                 </Grid>
               ) : (
-                <CardMedia
-                  component="img"
-                  className={styleClasses.image}
-                  image={dummyImages[1]}
-                  alt="dummy"
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItem: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CardMedia
+                    style={{
+                      width: "auto",
+                      maxHeight: "200px",
+                    }}
+                    component="img"
+                    image={dummyImages[1]}
+                  />
+                </div>
               )}
             </CardActionArea>
           </Card>
         </Grid>
-        <Grid
-          container
-          spacing={1}
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="thumbup"
-              onClick={() => setVote(vote + 1)}
-            >
-              <ThumbUp />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <Typography>{vote}</Typography>
-          </Grid>
+      </Grid>
 
-          <Grid item>
-            <IconButton edge="end" aria-label="share">
-              <ShareRounded />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton edge="end" aria-label="comment">
-              <Comment />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="Delete"
-              onClick={() => handleRemove(post)}
-            >
-              <Delete />
-            </IconButton>
-          </Grid>
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="thumbup"
+            onClick={() => setVote(vote + 1)}
+          >
+            <ThumbUp />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <Typography>{vote}</Typography>
+        </Grid>
+
+        <Grid item>
+          <IconButton edge="end" aria-label="share">
+            <ShareRounded />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton edge="end" aria-label="comment">
+            <Comment />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Delete"
+            onClick={() => handleRemove(post)}
+          >
+            <Delete />
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
@@ -250,12 +276,12 @@ function PostStream() {
       >
         {postStream}
       </Grid>
-      <Pagination
+      {/* <Pagination
         count={3}
         page={page}
         onChange={changePage}
         className={styleClasses.pagination}
-      />
+      /> */}
     </div>
   );
 }
