@@ -52,6 +52,11 @@ const useStyles = makeStyles(() => ({
     marginTop: "40px",
     paddingBottom: "40px",
   },
+
+  media: {
+    height: "300px",
+    paddingTop: "56.25%", // 16:9
+  },
 }));
 
 // dummy val
@@ -153,6 +158,24 @@ function PostStream() {
       </Grid>
       <Grid container>
         <Grid item xs>
+          {dummyImages[post.title.length % 3] != null ? null : (
+            <div
+              style={{
+                display: "flex",
+                alignItem: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CardMedia
+                style={{
+                  width: "auto",
+                  maxHeight: "200px",
+                }}
+                component="img"
+                image={dummyImages[0]}
+              />
+            </div>
+          )}
           <Card className={styleClasses.cardInPost}>
             <CardActionArea
               onClick={tempPostOnClick}
@@ -160,16 +183,6 @@ function PostStream() {
             >
               {post.title.length > 0 ? (
                 <Grid container>
-                  {dummyImages[post.title.length % 3] != null ? null : (
-                    <Grid item xs={2} className={styleClasses.postImage}>
-                      <CardMedia
-                        component="img"
-                        className={styleClasses.image}
-                        image={dummyImages[1]}
-                        alt="dummy"
-                      />
-                    </Grid>
-                  )}
                   <Grid item xs>
                     <Typography variant="h5" component="div">
                       {post.title}
