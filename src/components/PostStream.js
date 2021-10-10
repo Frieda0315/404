@@ -159,23 +159,29 @@ function PostStream() {
       <Grid container>
         <Grid item xs>
           {dummyImages[post.title.length % 3] != null ? null : (
-            <div
-              style={{
-                display: "flex",
-                alignItem: "center",
-                justifyContent: "center",
-              }}
+            <CardActionArea
+              onClick={tempPostOnClick}
+              className={styleClasses.clickBox}
             >
-              <CardMedia
+              <div
                 style={{
-                  width: "auto",
-                  maxHeight: "200px",
+                  display: "flex",
+                  alignItem: "center",
+                  justifyContent: "center",
                 }}
-                component="img"
-                image={dummyImages[0]}
-              />
-            </div>
+              >
+                <CardMedia
+                  style={{
+                    width: "auto",
+                    maxHeight: "200px",
+                  }}
+                  component="img"
+                  image={dummyImages[0]}
+                />
+              </div>
+            </CardActionArea>
           )}
+
           <Card className={styleClasses.cardInPost}>
             <CardActionArea
               onClick={tempPostOnClick}
@@ -193,12 +199,22 @@ function PostStream() {
                   </Grid>
                 </Grid>
               ) : (
-                <CardMedia
-                  component="img"
-                  className={styleClasses.image}
-                  image={dummyImages[1]}
-                  alt="dummy"
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItem: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CardMedia
+                    style={{
+                      width: "auto",
+                      maxHeight: "200px",
+                    }}
+                    component="img"
+                    image={dummyImages[1]}
+                  />
+                </div>
               )}
             </CardActionArea>
           </Card>
