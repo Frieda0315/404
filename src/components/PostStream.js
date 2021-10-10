@@ -159,27 +159,22 @@ function PostStream() {
       <Grid container>
         <Grid item xs>
           {dummyImages[post.title.length % 3] != null ? null : (
-            <CardActionArea
-              onClick={tempPostOnClick}
-              className={styleClasses.clickBox}
+            <div
+              style={{
+                display: "flex",
+                alignItem: "center",
+                justifyContent: "center",
+              }}
             >
-              <div
+              <CardMedia
                 style={{
-                  display: "flex",
-                  alignItem: "center",
-                  justifyContent: "center",
+                  width: "auto",
+                  maxHeight: "200px",
                 }}
-              >
-                <CardMedia
-                  style={{
-                    width: "auto",
-                    maxHeight: "200px",
-                  }}
-                  component="img"
-                  image={dummyImages[0]}
-                />
-              </div>
-            </CardActionArea>
+                component="img"
+                image={dummyImages[0]}
+              />
+            </div>
           )}
 
           <Card className={styleClasses.cardInPost}>
