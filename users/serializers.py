@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import User
-from django.db.models import fields
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,4 +15,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['uuid', 'user_name', 'github_name']
+        fields = ['id', 'uuid', 'user_name', 'github_name']
