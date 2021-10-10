@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Profile() {
+export default function Profile({ user_id, is_follow }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
@@ -46,13 +46,13 @@ export default function Profile() {
 
   const [github_user, set_github_user] = useState("xius666");
   const [username, setUserName] = useState("404notfound");
+
   const [textinput1, setTextinput1] = useState(github_user);
   const [textinput2, setTextinput2] = useState(username);
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
-  console.log(isEdit);
 
   useEffect(() => {
     //TODO:handle 404 case
@@ -157,16 +157,28 @@ export default function Profile() {
                     <Typography variant="body1" color="text.secondary" mt-10>
                       <Link href={github_link}> {github_user}</Link>
                     </Typography>
-                    <CardActions className={styleClasses.editbutton}>
-                      <Button
-                        className={styleClasses.button1}
-                        variant="contained"
-                        size="small"
-                        onClick={edit}
-                      >
-                        Edit
-                      </Button>
-                    </CardActions>
+                    {is_follow ? (
+                      <CardActions className={styleClasses.editbutton}>
+                        <Button
+                          className={styleClasses.button1}
+                          variant="contained"
+                          size="small"
+                        >
+                          Follow
+                        </Button>
+                      </CardActions>
+                    ) : (
+                      <CardActions className={styleClasses.editbutton}>
+                        <Button
+                          className={styleClasses.button1}
+                          variant="contained"
+                          size="small"
+                          onClick={edit}
+                        >
+                          Edit
+                        </Button>
+                      </CardActions>
+                    )}
                   </CardContent>
                 )}
               </CardContent>
