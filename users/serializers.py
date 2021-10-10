@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import User
-from django.db.models import fields
 
 
 class UserSerializer(serializers.ModelSerializer):

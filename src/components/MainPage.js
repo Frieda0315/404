@@ -1,7 +1,4 @@
-
-
 import PostStream from "./PostStream";
-import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import Button from '@mui/material/Button';
 import { useHistory } from "react-router-dom"
 import Stack from '@mui/material/Stack';
@@ -10,8 +7,8 @@ function MainPage() {
   const history = useHistory();
   return (
     <div className="MainPage">
-      <Typography variant="h1">let's connect with your friends</Typography>
-      
+      <h1>let's connect with your friends</h1>
+
       <Stack direction="row" spacing={2} justifyContent = 'flex-end'>
       <Button
           sx={{   
@@ -24,14 +21,12 @@ function MainPage() {
         </Button>
       
     </Stack>
-        
+
       <div>
         <PostStream />
       </div>
-      
     </div>
   );
 }
 
 export default MainPage;
-
