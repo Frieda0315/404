@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-kdde75%)#%0o%#w*rqa%q_0(pt7cfvh!7y5_t8fl&8&vzh@+&2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['todo-django-react-ppx.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['i-connect.herokuapp.com', 'localhost']
 
 
 # Application definition
@@ -133,8 +133,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
-
-# CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
