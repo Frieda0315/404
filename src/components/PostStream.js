@@ -27,16 +27,16 @@ const useStyles = makeStyles(() => ({
   clickBox: {
     height: "100%",
   },
-  postTitle: {
-    height: "28px",
-    font: "25px Italian",
-  },
-  postBody: {
-    flex: "1 0 auto",
-    font: "16px Arial",
-    marginTop: "5px",
-    marginLeft: "5px",
-  },
+  // postTitle: {
+  //   height: "28px",
+  //   font: "25px Italian",
+  // },
+  // postBody: {
+  //   flex: "1 0 auto",
+  //   font: "16px Arial",
+  //   marginTop: "5px",
+  //   marginLeft: "5px",
+  // },
   postImage: {
     margin: "auto",
   },
@@ -203,45 +203,46 @@ function PostStream() {
             </CardActionArea>
           </Card>
         </Grid>
-        <Grid
-          container
-          spacing={1}
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="thumbup"
-              onClick={() => setVote(vote + 1)}
-            >
-              <ThumbUp />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <Typography>{vote}</Typography>
-          </Grid>
+      </Grid>
 
-          <Grid item>
-            <IconButton edge="end" aria-label="share">
-              <ShareRounded />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton edge="end" aria-label="comment">
-              <Comment />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="Delete"
-              onClick={() => handleRemove(post)}
-            >
-              <Delete />
-            </IconButton>
-          </Grid>
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="thumbup"
+            onClick={() => setVote(vote + 1)}
+          >
+            <ThumbUp />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <Typography>{vote}</Typography>
+        </Grid>
+
+        <Grid item>
+          <IconButton edge="end" aria-label="share">
+            <ShareRounded />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton edge="end" aria-label="comment">
+            <Comment />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Delete"
+            onClick={() => handleRemove(post)}
+          >
+            <Delete />
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
