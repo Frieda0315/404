@@ -13,7 +13,7 @@ function MainPage() {
       <Stack direction="row" spacing={2} justifyContent = 'flex-end'>
       <Button
           sx={{
-            marginRight : '350px',
+            marginRight : '140px',
             }}
           variant="contained"
           onClick={() => {
