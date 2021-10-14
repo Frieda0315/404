@@ -9,8 +9,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Button } from '@mui/material';
+import { Button,Typography,CardContent, } from '@mui/material';
 import { useHistory } from "react-router-dom";
+import { Axios } from 'axios';
 
 const heading = {
     fontSize: '30px',
@@ -20,10 +21,26 @@ const heading = {
 }
 
 const Post = () => {
+
+const uploadImage = (files) => {
+    console.log(files[0]);
+  };
+
+
+  const [value, setValue] = React.useState('Image');
+
+  const ImageOrText = (event) => {
+    setValue(event.target.value);
+  };
+
+//const [isEdit, setIsEdit] = useState(false);
+
+const imageUpload = () =>{}
+
     const history = useHistory();
 
     return (
-        <div>
+       
             <Grid
                 container
                 direction="column"
@@ -49,24 +66,49 @@ const Post = () => {
 
                 <Grid item
                     alignItems = 'flex-start'>
+                    <Typography variant="body1" color="text.secondary">
+                          Post an Image or Plain text
+                    </Typography>
 
-                    <TextField
-                        style={{ marginTop: 5 ,
-                        marginBottom: 5,
-                        width: '90%',
-                        height: '90%',
-                        marginLeft: 5 }}
-                        id="addDescription"
-                        label="add description"
-                        variant="filled"
-                        multiline
-                        rows={10}
-                        //onChange = {this.handleCommon} 
-                        />         
+                    <FormControl component="fieldset">
+                        <RadioGroup row aria-label="gender" name="row-radio-buttons-group"
+                                value={value}
+                                onChange={ImageOrText}>
+                            <FormControlLabel value="Image" control={<Radio /> } label="Image" />
+                            <FormControlLabel value="Text" control={<Radio />} label="Text" />
+                        </RadioGroup>
+                    </FormControl>
                 </Grid>
 
+                {value == "Image" ?(
+                    <CardContent>
+                        <Grid container>
+                            <Grid item>
+                                <input type='file'  onChange = {(event) => {uploadImage(event.target.files)}} />
+                                <button >upload</button>
+                            </Grid>
+
+                         </Grid>
+                    </CardContent>
+                ):(
+        
+            <TextField
+                style={{ marginTop: 5 ,
+                marginBottom: 5,
+                width: '90%',
+                height: '90%',
+                marginLeft: 5 }}
+                id="addDescription"
+                label="add description"
+                variant="filled"
+                multiline
+                rows={10}
+                //onChange = {this.handleCommon} 
+                    />   
+                )}      
+                  
+
                 <Grid  item
-                    //bgcolor = '#eeeeee'
                     alignItems = 'flex-start'>   
                         
                     <FormControl component="fieldset">
@@ -115,12 +157,9 @@ const Post = () => {
                             }}> 
                         Cancle
                     </Button>
-                </Grid>
-                        
-                        
-                    
+                </Grid>               
         </Grid>
-     </div>
+
     )
 }
 
