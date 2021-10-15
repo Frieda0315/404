@@ -22,8 +22,9 @@ const heading = {
     
 }
 const images = {
-    width: '100%',
-    height: '100%',
+    width: '30%',
+    height: '30%',
+    marginBottom: '15px'
 }
 
 
@@ -34,7 +35,7 @@ const Post = () => {
     const uploadImage = (files) => {
         //accept = 'image/*';
         const file = files[0];
-        if (file != null){
+        if (file ){
             setImage(file)
         }
         else{
@@ -52,24 +53,15 @@ const Post = () => {
         }
         else{
             setPreview(noimage)
-
         }
     }, [image])
  
-
-
-  const [value, setValue] = React.useState('Image');
-  
-
-
-  const ImageOrText = (event) => {
-    setValue(event.target.value);
-  };
-
-//const [isEdit, setIsEdit] = useState(false);
-
-const imageUpload = () =>{}
-
+    const [value, setValue] = React.useState('Image');
+    const [title, setTitle] = React.useState(null);
+    const ImageOrText = (event) => {
+        setValue(event.target.value);
+    };
+    const imageUpload = () =>{}
     const history = useHistory();
 
     return (
@@ -119,8 +111,11 @@ const imageUpload = () =>{}
                             spacing={2}
                             direction="column">
                             <Grid item>
-                                <input type='file' onChange = {(event) => {uploadImage(event.target.files)}} />
-                                <button >upload</button>
+                                <input type='file' accept="image/*" onChange = {(event) => {uploadImage(event.target.files)}} />
+                                <Button variant="contained" color="success" 
+                                    sx={{   marginInlineStart : '5px',}}>
+                                    Upload                 
+                                </Button>
                             </Grid>
                             <Grid item>
                                 <img style = {images} src={preview} />
