@@ -1,8 +1,7 @@
 
-import React, { Component,StyleSheet } from 'react';
+import React, { StyleSheet,useState, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
-
-import { bgcolor, height } from '@mui/system';
+import noimage from "../static/noimage.png";
 import Grid from "@mui/material/Grid";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -12,6 +11,9 @@ import FormLabel from '@mui/material/FormLabel';
 import { Button,Typography,CardContent, } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import { Axios } from 'axios';
+import { Avatar, IconButton, Pagination } from "@material-ui/core";
+import { height } from '@material-ui/system';
+
 
 const heading = {
     fontSize: '30px',
@@ -19,15 +21,46 @@ const heading = {
     fontWeight: 'bold',
     
 }
+const images = {
+    width: '100%',
+    height: '100%',
+}
+
 
 const Post = () => {
 
-const uploadImage = (files) => {
-    console.log(files[0]);
-  };
+    const [image, setImage] = React.useState(null);
+    const [preview, setPreview] = React.useState();
+    const uploadImage = (files) => {
+        //accept = 'image/*';
+        const file = files[0];
+        if (file != null){
+            setImage(file)
+        }
+        else{
+            setImage(noimage)
+        }
+     };
+
+    useEffect(() => {
+        if(image){
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            }
+            reader.readAsDataURL(image);
+        }
+        else{
+            setPreview(noimage)
+
+        }
+    }, [image])
+ 
 
 
   const [value, setValue] = React.useState('Image');
+  
+
 
   const ImageOrText = (event) => {
     setValue(event.target.value);
@@ -82,12 +115,16 @@ const imageUpload = () =>{}
 
                 {value == "Image" ?(
                     <CardContent>
-                        <Grid container>
+                        <Grid container
+                            spacing={2}
+                            direction="column">
                             <Grid item>
-                                <input type='file'  onChange = {(event) => {uploadImage(event.target.files)}} />
+                                <input type='file' onChange = {(event) => {uploadImage(event.target.files)}} />
                                 <button >upload</button>
                             </Grid>
-
+                            <Grid item>
+                                <img style = {images} src={preview} />
+                            </Grid>
                          </Grid>
                     </CardContent>
                 ):(
