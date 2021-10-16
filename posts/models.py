@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from users.models import User
 
 # Create your models here.
 
@@ -9,9 +10,8 @@ class Post(models.Model):
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     title = models.CharField(max_length=120)
     content = models.TextField()
-<<<<<<< HEAD
+    published = models.DateTimeField(auto_now_add=True,null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     #image type
     #image = models.BinaryField(blank=True)
 
-=======
->>>>>>> main

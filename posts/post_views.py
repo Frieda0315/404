@@ -27,7 +27,7 @@ def post_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def post_detail(request, id):
+def post_detail(request, id): #this id here is postID
     """
     Retrieve, update or delete a code snippet.
     """
@@ -47,8 +47,16 @@ def post_detail(request, id):
     #         return Response(serializer.data)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # elif request.method == 'DELETE':
-    #     snippet.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'DELETE':
+
+        
+        #posts = Post.objects.filter(author_id=)
+        #print(post._meta.get_field("published"))
+        #print(request.user.id)
+        #print(post.author.id)
+
+        #TODO: GET CURRENT_USER
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Create your views here.
