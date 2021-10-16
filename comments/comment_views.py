@@ -1,13 +1,10 @@
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
 from .serializers import CommentSerializer
 from .models import Comment
 from posts.models import Post
-import json
 # Create your views here.
 
 
