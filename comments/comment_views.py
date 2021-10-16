@@ -1,11 +1,13 @@
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
 from .serializers import CommentSerializer
 from .models import Comment
 from posts.models import Post
+import json
 # Create your views here.
 
 
@@ -15,7 +17,10 @@ def comment_list(request, author_id, post_id):
         comments = Comment.objects.filter(author_id=author_id)
         comments = comments.filter(post_id=post_id)
         serializer = CommentSerializer(comments, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        comment_json = {'type': 'comments',
+                        'id': 'http://127.0.0.1:5454/author/...', 'comments': serializer.data}
+
+        return JsonResponse(comment_json, safe=False)
     elif request.method == 'POST':
         json_data = JSONParser().parse(request)
         serializer = CommentSerializer(data=json_data)
