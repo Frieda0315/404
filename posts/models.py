@@ -9,5 +9,5 @@ class Post(models.Model):
     title = models.CharField(max_length=120)
     content = models.TextField()
     #image type
-    image = models.BinaryField(blank=True)
+    #image = models.BinaryField(blank=True)
 

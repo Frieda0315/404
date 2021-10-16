@@ -13,6 +13,7 @@ class PostSerializer(serializers.ModelSerializer):
         """
         return Post.objects.create(**validated_data)
 
+
     class Meta:
         model = Post
         fields = ['id', 'title', 'content']
