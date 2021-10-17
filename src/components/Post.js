@@ -21,15 +21,13 @@ const heading = {
     
 }
 const images = {
-    width: '30%',
-    height: '30%',
+    width: '20%',
+    height: '20%',
     marginBottom: '15px'
 }
 
 
 const Post = () => {
-    const [disableImage, setDisableImage] = React.useState(false);
-    const [disableText, setDisableText] = React.useState(false);
     const [image, setImage] = React.useState(null);
     const [preview, setPreview] = React.useState();
     const [value, setValue] = React.useState(null);
@@ -67,18 +65,14 @@ const Post = () => {
         alert("Your file is being uploaded!")
     }
     const submited = () =>{
-        alert(common)
-        
-    }
-    const disable = () =>{
-        if(value == 'Image'&& value!= null){
-            setDisableText = true
+        if (value == 'Image'){
+            alert("image")
         }
-        if(value == 'Text' && value != null){
-            setDisableImage = true
+        if (value == 'Text'){
+            alert("text")
         }
-
     }
+    
     const history = useHistory();
 
     return (
@@ -120,16 +114,13 @@ const Post = () => {
                                 defaultValue="Text"
                                 onChange = {(event) => {setValue(event.target.value);
                                 }}
-                                //onClick = {disable}
                                 >
 
                             <FormControlLabel value="Image" 
-                                disabled={disableImage}
                                 control={<Radio /> } label="Image" 
-                                onClick = {disable} />
+                                />
 
                             <FormControlLabel value="Text" 
-                                disabled={disableText}
                                 control={<Radio />} label="Text" />
 
                         </RadioGroup>
@@ -149,7 +140,8 @@ const Post = () => {
                                     Upload                 
                                 </Button>
                             </Grid>
-                            <Grid item>
+                            <Grid item
+                            marginBottom = {10}>
                                 <img style = {images} src={preview} />
                             </Grid>
                          </Grid>
