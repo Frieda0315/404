@@ -21,12 +21,15 @@ from django.views.generic import TemplateView
 from users import user_views
 from posts import post_views
 from comments import comment_views
+from django.conf import settings
+from django.urls import include
+from django.conf.urls.static import static
 
 
 urlpatterns = [
     # TODO: update urls for post and authors
-    path('posts/', post_views.post_list, name='post_list'),
-    path('posts/<uuid:id>', post_views.post_detail, name='post_detail'),
+    path('authors/<uuid:author_id>/posts/', post_views.post_list, name='post_list'),
+    path('authors/<uuid:author_id>/posts/<uuid:id>', post_views.post_detail, name='post_detail'),
 
     path('users/', user_views.user_list, name='user_list'),
     path('users/<uuid:id>', user_views.user_detail, name='user_detail'),

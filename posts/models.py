@@ -13,5 +13,15 @@ class Post(models.Model):
     published = models.DateTimeField(auto_now_add=True,null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     #image type
-    #image = models.BinaryField(blank=True)
+    image = models.ImageField(blank=True, upload_to='img')
+
+    visibilityTypes = [("PUBLIC",     "Public"),
+                         #("FOAF",       "Friends of Friends"),
+                         ("FRIENDS",    "Friends"),
+                         ("PRIVATE",    "Private"),
+                         ("SERVERONLY", "Local Frchiends")]
+    visibility = models.CharField(max_length=30, choices=visibilityTypes, default="PUBLIC")
+
+    # class Meta:
+    #     db_table = "post"
 
