@@ -189,6 +189,11 @@ const Post = () => {
                                         marginInlineStart : '5px',
                                         }}
                                     control={<Radio />} label="Private" />
+                    <FormControlLabel value="friendOnly" 
+                                        sx={{   
+                                            marginInlineStart : '5px',
+                                            }} 
+                                        control={<Radio />} label="Friend Only" />
                     </RadioGroup>
                     </FormControl>
                 </Grid>
