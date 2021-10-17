@@ -11,8 +11,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { Button,Typography,CardContent, } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import { Axios } from 'axios';
-import { Avatar, IconButton, Pagination } from "@material-ui/core";
-import { height } from '@material-ui/system';
+
 
 
 const heading = {
@@ -29,9 +28,15 @@ const images = {
 
 
 const Post = () => {
-
+    const [disableImage, setDisableImage] = React.useState(false);
+    const [disableText, setDisableText] = React.useState(false);
     const [image, setImage] = React.useState(null);
     const [preview, setPreview] = React.useState();
+    const [value, setValue] = React.useState(null);
+    const [title, setTitle] = React.useState(null);
+    const [common, setCommon] = React.useState(null);
+
+
     const uploadImage = (files) => {
         //accept = 'image/*';
         const file = files[0];
@@ -56,12 +61,24 @@ const Post = () => {
         }
     }, [image])
  
-    const [value, setValue] = React.useState('Image');
-    const [title, setTitle] = React.useState(null);
-    const ImageOrText = (event) => {
-        setValue(event.target.value);
-    };
-    const imageUpload = () =>{}
+    
+    
+    const imageUpload = () =>{
+        alert("Your file is being uploaded!")
+    }
+    const submited = () =>{
+        alert(common)
+        
+    }
+    const disable = () =>{
+        if(value == 'Image'&& value!= null){
+            setDisableText = true
+        }
+        if(value == 'Text' && value != null){
+            setDisableImage = true
+        }
+
+    }
     const history = useHistory();
 
     return (
@@ -86,7 +103,9 @@ const Post = () => {
                         marginLeft: 5 }}
                         id="addTitle"
                         label="title"
-                        variant="filled"/>
+                        variant="filled"
+                        value = {title}
+                        onChange={(e) => setTitle(e.target.value)}/>
                 </Grid>
 
                 <Grid item
@@ -98,9 +117,21 @@ const Post = () => {
                     <FormControl component="fieldset">
                         <RadioGroup row aria-label="gender" name="row-radio-buttons-group"
                                 value={value}
-                                onChange={ImageOrText}>
-                            <FormControlLabel value="Image" control={<Radio /> } label="Image" />
-                            <FormControlLabel value="Text" control={<Radio />} label="Text" />
+                                defaultValue="Text"
+                                onChange = {(event) => {setValue(event.target.value);
+                                }}
+                                //onClick = {disable}
+                                >
+
+                            <FormControlLabel value="Image" 
+                                disabled={disableImage}
+                                control={<Radio /> } label="Image" 
+                                onClick = {disable} />
+
+                            <FormControlLabel value="Text" 
+                                disabled={disableText}
+                                control={<Radio />} label="Text" />
+
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -113,7 +144,8 @@ const Post = () => {
                             <Grid item>
                                 <input type='file' accept="image/*" onChange = {(event) => {uploadImage(event.target.files)}} />
                                 <Button variant="contained" color="success" 
-                                    sx={{   marginInlineStart : '5px',}}>
+                                    sx={{   marginInlineStart : '5px',}}
+                                    onClick = {() => {imageUpload()}}>
                                     Upload                 
                                 </Button>
                             </Grid>
@@ -135,7 +167,8 @@ const Post = () => {
                 variant="filled"
                 multiline
                 rows={10}
-                //onChange = {this.handleCommon} 
+                value = {common}
+                onChange={(e) => setCommon(e.target.value)} 
                     />   
                 )}      
                   
@@ -152,7 +185,8 @@ const Post = () => {
                     <RadioGroup
                         aria-label="private?"
                         defaultValue="public"
-                        name="radio-buttons-group">
+                        name="radio-buttons-group"
+                        >
                     <FormControlLabel value="public" 
                                         sx={{   
                                             marginInlineStart : '5px',
@@ -173,11 +207,12 @@ const Post = () => {
                     //bgcolor = '#e0e0e0'
                     >   
                     <Button variant="contained" color="success" 
-                    sx={{   
-                        marginInlineStart : '5px',
-                        }}>
+                    sx={{   marginInlineStart : '5px',
+                        }}
+                    onClick= {(event) => {submited(event.target)}}>
                         Create Post
                     </Button>
+
                     <Button variant="contained" 
                         sx={{   
                         marginInlineStart : '50px',
