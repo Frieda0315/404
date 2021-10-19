@@ -30,7 +30,7 @@ const images = {
 const Post = () => {
     const [image, setImage] = React.useState(null);
     const [preview, setPreview] = React.useState();
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState('Text');
     const [title, setTitle] = React.useState(null);
     const [common, setCommon] = React.useState(null);
 
