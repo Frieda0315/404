@@ -8,9 +8,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Button,Typography,CardContent, } from '@mui/material';
+import { Button,Typography,CardContent, Card, CardMedia} from '@mui/material';
 import { useHistory } from "react-router-dom";
 import { Axios } from 'axios';
+import { maxHeight } from '@mui/system';
 
 
 
@@ -22,10 +23,17 @@ const heading = {
 }
 const images = {
     marginBottom: '15px',
-    height: '20px;',
-    width: '20px;',
+    height: '200px',
+    width: '200px' 
    
 }
+
+const pic = {
+    maxHeight: 400,
+    maxWidth: 300,
+    marginBottom: "30px",
+    borderRadius: "50%",
+  }
 
 
 const Post = () => {
@@ -142,10 +150,12 @@ const Post = () => {
                                     Upload                 
                                 </Button>
                             </Grid>
-                            <Grid item
-                                marginBottom = {10}>
-                                <img style = {images} src={preview}  />
-                            </Grid>
+                            <Card
+                                sx={{ maxWidth: 200 ,
+                                maxHeight: 200}}>
+                                
+                                 <img style = {images} src={preview}  /> 
+                            </Card>
                          </Grid>
                     </CardContent>
                 ):(
