@@ -21,9 +21,10 @@ const heading = {
     
 }
 const images = {
-    width: '20%',
-    height: '20%',
-    marginBottom: '15px'
+    marginBottom: '15px',
+    height: '20px;',
+    width: '20px;',
+   
 }
 
 
@@ -64,6 +65,7 @@ const Post = () => {
     const imageUpload = () =>{
         alert("Your file is being uploaded!")
     }
+    
     const submited = () =>{
         if (value == 'Image'){
             alert("image")
@@ -141,8 +143,8 @@ const Post = () => {
                                 </Button>
                             </Grid>
                             <Grid item
-                            marginBottom = {10}>
-                                <img style = {images} src={preview} />
+                                marginBottom = {10}>
+                                <img style = {images} src={preview}  />
                             </Grid>
                          </Grid>
                     </CardContent>
