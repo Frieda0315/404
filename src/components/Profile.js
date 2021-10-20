@@ -63,6 +63,7 @@ export default function Profile({ user_id, is_follow }) {
       seturl(res.data["avatar_url"]);
     });
   }, [github_user]);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     set_github_user(textinput1);
