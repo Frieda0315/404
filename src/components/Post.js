@@ -1,6 +1,3 @@
-import React, { Component, StyleSheet } from "react";
-import TextField from "@mui/material/TextField";
-
 import React, { StyleSheet, useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import noimage from "../static/noimage.png";
