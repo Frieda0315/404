@@ -1,11 +1,10 @@
 import Grid from "@material-ui/core/Grid";
-
 import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
-
+import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
@@ -58,14 +57,7 @@ const useStyles = makeStyles(() => ({
     paddingTop: "56.25%", // 16:9
   },
 }));
-
-// dummy val
-const tempPostOnClick = (ev) => {
-  console.log("clicked a post");
-};
-
-const dummyImages = [dummy_image, dummy_image1, null];
-const tempPostList = [
+var tempPostList = [
   {
     title: "Hello world",
     content: "Hello world Content",
@@ -117,11 +109,19 @@ const tempPostList = [
   },
 ];
 
+// dummy val
+const tempPostOnClick = (ev) => {
+  console.log("clicked a post");
+};
+
+const dummyImages = [dummy_image, dummy_image1, null];
+/**/
+
 function PostStream() {
   const handleRemove = (e) => {
     const id = e.id;
-    const newList = tempPostList1.filter((item) => item.id !== id);
-    setTempPostList(newList);
+    const newList = postlist.filter((item) => item.id !== id);
+    setPostlist(newList);
   };
   const changePage = (ev, value) => {
     setPage(value);
@@ -132,9 +132,18 @@ function PostStream() {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
+  const [postlist, setPostlist] = React.useState([]);
+
   const open = () => setOpenPopup(true);
 
-  const postStream = tempPostList1.map((post) => (
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/posts/`).then((res) => {
+      console.log(res.data);
+      setPostlist(res.data);
+    });
+  }, []);
+
+  const postStream = postlist.map((post) => (
     <Grid
       item
       xs={8}
