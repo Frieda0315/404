@@ -108,6 +108,7 @@ var tempPostList = [
     id: "7",
   },
 ];
+const baseUrl = "https://api.github.com/users";
 
 // dummy val
 const tempPostOnClick = (ev) => {
@@ -137,9 +138,24 @@ function PostStream() {
   const open = () => setOpenPopup(true);
 
   useEffect(() => {
+    var newList = [];
     axios.get(`http://127.0.0.1:8000/posts/`).then((res) => {
       console.log(res.data);
-      setPostlist(res.data);
+      newList = res.data;
+    });
+    axios.get(`${baseUrl}/xius666/events`).then((res) => {
+      console.log(res.data);
+      res.data.map((single) => {
+        console.log(single.actor);
+        newList.push({
+          id: single.id,
+          date: single.created_at,
+          content: "from repo: " + single.repo.name,
+          author: single.actor.login,
+          title: "Github Activity: " + single.type,
+        });
+      });
+      setPostlist(newList);
     });
   }, []);
 
@@ -167,7 +183,7 @@ function PostStream() {
       </Grid>
       <Grid container>
         <Grid item xs>
-          {dummyImages[post.title.length % 3] != null ? null : (
+          {dummyImages[0] != null ? null : (
             <div
               style={{
                 display: "flex",

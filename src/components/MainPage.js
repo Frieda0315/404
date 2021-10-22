@@ -15,7 +15,7 @@ function MainPage() {
   }
 
   return (
-    <div className="MainPage">
+    <div>
       <h1 className="text-center">let's connect with your friends</h1>
 
       <Stack
