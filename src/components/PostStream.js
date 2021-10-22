@@ -11,6 +11,7 @@ import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+import { Redirect } from "react-router";
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -307,7 +308,12 @@ function PostStream() {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
+  const [comments, setComments] = React.useState({});
   const open = () => setOpenPopup(true);
+
+  if (Object.keys(comments).length !== 0) {
+    return <Redirect to={"/posts/" + comments.id + "/comments"}></Redirect>;
+  }
 
   const postStream = tempPostList1.map((post) => (
     <Grid
@@ -417,7 +423,11 @@ function PostStream() {
           </IconButton>
         </Grid>
         <Grid item>
-          <IconButton edge="end" aria-label="comment">
+          <IconButton
+            edge="end"
+            aria-label="comment"
+            onClick={() => setComments(post)}
+          >
             <Comment />
           </IconButton>
         </Grid>
