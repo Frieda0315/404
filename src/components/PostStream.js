@@ -136,17 +136,17 @@ function PostStream() {
   const [postlist, setPostlist] = React.useState([]);
 
   const open = () => setOpenPopup(true);
-
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios.get(`http://127.0.0.1:8000/posts/`).then((res) => {
-      console.log(res.data);
+    axios.get(`${baseUrl2}posts/`).then((res) => {
+      //console.log(res.data);
       newList = res.data;
     });
     axios.get(`${baseUrl}/xius666/events`).then((res) => {
       console.log(res.data);
       res.data.map((single) => {
-        console.log(single.actor);
+        //console.log(single.actor);
         newList.push({
           id: single.id,
           date: single.created_at,
