@@ -88,8 +88,8 @@ def post_detail(request, author_id, id): #this id here is postID
 # helper function under
 
 
-def imageHelper(request):
-    file_content = ContentFile(request.FILES['img'].read())  
-    img = Post(name = request.FILES['img'].name, img = request.FILES['img'])  
-    img.save()
+# def imageHelper(request):
+#     file_content = ContentFile(request.FILES['img'].read())  
+#     img = Post(name = request.FILES['img'].name, img = request.FILES['img'])  
+#     img.save()
 
