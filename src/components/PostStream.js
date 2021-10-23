@@ -293,7 +293,7 @@ const tempPostList = [
   },
 ];
 
-function PostStream() {
+function PostStream(props) {
   const handleRemove = (e) => {
     const id = e.id;
     const newList = tempPostList1.filter((item) => item.id !== id);
@@ -301,6 +301,17 @@ function PostStream() {
   };
   const changePage = (ev, value) => {
     setPage(value);
+  };
+
+  const viewComments = (post) => {
+    setComments(post);
+    // console.log(props);
+    // props.history.push({
+    //   pathname: "/posts/" + post.id + "/comments",
+    //   state: {
+    //     commentsSrc: post.commentsSrc,
+    //   },
+    // });
   };
   const [vote, setVote] = React.useState(0);
 
@@ -426,7 +437,7 @@ function PostStream() {
           <IconButton
             edge="end"
             aria-label="comment"
-            onClick={() => setComments(post)}
+            onClick={() => viewComments(post)}
           >
             <Comment />
           </IconButton>
