@@ -9,7 +9,13 @@ import Login from "./components/login/Login";
 import signup from "./components/signup/signup";
 function App() {
   const [cookies, setCookie] = useCookies([]);
+  const [isSignup, setIsSignup] = useCookies(false);
+
   console.log(isEmpty(cookies));
+  console.log(window.location.pathname);
+  if (window.location.pathname === "/signup") {
+    setIsSignup(true);
+  }
   return (
     <header>
       <Route exact path="/login" component={Login} />
@@ -19,7 +25,11 @@ function App() {
           exact
           path="/"
           render={() =>
-            isEmpty(cookies) ? <Redirect to="/login/" /> : <Redirect to="/" />
+            isEmpty(cookies) && !isSignup ? (
+              <Redirect to="/login/" />
+            ) : (
+              <Redirect to="/" />
+            )
           }
         ></Route>
         <Route exact path="/">
