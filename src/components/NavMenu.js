@@ -59,14 +59,7 @@ function NavMenu(is_logged_in) {
           {loggedIn ? null : (
             <Nav navbar>
               <NavItem>
-                <NavLink href="/login/" onClick={login}>
-                  Log in
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/signup/" onClick={login}>
-                  Sign Up
-                </NavLink>
+                <NavLink href="/login/">Log in</NavLink>
               </NavItem>
             </Nav>
           )}

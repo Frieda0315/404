@@ -1,11 +1,10 @@
 import Grid from "@material-ui/core/Grid";
-
 import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
-
+import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
@@ -58,14 +57,7 @@ const useStyles = makeStyles(() => ({
     paddingTop: "56.25%", // 16:9
   },
 }));
-
-// dummy val
-const tempPostOnClick = (ev) => {
-  console.log("clicked a post");
-};
-
-const dummyImages = [dummy_image, dummy_image1, null];
-const tempPostList = [
+var tempPostList = [
   {
     title: "Hello world",
     content: "Hello world Content",
@@ -116,12 +108,21 @@ const tempPostList = [
     id: "7",
   },
 ];
+const baseUrl = "https://api.github.com/users";
+
+// dummy val
+const tempPostOnClick = (ev) => {
+  console.log("clicked a post");
+};
+
+const dummyImages = [dummy_image, dummy_image1, null];
+/**/
 
 function PostStream() {
   const handleRemove = (e) => {
     const id = e.id;
-    const newList = tempPostList1.filter((item) => item.id !== id);
-    setTempPostList(newList);
+    const newList = postlist.filter((item) => item.id !== id);
+    setPostlist(newList);
   };
   const changePage = (ev, value) => {
     setPage(value);
@@ -132,9 +133,33 @@ function PostStream() {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
-  const open = () => setOpenPopup(true);
+  const [postlist, setPostlist] = React.useState([]);
 
-  const postStream = tempPostList1.map((post) => (
+  const open = () => setOpenPopup(true);
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  useEffect(() => {
+    var newList = [];
+    axios.get(`${baseUrl2}posts/`).then((res) => {
+      //console.log(res.data);
+      newList = res.data;
+    });
+    axios.get(`${baseUrl}/xius666/events`).then((res) => {
+      console.log(res.data);
+      res.data.map((single) => {
+        //console.log(single.actor);
+        newList.push({
+          id: single.id,
+          date: single.created_at,
+          content: "from repo: " + single.repo.name,
+          author: single.actor.login,
+          title: "Github Activity: " + single.type,
+        });
+      });
+      setPostlist(newList);
+    });
+  }, []);
+
+  const postStream = postlist.map((post) => (
     <Grid
       item
       xs={8}
@@ -158,7 +183,7 @@ function PostStream() {
       </Grid>
       <Grid container>
         <Grid item xs>
-          {dummyImages[post.title.length % 3] != null ? null : (
+          {dummyImages[0] != null ? null : (
             <div
               style={{
                 display: "flex",
