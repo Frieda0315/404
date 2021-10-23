@@ -17,6 +17,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { Axios } from "axios";
 import { maxHeight } from "@mui/system";
+import "./font/style.css";
 
 const heading = {
   fontSize: "30px",
@@ -83,7 +84,7 @@ const Post = () => {
   return (
     <Grid container direction="column" justifyContent="center">
       <Grid item alignItems="center">
-        <div style={heading}>Create A New Post</div>
+        <div class="text text-3">Create A New Post</div>
       </Grid>
 
       <Grid

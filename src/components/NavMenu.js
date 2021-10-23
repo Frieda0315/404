@@ -18,6 +18,9 @@ import { makeStyles } from "@material-ui/styles";
 import { useCookies } from "react-cookie";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { isEmpty } from "lodash";
+import "./font/style.css";
+import logo from "./assets/logo.png";
+import Link from "@mui/material/Link";
 
 const useStyles = makeStyles(() => ({
   pic: {
@@ -47,10 +50,15 @@ function NavMenu(is_logged_in) {
   }
 
   return (
-    <Navbar color="dark" dark expand="md">
-      <NavbarBrand href="/" className={styleClasses.title}>
-        I-Connect
-      </NavbarBrand>
+    <Navbar light expand="md">
+      <Link href="/">
+        <Avatar
+          alt="Remy Sharp"
+          src={logo}
+          sx={{ width: 90, height: 80, marginLeft: 2 }}
+        />
+      </Link>
+
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ms-auto" navbar>
