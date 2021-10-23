@@ -25,7 +25,7 @@ def post_like_list(request, author_id, post_id):
         likes = Like.objects.filter(post=post)
         if(not likes):
             return JsonResponse({'status': 'false', 'message': 'like object not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = CommentSerializer(likes, many=True)
+        serializer = LikeSerializer(likes, many=True)
         like_json = {'type': 'likes',
                      'post': 'http://127.0.0.1:5454/author/.../posts/...', 'likes': serializer.data}
 

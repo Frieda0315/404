@@ -11,7 +11,7 @@ from .models import Like
 class LikeSerializer(serializers.ModelSerializer):
 
     author = UserSerializer()
-    commnet = CommentSerializer()
+    comment = CommentSerializer(allow_null=True)
     post = PostSerializer()
     id = serializers.UUIDField()
 

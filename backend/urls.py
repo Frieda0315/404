@@ -22,6 +22,7 @@ from users import user_views
 from posts import post_views
 from comments import comment_views
 from likes import like_views
+from inbox import inbox_views
 
 
 urlpatterns = [
@@ -41,6 +42,10 @@ urlpatterns = [
          like_views.comment_like_list, name='comment_like_list'),
     path('author/<uuid:author_id>/liked',
          like_views.author_like_list, name='author_like_list'),
+
+    # inbox
+    path('author/<uuid:author_id>/inbox',
+         inbox_views.inbox_list, name='inbox_list'),
 
     path('admin/', admin.site.urls),
     re_path('.*', TemplateView.as_view(template_name='index.html'))
