@@ -7,11 +7,7 @@ import Stack from '@mui/material/Stack';
 import { Route, Redirect } from 'react-router'
 
 function MainPage() {
-  //const history = useHistory();
-  const [creatNew, setCreatNew] = React.useState(false);
-  if(creatNew){
-    return <Redirect from = '/' to='/new' />
-  }
+  const history = useHistory();
 
   return (
  
@@ -25,8 +21,9 @@ function MainPage() {
             }}
           variant="contained"
           onClick={() => {
-           setCreatNew(true);
-          }}>
+            let path = `/new/`; 
+            history.push(path);
+            }}>
           New
         </Button>
 
