@@ -8,7 +8,7 @@ import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import { Delete, ShareRounded, ThumbUp, Comment,Edit} from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 const useStyles = makeStyles(() => ({
@@ -246,6 +246,14 @@ function PostStream() {
             <Comment />
           </IconButton>
         </Grid>
+{/* 
+        <Grid item>
+          <IconButton edge="end" aria-label="edit"
+          onClick = {()=> handelEdit()}>
+            <Edit />
+          </IconButton>
+        </Grid> */}
+
         <Grid item>
           <IconButton
             edge="end"
