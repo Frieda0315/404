@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import './index.css'
 
 ReactDOM.render(
-  <BrowserRouter basename="http://localhost:3000/">
+  <BrowserRouter >
     <App />
   </BrowserRouter>,
   document.getElementById("root")
