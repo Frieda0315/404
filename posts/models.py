@@ -15,6 +15,7 @@ class Post(models.Model):
     #image type
     image = models.ImageField(blank=True, upload_to='img')
 
+    #the first column is the actual value in databse, the second column is the human-readable value in admin selecting page
     visibilityTypes = [("PUBLIC",     "Public"),
                          #("FOAF",       "Friends of Friends"),
                          ("FRIENDS",    "Friends"),

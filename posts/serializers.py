@@ -15,9 +15,11 @@ class PostSerializer(serializers.ModelSerializer):
         #validated_data = validated_data.pop('id')
         # id = uuid.uuid4()
         # return Post.objects.create(id=id, **validated_data)
+
+        #at here, backend API only receive the unique postID, and it is must be provided.
         return Post.objects.create(**validated_data)
 
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content','published','author']
+        fields = ['id', 'title', 'content','published','author','visibility']
