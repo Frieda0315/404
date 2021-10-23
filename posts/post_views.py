@@ -17,8 +17,8 @@ def post_list(request, author_id):
         
         #retrieve all public posts
         posts = Post.objects.filter(visibility="PUBLIC")
-        #retrieve all posts of this author
-        posts = posts.filter(author_id=author_id)
+        #retrieve all posts of this author， this might be a bug
+        #posts = posts.filter(author_id=author_id)
         serializer = PostSerializer(posts, many=True)
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
@@ -50,9 +50,14 @@ def post_detail(request, author_id, id): #this id here is postID
     elif request.method == 'PUT':
         #use serilizer to change post instance data to current request data
         serializer = PostSerializer(post, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+        #if you are modifying your own posts
+        if(post.author.id == author_id):
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+        #modifying others posts is not allowed
+        else:
+            return Response(status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
@@ -88,5 +93,3 @@ def imageHelper(request):
     img = Post(name = request.FILES['img'].name, img = request.FILES['img'])  
     img.save()
 
-def getPublicPost(request):
-    return 0
