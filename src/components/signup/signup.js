@@ -4,7 +4,7 @@
     Availability: https://medium.com/@aswinvp/a-mock-login-form-using-react-material-ui-754cdad0a9e8
 */
 import React from "react";
-import "./login.css";
+import "./signup.css";
 import "../font/style.css";
 import { instanceOf } from "prop-types";
 
@@ -28,10 +28,10 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: this.props.cookies.get("username") || "",
-      password: this.props.cookies.get("password") || "",
+      username: "",
+      github_user: "",
+      password: "",
       authflag: 1,
-      selected: "no",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,7 +51,6 @@ class Login extends React.Component {
       const { cookies } = this.props;
       cookies.set("username", this.state.username, { path: "/" }); // setting the cookie
       cookies.set("password", this.state.password, { path: "/" });
-
       this.setState({
         username: cookies.get("username"),
         password: cookies.get("password"),
@@ -61,7 +60,7 @@ class Login extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     if (this.state.username == "" && this.state.password == "") {
-      this.props.history.push("/login");
+      this.props.history.push("/signup");
     } else {
       alert("Incorrect Credntials!");
     }
@@ -92,11 +91,11 @@ class Login extends React.Component {
               className="login-form"
               alignItems="center"
             >
-              <div class="text text-3">I-connect</div>
+              <div class="text text-3"> Sign up your account</div>
 
               <Paper
                 variant="elevation"
-                elevation={2}
+                elevation={3}
                 className="login-background"
               >
                 <Grid item style={{ width: "300px" }}>
@@ -104,7 +103,7 @@ class Login extends React.Component {
                     <Grid container direction="column" spacing={2}>
                       <Grid item>
                         <Typography component="h1" variant="h6">
-                          Sign in
+                          Sign up
                         </Typography>
                       </Grid>
                       <Grid item>
@@ -125,6 +124,21 @@ class Login extends React.Component {
                       </Grid>
                       <Grid item>
                         <TextField
+                          placeholder="Github Username"
+                          fullWidth
+                          name="github_user"
+                          variant="outlined"
+                          value={this.state.password}
+                          onChange={(event) =>
+                            this.setState({
+                              [event.target.name]: event.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </Grid>
+                      <Grid item>
+                        <TextField
                           type="password"
                           placeholder="Password"
                           fullWidth
@@ -139,35 +153,21 @@ class Login extends React.Component {
                           required
                         />
                       </Grid>
+
                       <Grid item>
                         <Button
                           variant="contained"
                           color="primary"
                           type="submit"
                           className="button-block"
-                          href="/"
+                          href="/login"
                           onClick={this.handleCookie}
                         >
-                          Log in
+                          Sign Up
                         </Button>
                       </Grid>
                     </Grid>
                   </form>
-                </Grid>
-                <Grid item>
-                  <RadioGroup onChange={this.handleRadio} value={selected}>
-                    <FormControlLabel
-                      value="yes"
-                      control={<Radio />}
-                      label="Keep me Logged in"
-                    />
-                  </RadioGroup>
-                </Grid>
-
-                <Grid item>
-                  <Link href="/signup" variant="body2">
-                    New User? Sign up here!
-                  </Link>
                 </Grid>
               </Paper>
             </Grid>

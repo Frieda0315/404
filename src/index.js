@@ -5,12 +5,15 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route } from "react-router-dom";
 import "./index.css";
+import { CookiesProvider } from "react-cookie";
 import Login from "./components/login/Login";
-
+import signup from "./components/signup/signup";
+import Profile from "./components/Profile";
 ReactDOM.render(
   <BrowserRouter>
-    <Route exact path="/login" component={Login} />
-    <Route exact path="/" component={App} />
+    <CookiesProvider>
+      <App></App>
+    </CookiesProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );

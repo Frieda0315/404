@@ -3,19 +3,25 @@ import MainPage from "./components/MainPage";
 import { Route, Switch, Redirect } from "react-router-dom";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
-
+import { useCookies } from "react-cookie";
+import { isEmpty } from "lodash";
+import Login from "./components/login/Login";
+import signup from "./components/signup/signup";
 function App() {
-  var loggedIn = false;
+  const [cookies, setCookie] = useCookies([]);
+  console.log(isEmpty(cookies));
   return (
     <header>
-      <Route
-        exact
-        path="/"
-        render={() =>
-          loggedIn ? <Redirect to="/" /> : <Redirect to="/login" />
-        }
-      />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/signup" component={signup} />
       <Layout>
+        <Route
+          exact
+          path="/"
+          render={() =>
+            isEmpty(cookies) ? <Redirect to="/login/" /> : <Redirect to="/" />
+          }
+        ></Route>
         <Route exact path="/">
           <MainPage></MainPage>
         </Route>
@@ -23,7 +29,7 @@ function App() {
           <Profile is_follow={false}></Profile>
         </Route>
         <Switch>
-          <Route path={"/new/"} component={Post} exact={true} />
+          <Route path={"/new"} component={Post} exact={true} />
         </Switch>
       </Layout>
     </header>
