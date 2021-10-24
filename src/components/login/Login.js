@@ -7,6 +7,7 @@ import React from "react";
 import "./login.css";
 import "../font/style.css";
 import { instanceOf } from "prop-types";
+import ParticlesBg from "particles-bg";
 
 import {
   Button,
@@ -81,7 +82,6 @@ class Login extends React.Component {
           alignItems="stretch"
           sx={{
             height: "100vh",
-            backgroundColor: "aquamarine",
             width: "100%",
           }}
         >
@@ -104,16 +104,17 @@ class Login extends React.Component {
                 }}
               />
 
-              <Paper
-                variant="elevation"
-                elevation={2}
-                className="login-background"
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
               >
                 <Grid item style={{ width: "300px" }}>
                   <form onSubmit={this.handleSubmit}>
                     <Grid container direction="column" spacing={2}>
                       <Grid item>
-                        <Typography component="h1" variant="h6">
+                        <Typography component="h1" variant="h5">
                           Sign in
                         </Typography>
                       </Grid>
@@ -179,7 +180,7 @@ class Login extends React.Component {
                     New User? Sign up here!
                   </Link>
                 </Grid>
-              </Paper>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

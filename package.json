@@ -16,6 +16,7 @@
     "bootstrap": "^5.1.1",
     "chokidar": "^3.5.2",
     "hyphenate-style-name": "^1.0.4",
+    "particles-bg": "^2.5.5",
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",

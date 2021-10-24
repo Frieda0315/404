@@ -6,20 +6,33 @@ import Post from "./components/Post";
 import { useCookies } from "react-cookie";
 import { isEmpty } from "lodash";
 import Login from "./components/login/Login";
-import signup from "./components/signup/signup";
+import Signup from "./components/signup/signup";
 import { useEffect, useState } from "react";
+import ParticlesBg from "particles-bg";
+
 function App() {
   const [cookies, setCookie] = useCookies([]);
   console.log(isEmpty(cookies));
   console.log(window.location.pathname);
 
   if (window.location.pathname === "/signup") {
-    return <Route exact path="/signup" component={signup} />;
+    return (
+      <header>
+        <Route exact path="/signup" component={Signup} />{" "}
+        <ParticlesBg type="square" bg={true} />
+      </header>
+    );
   }
   return (
     <header>
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/signup" component={signup} />
+      <Route exact path="/login">
+        <Login></Login>
+        <ParticlesBg type="square" bg={true} />
+      </Route>
+      <Route exact path="/signup">
+        <Signup></Signup>
+        <ParticlesBg type="square" bg={true} />
+      </Route>
 
       <Layout>
         <Route
