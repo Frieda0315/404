@@ -1,10 +1,20 @@
-import React, { StyleSheet,useState, useEffect} from 'react';
+import React, { StyleSheet,useState, useEffect,Text} from 'react';
 import { Card, CardMedia, CardActionArea, Typography,IconButton } from "@material-ui/core";
 import { Delete,Edit} from "@material-ui/icons";
-import noimage from "../static/noimage.png";
 import { Grid } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import dummy_image from "../static/musle.png";
+
+const style1 = {
+    backgroundColor: "#fff",
+    borderBottom: "1.2px solid #f0f2f7",
+    padding: "30px",
+    boxShadow: "0 1px 3px rgb(18 18 18 / 10%)",
+    textAlign: 'center', 
+    alignSelf : 'center',
+    top:'10%',
+    width : "50%"
+}
 
 
 const PostList = [
@@ -67,10 +77,6 @@ const PostList = [
   ];
   
 
-
-
-
-
 const MyPostList = () => {
     const history = useHistory();
     const [PostList1, setPostList] = React.useState(PostList);
@@ -83,6 +89,7 @@ const MyPostList = () => {
 
     const handleEdit= (e) => {
         const id = e.id;
+        const newList = PostList1.filter((item) => item.id !== id);
         const item = PostList1.find((item) => item.id == id)
         history.push({pathname: '/mypost/edit',state:item});
         alert(item.content);
@@ -90,30 +97,53 @@ const MyPostList = () => {
       
   const listItems = PostList1.map((post) =>
    
-  <Grid item>
-      <Typography>{post.title}</Typography>
-      <Typography>{post.author}</Typography>
-      <Typography>{post.date}</Typography>
-      <Typography>{post.id}</Typography>
-      { post.contentType == "text/plain" ? (
-          <Typography>{post.content}</Typography>
-      ):(<CardMedia
-          style={{
-          width: "auto",
-          maxHeight: "200px",
-          }}
-          component="img"
-          image={post.image}
-      />
-      )}
-  
+  <Grid item
+    // xs={8}
+    // textAlign = 'start'
+    // justifyContent="flex-start"
+    // alignItems="flex-start" 
+    // className = {style1}
+    >
+    <Grid container direction="column" spacing={5}>
+        <Grid container direction="row" spacing={5}>
+            <Grid item>
+                <Typography >{post.date}</Typography>
+            </Grid>
+            {post.contentType == "text/plain" ? (
+                <Grid item spacing={2}>
+                    <Typography>{post.title}</Typography>
+                    <Typography>{post.content}</Typography>
+                </Grid>
+                
+                ):(
+                <Grid item >
+                    <Grid container direction="row" spacing={5}>
+                        <Grid item>
+                            <CardMedia
+                                style={{
+                                width: "auto",
+                                maxHeight: "200px",
+                                }}
+                                component="img"
+                                image={post.image}/>
+                        </Grid>
+                        <Grid item>
+                            <Typography>{post.title}</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                    
+                )}
+        </Grid>
 
-      <Grid
+
+        <Grid
           container
           spacing={1}
           direction="row"
           justifyContent="flex-end"
           alignItems="flex-end"
+          
       >
           <Grid item>
               <IconButton
@@ -135,19 +165,24 @@ const MyPostList = () => {
               </IconButton>
           </Grid>
       </Grid>
+      <hr></hr>
+    </Grid>     
 </Grid>
   
 
 );
     
     return (
-       <Grid container
-        spacing={1}
-        direction="column"
-        justifyContent="flex-start"
-        alignItems="center">
-            {listItems}   
-       </Grid>
+        <div style = {style1}>
+            <Grid container
+            spacing={10}
+            direction="column"
+            alignSelf = 'center'
+            alignItems="center">
+                {listItems}   
+            </Grid>
+        </div>
+       
         
    
   );

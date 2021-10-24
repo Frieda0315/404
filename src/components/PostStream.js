@@ -246,13 +246,6 @@ function PostStream() {
             <Comment />
           </IconButton>
         </Grid>
-{/* 
-        <Grid item>
-          <IconButton edge="end" aria-label="edit"
-          onClick = {()=> handelEdit()}>
-            <Edit />
-          </IconButton>
-        </Grid> */}
 
         <Grid item>
           <IconButton
