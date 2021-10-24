@@ -3,12 +3,19 @@ import MainPage from "./components/MainPage";
 import { Route, Switch, Redirect } from "react-router-dom";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
+
+import MyPostList from "./components/MyPostList"
+import EditPost from "./components/EditPost"
+import friedaList from "./components/friedaList";
+
+
 import { useCookies } from "react-cookie";
 import { isEmpty } from "lodash";
 import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
 import { useEffect, useState } from "react";
 import ParticlesBg from "particles-bg";
+
 
 function App() {
   const [cookies, setCookie] = useCookies([]);
@@ -45,13 +52,27 @@ function App() {
         <Route exact path="/">
           <MainPage></MainPage>
         </Route>
-        <Route exact path="/profile/">
+        <Route exact path="/profile">
           <Profile is_follow={false}></Profile>
         </Route>
         <Switch>
           <Route path={"/new"} component={Post} exact={true} />
         </Switch>
+        <Route 
+            path={'/mypost'}
+            component={MyPostList}
+            exact={true}/>
+        <Route 
+            path={'/mypost/edit'}
+            component={EditPost}
+            exact={true}/>
+            <Route 
+            path={'/friends'}
+            component={friedaList}
+            exact={true}/>
       </Layout>
+      
+ 
     </header>
   );
 }
