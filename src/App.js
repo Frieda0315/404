@@ -59,7 +59,7 @@ function App() {
           <Route path={"/new"} component={Post} exact={true} />
         </Switch>
         <Route 
-            path={'/mypost/'}
+            path={'/mypost'}
             component={MyPostList}
             exact={true}/>
         <Route 
@@ -67,7 +67,7 @@ function App() {
             component={EditPost}
             exact={true}/>
             <Route 
-            path={'/friends/'}
+            path={'/friends'}
             component={friedaList}
             exact={true}/>
       </Layout>
