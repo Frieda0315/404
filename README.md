@@ -22,7 +22,6 @@ This project's background, description and requirement are based on Abram Hindle
 
 # Backend Development Process(from root dir)
 ```
-cd ./backend
 
 virtualenv venv --python=python3.6 (if you did not get the virtual env)
 
