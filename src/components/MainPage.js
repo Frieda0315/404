@@ -1,6 +1,7 @@
 import PostStream from "./PostStream";
 import React from "react";
-import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
+import { CardMedia, CardActionArea, Typography, Fab } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import Button from "@mui/material/Button";
 import { useHistory } from "react-router-dom";
 import Stack from "@mui/material/Stack";
@@ -14,26 +15,24 @@ function MainPage() {
   }
 
   return (
-    <div className="MainPage">
-      <Typography variant="h1">let's connect with your friends</Typography>
+    <div>
+      <h1 className="text-center">let's connect with your friends</h1>
 
-      <Stack direction="row" spacing={2} justifyContent="flex-end">
-        <Button
-          sx={{
-            marginRight: "140px",
-          }}
-          variant="contained"
-          onClick={() => {
-            setCreatNew(true);
-          }}
-        >
-          New
-        </Button>
+      <Stack
+        direction="column"
+        spacing={2}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Fab color="primary" aria-label="add">
+          <Add
+            onClick={() => {
+              setCreatNew(true);
+            }}
+          />
+        </Fab>
       </Stack>
-
-      <div>
-        <PostStream />
-      </div>
+      <PostStream />
     </div>
   );
 }
