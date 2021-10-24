@@ -7,33 +7,26 @@ import { useCookies } from "react-cookie";
 import { isEmpty } from "lodash";
 import Login from "./components/login/Login";
 import signup from "./components/signup/signup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 function App() {
   const [cookies, setCookie] = useCookies([]);
-  const [isSignup, setIsSignup] = useState(false);
-
   console.log(isEmpty(cookies));
   console.log(window.location.pathname);
-  console.log(isSignup);
+
   if (window.location.pathname === "/signup") {
-    setIsSignup(true);
-  } else if (window.location.pathname === "/signin") {
-    setIsSignup(false);
+    return <Route exact path="/signup" component={signup} />;
   }
   return (
     <header>
       <Route exact path="/login" component={Login} />
       <Route exact path="/signup" component={signup} />
+
       <Layout>
         <Route
           exact
           path="/"
           render={() =>
-            isEmpty(cookies) && !isSignup ? (
-              <Redirect to="/login/" />
-            ) : (
-              <Redirect to="/" />
-            )
+            isEmpty(cookies) ? <Redirect to="/login" /> : <Redirect to="/" />
           }
         ></Route>
         <Route exact path="/">

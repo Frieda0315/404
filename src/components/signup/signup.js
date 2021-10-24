@@ -128,7 +128,7 @@ class Login extends React.Component {
                           fullWidth
                           name="github_user"
                           variant="outlined"
-                          value={this.state.password}
+                          value={this.state.github_user}
                           onChange={(event) =>
                             this.setState({
                               [event.target.name]: event.target.value,

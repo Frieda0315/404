@@ -18,9 +18,11 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  CardMedia,
+  Avatar,
 } from "@material-ui/core";
 import { withCookies, Cookies } from "react-cookie";
-
+import logo from "./logo.png";
 class Login extends React.Component {
   static propTypes = {
     cookies: instanceOf(Cookies).isRequired,
@@ -93,6 +95,15 @@ class Login extends React.Component {
               alignItems="center"
             >
               <div className="text text-3">I-connect</div>
+              <Avatar
+                variant={"rounded"}
+                alt="The image"
+                src={logo}
+                style={{
+                  width: 200,
+                  height: 200,
+                }}
+              />
 
               <Paper
                 variant="elevation"
