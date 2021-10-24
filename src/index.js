@@ -3,12 +3,17 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter } from "react-router-dom";
-import './index.css'
-
+import { BrowserRouter, Route } from "react-router-dom";
+import "./index.css";
+import { CookiesProvider } from "react-cookie";
+import Login from "./components/login/Login";
+import signup from "./components/signup/signup";
+import Profile from "./components/Profile";
 ReactDOM.render(
-  <BrowserRouter >
-    <App />
+  <BrowserRouter>
+    <CookiesProvider>
+      <App></App>
+    </CookiesProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );
