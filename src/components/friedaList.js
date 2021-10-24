@@ -47,6 +47,9 @@ const listItems = friendList.map((item) =>
                 <Grid item>
                     <Typography >{item.displayName}</Typography>
                 </Grid>
+                <Grid item>
+                    <Typography >{item.type}</Typography>
+                </Grid>
             </Grid>
     </Grid>
 
