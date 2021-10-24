@@ -1,10 +1,13 @@
 import React, { StyleSheet,useState, useEffect,Text} from 'react';
-import { Card, CardMedia, CardActionArea, Typography,IconButton } from "@material-ui/core";
+import { Card, CardMedia, CardActionArea, Typography,IconButton, Avatar} from "@material-ui/core";
 import { Delete,Edit} from "@material-ui/icons";
 import { Grid } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import dummy_image from "../static/musle.png";
-
+import head2 from "../static/2.JPG";
+import {ShareRounded, ThumbUp, Comment} from "@material-ui/icons"; 
+import Popup from "./Popup";
+import Share from "./Share";
 const PostList = [
     {
       title: "Hello world",
@@ -68,7 +71,9 @@ const PostList = [
 const MyPostList = () => {
     const history = useHistory();
     const [PostList1, setPostList] = React.useState(PostList);
-    
+    const [openPopup2, setOpenPopup2] = React.useState(false);
+    const open_share = () => setOpenPopup2(true);
+
     const handleRemove = (e) => {
             const id = e.id;
             const newList = PostList1.filter((item) => item.id !== id);
@@ -97,79 +102,80 @@ const MyPostList = () => {
     marginRight = {20}
 
     >
-    <Grid container direction="column" 
-          justifyContent="flex-start"
-          alignItems="flex-start"
-          spacing={5}>
-
-        <Grid container direction="row" spacing={5}>
+      <Grid item >
+        <Grid container spacing={2} direction="row" justifyContent="flex-start" alignItems="flex-start" >
             <Grid item>
-                <Typography >{post.date}</Typography>
+              <Avatar src={head2} ></Avatar>
+            </Grid> 
+            <Grid item >
+              <Grid container  direction="column">
+                  <Grid item>
+                     <Typography >{post.author}</Typography>
+                  </Grid>
+                  <Grid item>
+                      <Typography >{post.date}</Typography>
+                  </Grid>
+              </Grid>
             </Grid>
-            {post.contentType == "text/plain" ? (
-                <Grid item spacing={2}>
-                    <Typography>{post.title}</Typography>
-                    <Typography>{post.content}</Typography>
-                </Grid>
-                
-                ):(
-                <Grid item >
-                    <Grid container direction="row" spacing={5}>
-                        <Grid item>
-                            <CardMedia
-                                style={{
-                                width: "auto",
-                                maxHeight: "200px",
-                                }}
-                                component="img"
-                                image={post.image}/>
-                        </Grid>
-                        <Grid item>
-                            <Typography>{post.title}</Typography>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                    
-                )}
-        </Grid>
-
-
-        <Grid
-          container
-          spacing={1}
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="flex-end"
-      >
+          </Grid>
+      </Grid>
+    
+      <Grid item>
+        <Typography variant="h5" >{post.title}</Typography>
+      </Grid>
+         {post.contentType == "text/plain" ? (
+          <Grid item spacing={2}>
+              <Typography>{post.content}</Typography>
+          </Grid>
+          ):(
           <Grid item>
-              <IconButton
-              edge="end"
-              aria-label="Edit"
-              onClick={() => handleEdit(post)}
-              >
-                  <Edit />
+              <CardMedia style={{width: "auto", maxHeight: "200px",}} component="img" image={post.image}/>
+          </Grid> 
+          )}
+    
+      <Grid  container spacing={1} direction="row"  justifyContent="flex-end"  alignItems="flex-end">
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="thumbup">
+            <ThumbUp />
+          </IconButton>
+          </Grid>
+          <Grid item>
+          <IconButton edge="end" aria-label="share" onClick={open_share}>
+            <ShareRounded />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton edge="end" aria-label="comment">
+            <Comment />
+          </IconButton>
+        </Grid>
+          <Grid item>
+              <IconButton edge="end" aria-label="Edit" onClick={() => handleEdit(post)}>
+                  <Edit/>
               </IconButton>
           </Grid>
 
           <Grid item>
-              <IconButton
-              edge="end"
-              aria-label="Delete"
-              onClick={() => handleRemove(post)}
-              >
+              <IconButton edge="end" aria-label="Delete" onClick={() => handleRemove(post)}>
                   <Delete />
               </IconButton>
           </Grid>
       </Grid>
-      <hr></hr>
-    </Grid>     
-</Grid>
-  
-
+ </Grid> 
+   
 );
     
     return (
         <div >
+          <Popup
+        title={"Who do you want to share with?"}
+        openPopup={openPopup2}
+        setOpenPopup={setOpenPopup2}
+      >
+        <Share></Share>
+      </Popup>
             <Grid container
             spacing={10}
             direction="column"

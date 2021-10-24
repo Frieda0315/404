@@ -15,17 +15,20 @@ const friendList =[
     {
         type:"follower",
         displayName: "tomato",
-        profileImage: head1
+        profileImage: head1,
+        github: "http://github.com/laracroft",
     },
     {
         type:"follower",
         displayName: "potato",
-        profileImage: head2
+        profileImage: head2,
+        github: "http://github.com/laracroft",
     },
     {
         type:"pending",
         displayName: "melon",
-        profileImage: head3
+        profileImage: head3,
+        github: "http://github.com/laracroft",
     }
 ];
 const listItems = friendList.map((item) =>
@@ -40,17 +43,25 @@ const listItems = friendList.map((item) =>
     marginLeft = {50}
     marginRight = {50}
     >
-        <Grid container direction = "row" spacing={5}>
-                <Grid item>
-                    <Avatar alt={`head1`} src={item.profileImage}/> 
-                </Grid>
-                <Grid item>
-                    <Typography >{item.displayName}</Typography>
-                </Grid>
-                <Grid item>
-                    <Typography >{item.type}</Typography>
+        <Grid container  direction = "column" spacing = {1}>
+            <Grid item>
+                <Grid container direction = "row" spacing={2}>
+                    <Grid item>
+                        <Avatar alt={`head1`} src={item.profileImage}/> 
+                    </Grid>
+                    <Grid item>
+                        <Typography >{item.displayName}</Typography>
+                    </Grid>
+                    <Grid item  marginLeft = {30} >
+                        <Typography >{item.type}</Typography>
+                    </Grid>
                 </Grid>
             </Grid>
+            
+            <Grid item marginLeft = {7}>
+                <Typography >{item.github}</Typography>
+            </Grid>
+        </Grid>
     </Grid>
 
 
