@@ -73,12 +73,10 @@ function NavMenu(is_logged_in) {
                 <DropdownItem href="/profile">Profile</DropdownItem>
                 <DropdownItem divider />
 
-                <DropdownItem href="/mypost/">My Post</DropdownItem>
+                <DropdownItem href="/mypost">My Post</DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="/friends/">Friends</DropdownItem>
+                <DropdownItem href="/friends">Friends</DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem onClick={login}>Sign out</DropdownItem>
-
                 <DropdownItem onClick={handleRemoveCookie}>
                   Sign out
                 </DropdownItem>
