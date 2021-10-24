@@ -94,7 +94,6 @@ class Login extends React.Component {
               className="login-form"
               alignItems="center"
             >
-              <div className="text text-3">I-connect</div>
               <Avatar
                 variant={"rounded"}
                 alt="The image"
