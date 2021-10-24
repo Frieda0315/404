@@ -7,14 +7,18 @@ import { useCookies } from "react-cookie";
 import { isEmpty } from "lodash";
 import Login from "./components/login/Login";
 import signup from "./components/signup/signup";
+import { useState } from "react";
 function App() {
   const [cookies, setCookie] = useCookies([]);
-  const [isSignup, setIsSignup] = useCookies(false);
+  const [isSignup, setIsSignup] = useState(false);
 
   console.log(isEmpty(cookies));
   console.log(window.location.pathname);
+  console.log(isSignup);
   if (window.location.pathname === "/signup") {
     setIsSignup(true);
+  } else if (window.location.pathname === "/signin") {
+    setIsSignup(false);
   }
   return (
     <header>
