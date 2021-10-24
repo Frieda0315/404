@@ -92,7 +92,7 @@ class Login extends React.Component {
               className="login-form"
               alignItems="center"
             >
-              <div class="text text-3">I-connect</div>
+              <div className="text text-3">I-connect</div>
 
               <Paper
                 variant="elevation"

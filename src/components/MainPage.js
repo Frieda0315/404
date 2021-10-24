@@ -31,7 +31,7 @@ function MainPage() {
       alignItems="center"
     >
       <Grid item>
-        <div class="text text-3">let's connect with your friends</div>
+        <div className="text text-3">let's connect with your friends</div>
       </Grid>
       <Grid item>
         <Stack
