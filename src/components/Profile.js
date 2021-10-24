@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import axios from "axios";
 import { Form } from "reactstrap";
-
+import "./font/style.css";
 import { makeStyles } from "@material-ui/styles";
 import {
   Button,
@@ -15,7 +15,6 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-
 
 const useStyles = makeStyles(() => ({
   editbutton: {
@@ -63,7 +62,7 @@ export default function Profile({ user_id, is_follow }) {
       seturl(res.data["avatar_url"]);
     });
   }, [github_user]);
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     set_github_user(textinput1);
@@ -75,13 +74,22 @@ export default function Profile({ user_id, is_follow }) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Box sx={{ flexGrow: 1 }}>
+      <Grid
+        container
+        spacing={0}
+        justifyContent="center"
+        direction="column"
+        alignItems="center"
+      >
+        {is_follow ? "" : <div class="text text-1">Your Profile</div>}
+
         <Grid
           container
           spacing={2}
           direction="column"
           justifyContent="center"
           alignItems="center"
+          style={{ width: "300px" }}
         >
           <Grid item>
             <Card>
@@ -92,9 +100,7 @@ export default function Profile({ user_id, is_follow }) {
                   image={url}
                   alt="no img"
                 />
-                <Typography variant="h4" component="div" gutterBottom>
-                  Your Profile
-                </Typography>
+
                 {isEdit ? (
                   <CardContent>
                     <Grid
@@ -188,7 +194,7 @@ export default function Profile({ user_id, is_follow }) {
             </Card>
           </Grid>
         </Grid>
-      </Box>
+      </Grid>
     </Form>
   );
 }
