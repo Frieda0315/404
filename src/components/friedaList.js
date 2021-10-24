@@ -37,8 +37,8 @@ const listItems = friendList.map((item) =>
     borderBottom =  "1.2px solid #f0f2f7"
     padding = "30px"
     boxShadow =  "0 1px 3px rgb(18 18 18 / 10%)"
-    marginLeft = {20}
-    marginRight = {20}
+    marginLeft = {50}
+    marginRight = {50}
     >
         <Grid container direction = "row" spacing={5}>
                 <Grid item>
@@ -46,9 +46,6 @@ const listItems = friendList.map((item) =>
                 </Grid>
                 <Grid item>
                     <Typography >{item.displayName}</Typography>
-                </Grid>
-                <Grid item>
-                    <text>1</text>
                 </Grid>
             </Grid>
     </Grid>
