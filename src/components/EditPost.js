@@ -263,7 +263,7 @@ const EditPost = () => {
                         }}
                         
                         onClick={() => {
-                            let path = `/mypost/`; 
+                            let path = `/mypost`; 
                             history.push(path);
                             }}> 
                         Cancle

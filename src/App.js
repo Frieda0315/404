@@ -52,7 +52,7 @@ function App() {
         <Route exact path="/">
           <MainPage></MainPage>
         </Route>
-        <Route exact path="/profile/">
+        <Route exact path="/profile">
           <Profile is_follow={false}></Profile>
         </Route>
         <Switch>
