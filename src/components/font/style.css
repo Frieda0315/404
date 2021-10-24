@@ -6,12 +6,13 @@
 @import url("https://fonts.googleapis.com/css?family=Modak");
 
 .text {
-  height: 100px;
+  height: 105px;
   display: inline-block;
-  font-size: 60px;
+  font-size: 45px;
   line-height: 84%;
   font-family: Modak;
   padding-left: 7px;
+
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
