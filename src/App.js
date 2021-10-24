@@ -5,6 +5,7 @@ import Profile from "./components/Profile";
 import Post from "./components/Post";
 import MyPostList from "./components/MyPostList"
 import EditPost from "./components/EditPost"
+import friedaList from "./components/friedaList";
 
 
 
@@ -31,6 +32,10 @@ function App() {
         <Route 
             path={'/mypost/edit'}
             component={EditPost}
+            exact={true}/>
+            <Route 
+            path={'/friends/'}
+            component={friedaList}
             exact={true}/>
       </Layout>
       
