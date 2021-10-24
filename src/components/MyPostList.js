@@ -5,18 +5,6 @@ import { Grid } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import dummy_image from "../static/musle.png";
 
-const style1 = {
-    backgroundColor: "#fff",
-    borderBottom: "1.2px solid #f0f2f7",
-    padding: "30px",
-    boxShadow: "0 1px 3px rgb(18 18 18 / 10%)",
-    textAlign: 'center', 
-    alignSelf : 'center',
-    top:'10%',
-    width : "50%"
-}
-
-
 const PostList = [
     {
       title: "Hello world",
@@ -98,13 +86,22 @@ const MyPostList = () => {
   const listItems = PostList1.map((post) =>
    
   <Grid item
-    // xs={8}
-    // textAlign = 'start'
-    // justifyContent="flex-start"
-    // alignItems="flex-start" 
-    // className = {style1}
+    xs={8}
+    justifyContent="flex-start"
+    alignItems="flex-start"
+    backgroundColor = "#fff"
+    borderBottom =  "1.2px solid #f0f2f7"
+    padding = "30px"
+    boxShadow =  "0 1px 3px rgb(18 18 18 / 10%)"
+    marginLeft = {20}
+    marginRight = {20}
+    marginTop = {2}
     >
-    <Grid container direction="column" spacing={5}>
+    <Grid container direction="column" 
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          spacing={5}>
+
         <Grid container direction="row" spacing={5}>
             <Grid item>
                 <Typography >{post.date}</Typography>
@@ -143,7 +140,6 @@ const MyPostList = () => {
           direction="row"
           justifyContent="flex-end"
           alignItems="flex-end"
-          
       >
           <Grid item>
               <IconButton
@@ -173,12 +169,13 @@ const MyPostList = () => {
 );
     
     return (
-        <div style = {style1}>
+        <div >
             <Grid container
             spacing={10}
             direction="column"
             alignSelf = 'center'
-            alignItems="center">
+            marginTop = {2}
+            >
                 {listItems}   
             </Grid>
         </div>
