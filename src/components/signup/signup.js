@@ -78,7 +78,6 @@ class Login extends React.Component {
           alignItems="stretch"
           sx={{
             height: "100vh",
-            backgroundColor: "aquamarine",
             width: "100%",
           }}
         >
@@ -93,16 +92,17 @@ class Login extends React.Component {
             >
               <div class="text text-3"> Sign up your account</div>
 
-              <Paper
-                variant="elevation"
-                elevation={3}
-                className="login-background"
+              <Grid
+                container
+                direction="column"
+                justify="center"
+                alignItems="center"
               >
                 <Grid item style={{ width: "300px" }}>
                   <form onSubmit={this.handleSubmit}>
                     <Grid container direction="column" spacing={2}>
                       <Grid item>
-                        <Typography component="h1" variant="h6">
+                        <Typography component="h1" variant="h5">
                           Sign up
                         </Typography>
                       </Grid>
@@ -169,7 +169,7 @@ class Login extends React.Component {
                     </Grid>
                   </form>
                 </Grid>
-              </Paper>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
