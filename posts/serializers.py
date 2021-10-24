@@ -19,6 +19,7 @@ class PostSerializer(serializers.ModelSerializer):
         # return Post.objects.create(id=id, **validated_data)
 
         # at here, backend API only receive the unique postID, and it is must be provided.
+        # author_data = validated_data.pop("author")
         return Post.objects.create(**validated_data)
 
     class Meta:
