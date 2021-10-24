@@ -22,24 +22,24 @@ def add_like(like_object):
 
 # TODO: change the error returned value to err message
 def check_inbox_type(json_data, receive_author):
-    if(json_data['type'] == 'Like'):
+    if(json_data["type"] == "Like"):
         if(not add_like(json_data)):
             return False
-        return {'id': json_data['id'], 'like': json_data, 'receive_author': receive_author}
-    elif(json_data['type'] == 'Post'):
-        return {'id': json_data['id'], 'post': json_data, 'receive_author': receive_author}
-    elif(json_data['type'] == 'Follow'):
-        return {'id': json_data['id'], 'follow': json_data, 'receive_author': receive_author}
+        return {"id": json_data["id"], "like": json_data, "receive_author": receive_author}
+    elif(json_data["type"] == "Post"):
+        return {"id": json_data["id"], "post": json_data, "receive_author": receive_author}
+    elif(json_data["type"] == "Follow"):
+        return {"id": json_data["id"], "follow": json_data, "receive_author": receive_author}
     return False
 
 
 def add_to_json(inbox_item):
-    if(inbox_item['like'] != None):
-        return inbox_item['like']
-    elif(inbox_item['post'] != None):
-        return inbox_item['post']
-    elif(inbox_item['follow'] != None):
-        return inbox_item['follow']
+    if(inbox_item["like"] != None):
+        return inbox_item["like"]
+    elif(inbox_item["post"] != None):
+        return inbox_item["post"]
+    elif(inbox_item["follow"] != None):
+        return inbox_item["follow"]
     return
 
 
