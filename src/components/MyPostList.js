@@ -95,7 +95,7 @@ const MyPostList = () => {
     boxShadow =  "0 1px 3px rgb(18 18 18 / 10%)"
     marginLeft = {20}
     marginRight = {20}
-    marginTop = {2}
+
     >
     <Grid container direction="column" 
           justifyContent="flex-start"
