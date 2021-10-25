@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'posts',
-    'comments'
+    'comments',
+    'likes',
+    'inbox'
 ]
 
 REST_FRAMEWORK = {

@@ -7,10 +7,14 @@ import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import { Delete, ShareRounded, ThumbUp, Comment} from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+
 import { Redirect } from "react-router";
+
+import Share from "./Share";
+
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -323,8 +327,11 @@ function PostStream(props) {
   const [comments, setComments] = React.useState({});
 
   const [postlist, setPostlist] = React.useState([]);
+  const [openPopup2, setOpenPopup2] = React.useState(false);
 
   const open = () => setOpenPopup(true);
+  const open_share = () => setOpenPopup2(true);
+
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
@@ -453,7 +460,7 @@ function PostStream(props) {
         </Grid>
 
         <Grid item>
-          <IconButton edge="end" aria-label="share">
+          <IconButton edge="end" aria-label="share" onClick={open_share}>
             <ShareRounded />
           </IconButton>
         </Grid>
@@ -466,6 +473,7 @@ function PostStream(props) {
             <Comment />
           </IconButton>
         </Grid>
+
         <Grid item>
           <IconButton
             edge="end"
@@ -486,6 +494,13 @@ function PostStream(props) {
         setOpenPopup={setOpenPopup}
       >
         <Profile user={1} is_follow={true}></Profile>
+      </Popup>
+      <Popup
+        title={"Who do you want to share with?"}
+        openPopup={openPopup2}
+        setOpenPopup={setOpenPopup2}
+      >
+        <Share></Share>
       </Popup>
       <Grid
         container

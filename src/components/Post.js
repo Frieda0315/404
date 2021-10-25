@@ -240,7 +240,7 @@ const Post = () => {
             history.push(path);
           }}
         >
-          Cancle
+          Cancel
         </Button>
       </Grid>
     </Grid>
