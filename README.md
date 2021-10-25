@@ -1,4 +1,5 @@
 # CMPUT404-project-socialdistribution
+
 CMPUT404-project-socialdistribution
 
 See [Abram Hindle's project.org](https://github.com/abramhindle/CMPUT404-project-socialdistribution/blob/master/project.org) (plain-text/org-mode) for a description of the project.
@@ -6,7 +7,9 @@ See [Abram Hindle's project.org](https://github.com/abramhindle/CMPUT404-project
 Make a distributed social network!
 
 This project's background, description and requirement are based on Abram Hindle's work, please check his project [here](https://github.com/abramhindle/CMPUT404-project-socialdistribution).
+
 # Contributor
+
 <table>
   <tr>
     <td align="center"><a href="https://github.com/xius666"><img src="https://avatars.githubusercontent.com/u/55036290?v=4" width="200px;" alt=""/><br /><sub><b>xiu</b></sub></td>
@@ -19,8 +22,8 @@ This project's background, description and requirement are based on Abram Hindle
 
 # Please use npm ci instead of npm install to install all the dependency for the front end
 
-
 # Development Process(from root dir)
+
 ```
 virtualenv venv --python=python3.7 (if you did not get the virtual env)
 source venv/bin/activate
@@ -32,11 +35,29 @@ npm ci
 npm start
 #open browser and go to url localhost:8000 and/or localhost:3000 and start coding
 ```
+
 # Documentation
-## Developmeng Admin Management
+
+## Development Admin Management
+
 You can login to the page https://i-connect.herokuapp.com/admin/ to manage the database's entries.
 The credentials is:
+
 ```
 username: admin
 password: admin
 ```
+
+## API documentation
+
+### API specification
+
+- service address: https://i-connect.herokuapp.com/service
+- local port: 8000
+- local hostname: 127.0.0.1 or localhost
+- prefix of service: service
+
+### Online documentation
+
+The API documentation is developed by [swagger editor](https://editor.swagger.io/) and [swagger ui](https://github.com/swagger-api/swagger-ui). They are under Apache 2.0 LICENSE.\
+It is deployed by Heroku, you can view the doc [here](https://i-connect-doc.herokuapp.com/docs/). The source code of the documentation is [here](https://github.com/xichen1/i-connect-doc).
