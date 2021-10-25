@@ -28,8 +28,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # TODO: update urls for post and authors
-    path('authors/<uuid:author_id>/posts/', post_views.post_list, name='post_list'),
-    path('authors/<uuid:author_id>/posts/<uuid:id>', post_views.post_detail, name='post_detail'),
+    path('authors/<uuid:author_id>/posts/',
+         post_views.post_list, name='post_list'),
+    path('authors/<uuid:author_id>/posts/<uuid:id>',
+         post_views.post_detail, name='post_detail'),
 
     path('users/', user_views.user_list, name='user_list'),
     path('users/<uuid:id>', user_views.user_detail, name='user_detail'),
@@ -40,3 +42,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('.*', TemplateView.as_view(template_name='index.html'))
 ]
+# # image debug
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL,
+#                           document_root=settings.MEDIA_ROOT)

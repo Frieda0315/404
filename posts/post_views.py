@@ -25,9 +25,9 @@ def post_list(request, author_id):
         # get POST JSON Object
         json_data = JSONParser().parse(request)
         serializer = PostSerializer(data=json_data)
-        #
         if serializer.is_valid():
-            serializer.validated_data["author"] = User.objects.get(id=json_data["author"]["id"])
+            serializer.validated_data["author"] = User.objects.get(
+                id=json_data["author"]["id"])
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
