@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Comments from "./components/Comment";
+import Inbox from "./components/Inbox";
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
         </Route>
         <Route exact path="/posts/*/comments">
           <Comments></Comments>
+        </Route>
+        <Route exact path="/authors/*/inbox">
+          <Inbox></Inbox>
         </Route>
         <Route exact path="/profile/">
           <Profile is_follow={false}></Profile>

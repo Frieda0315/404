@@ -76,13 +76,6 @@ const useStyles = makeStyles(() => ({
   cardInPost: {
     border: 0,
   },
-  clickBox: {
-    height: "100%",
-  },
-  voteBox: {
-    maxHeight: "50px",
-    maxWidth: "50px",
-  },
 }));
 
 function Comments(props) {
