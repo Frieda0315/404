@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'posts',
-    'comments'
+    'comments',
+    'likes',
+    'inbox'
 ]
 
 REST_FRAMEWORK = {
@@ -155,3 +157,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_heroku.settings(locals())
 options = DATABASES['default'].get('OPTIONS', {})
 options.pop('sslmode', None)
+
+
+# Image field setting
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

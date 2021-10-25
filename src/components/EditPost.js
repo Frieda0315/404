@@ -14,10 +14,8 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Axios } from "axios";
-import { maxHeight } from "@mui/system";
-import "./font/style.css";
 
 const heading = {
   fontSize: "30px",
@@ -37,12 +35,16 @@ const pic = {
   borderRadius: "50%",
 };
 
-const Post = () => {
+const EditPost = () => {
+  const history = useHistory();
+  const location = useLocation();
+  const [item1, setItem] = React.useState(location.state);
   const [image, setImage] = React.useState(null);
   const [preview, setPreview] = React.useState();
-  const [value, setValue] = React.useState("Text");
-  const [title, setTitle] = React.useState(null);
-  const [common, setCommon] = React.useState(null);
+  const [value, setValue] = React.useState(item1.contentType);
+  const [state, setState] = React.useState("public");
+  const [title, setTitle] = React.useState(item1.title);
+  const [common, setCommon] = React.useState(item1.content);
 
   const uploadImage = (files) => {
     //accept = 'image/*';
@@ -50,7 +52,11 @@ const Post = () => {
     if (file) {
       setImage(file);
     } else {
-      setImage(noimage);
+      if (value == "image") {
+        setImage(location.state.image);
+      } else {
+        setImage(noimage);
+      }
     }
   };
 
@@ -62,7 +68,11 @@ const Post = () => {
       };
       reader.readAsDataURL(image);
     } else {
-      setPreview(noimage);
+      if (value == "image") {
+        setPreview(location.state.image);
+      } else {
+        setPreview(noimage);
+      }
     }
   }, [image]);
 
@@ -71,20 +81,38 @@ const Post = () => {
   };
 
   const submited = () => {
-    if (value == "Image") {
-      alert("image");
+    if (value == "image") {
+      const item2 = {
+        title: title,
+        image: image,
+        author: item1.author,
+        date: "xxxx-xx-xx xx:xx",
+        id: item1.id,
+        contentType: value,
+      };
+      setItem(item2);
+      alert(item2.title);
+      history.push({ pathname: "/mypost/", state: item2 });
     }
-    if (value == "Text") {
-      alert("text");
+    if (value == "text/plain") {
+      const item2 = {
+        title: title,
+        content: common,
+        author: item1.author,
+        date: "xxxx-xx-xx xx:xx",
+        id: item1.id,
+        contentType: value,
+      };
+      setItem(item2);
+      alert(item2.title);
+      history.push({ pathname: "/mypost/", state: item2 });
     }
   };
-
-  const history = useHistory();
 
   return (
     <Grid container direction="column" justifyContent="center">
       <Grid item alignItems="center">
-        <div class="text text-3">Create A New Post</div>
+        <div style={heading}>Edit Post</div>
       </Grid>
 
       <Grid
@@ -118,14 +146,18 @@ const Post = () => {
               setValue(event.target.value);
             }}
           >
-            <FormControlLabel value="Image" control={<Radio />} label="Image" />
+            <FormControlLabel value="image" control={<Radio />} label="Image" />
 
-            <FormControlLabel value="Text" control={<Radio />} label="Text" />
+            <FormControlLabel
+              value="text/plain"
+              control={<Radio />}
+              label="Text"
+            />
           </RadioGroup>
         </FormControl>
       </Grid>
 
-      {value == "Image" ? (
+      {value == "image" ? (
         <CardContent>
           <Grid container spacing={2} direction="column">
             <Grid item>
@@ -183,7 +215,7 @@ const Post = () => {
           </FormLabel>
           <RadioGroup
             aria-label="private?"
-            defaultValue="public"
+            defaultValue={state}
             name="radio-buttons-group"
           >
             <FormControlLabel
@@ -227,7 +259,7 @@ const Post = () => {
             submited(event.target);
           }}
         >
-          Create Post
+          Save Post
         </Button>
 
         <Button
@@ -236,15 +268,15 @@ const Post = () => {
             marginInlineStart: "50px",
           }}
           onClick={() => {
-            let path = `/`;
+            let path = `/mypost`;
             history.push(path);
           }}
         >
-          Cancel
+          Cancle
         </Button>
       </Grid>
     </Grid>
   );
 };
 
-export default Post;
+export default EditPost;

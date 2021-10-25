@@ -20,17 +20,23 @@ This project's background, description and requirement are based on Abram Hindle
 # Please use npm ci instead of npm install to install all the dependency for the front end
 
 
-# Backend Development Process(from root dir)
+# Development Process(from root dir)
 ```
-cd ./backend
-
-virtualenv venv --python=python3.6 (if you did not get the virtual env)
-
+virtualenv venv --python=python3.7 (if you did not get the virtual env)
 source venv/bin/activate
-
 pip install -r requirements.txt (to install all required libraries for backend using pip)
-
 python manager.py runserver
 
-#open browser and go to url localhost:8000 and start coding
+# open another terminal
+npm ci
+npm start
+#open browser and go to url localhost:8000 and/or localhost:3000 and start coding
+```
+# Documentation
+## Developmeng Admin Management
+You can login to the page https://i-connect.herokuapp.com/admin/ to manage the database's entries.
+The credentials is:
+```
+username: admin
+password: admin
 ```
