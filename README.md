@@ -59,5 +59,5 @@ password: admin
 
 ### Online documentation
 
-The API documentation is developed by [swagger editor](https://editor.swagger.io/) and [swagger ui](https://github.com/swagger-api/swagger-ui). They are under Apache 2.0 LICENSE.\
 It is deployed by Heroku, you can view the doc [here](https://i-connect-doc.herokuapp.com/docs/). The source code of the documentation is [here](https://github.com/xichen1/i-connect-doc).
+The API documentation is developed by [swagger editor](https://editor.swagger.io/) and [swagger ui](https://github.com/swagger-api/swagger-ui). They are under Apache 2.0 LICENSE.\
