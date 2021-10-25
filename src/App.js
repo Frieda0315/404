@@ -8,6 +8,7 @@ import Comments from "./components/Comment";
 import MyPostList from "./components/MyPostList";
 import EditPost from "./components/EditPost";
 import friedaList from "./components/friedaList";
+import Inbox from "./components/Inbox";
 
 import { useCookies } from "react-cookie";
 import { isEmpty } from "lodash";
@@ -63,6 +64,7 @@ function App() {
           <Route path={"/new"} component={Post} exact={true} />
         </Switch>
         <Route path={"/mypost"} component={MyPostList} exact={true} />
+        <Route path={"/inbox"} component={Inbox} exact={true} />
         <Route path={"/mypost/edit"} component={EditPost} exact={true} />
         <Route path={"/friends"} component={friedaList} exact={true} />
       </Layout>

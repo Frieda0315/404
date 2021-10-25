@@ -11,6 +11,7 @@ import dummy_image from "../static/musle.png";
 import { Delete } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+import "./font/style.css";
 
 const tempCommentList = [
   {
