@@ -84,6 +84,10 @@ const Inbox = () => {
     const newList = InboxList1.filter((item) => item.id !== id);
     setInboxList(newList);
   };
+  const setPostList = () => {
+    const newList = InboxList1.filter((item) => item.type === "post");
+    setInboxList(newList);
+  };
 
   const listItems = InboxList1.map((item) => (
     <Grid
@@ -112,7 +116,9 @@ const Inbox = () => {
           <Grid item>
             <Grid container direction="column">
               <Grid item>
-                <Typography>{item.author.displayName}</Typography>
+                <Typography>
+                  {item.author.displayName + " makes a new post."}
+                </Typography>
               </Grid>
               <Grid item>
                 <Typography>{item.published}</Typography>
@@ -179,7 +185,7 @@ const Inbox = () => {
         container
         spacing={10}
         direction="column"
-        alignSelf="center"
+        alignSelf="right"
         marginTop={2}
       >
         {listItems}
