@@ -76,6 +76,12 @@ const Inbox = () => {
   const history = useHistory();
   const inboxList = tempInbox.items;
   const [InboxList1, setInboxList] = React.useState(inboxList);
+
+  // 0 for post;
+  // 1 for likes;
+  // 2 for follow;
+  const [InboxToggle, setInboxToggle] = React.useState(0);
+
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const open_share = () => setOpenPopup2(true);
 
@@ -84,93 +90,105 @@ const Inbox = () => {
     const newList = InboxList1.filter((item) => item.id !== id);
     setInboxList(newList);
   };
-  const setPostList = () => {
-    const newList = InboxList1.filter((item) => item.type === "post");
-    setInboxList(newList);
-  };
 
-  const listItems = InboxList1.map((item) => (
-    <Grid
-      item
-      xs={8}
-      justifyContent="flex-start"
-      alignItems="flex-start"
-      backgroundColor="#fff"
-      borderBottom="1.2px solid #f0f2f7"
-      padding="30px"
-      boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
-      marginLeft={20}
-      marginRight={20}
-    >
-      <Grid item>
+  var listItems;
+  if (InboxToggle === 0) {
+    // Posts
+    listItems = InboxList1.filter((item) => item.type === "post").map(
+      (item) => (
         <Grid
-          container
-          spacing={2}
-          direction="row"
+          item
+          xs={8}
           justifyContent="flex-start"
           alignItems="flex-start"
+          backgroundColor="#fff"
+          borderBottom="1.2px solid #f0f2f7"
+          padding="30px"
+          boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
+          marginLeft={20}
+          marginRight={20}
         >
           <Grid item>
-            <Avatar src={item.author.profileImage}></Avatar>
-          </Grid>
-          <Grid item>
-            <Grid container direction="column">
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+            >
               <Grid item>
-                <Typography>
-                  {item.author.displayName + " makes a new post."}
-                </Typography>
+                <Avatar src={item.author.profileImage}></Avatar>
               </Grid>
               <Grid item>
-                <Typography>{item.published}</Typography>
+                <Grid container direction="column">
+                  <Grid item>
+                    <Typography>
+                      {item.author.displayName + " makes a new post."}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography>{item.published}</Typography>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
 
-      <Grid item>
-        <Typography variant="h5">{item.title}</Typography>
-      </Grid>
+          <Grid item>
+            <Typography variant="h5">{item.title}</Typography>
+          </Grid>
 
-      <Grid item spacing={2}>
-        <Typography>{item.content}</Typography>
-      </Grid>
+          <Grid item spacing={2}>
+            <Typography>{item.content}</Typography>
+          </Grid>
 
-      <Grid
-        container
-        spacing={1}
-        direction="row"
-        justifyContent="flex-end"
-        alignItems="flex-end"
-      >
-        <Grid item>
-          <IconButton edge="end" aria-label="thumbup">
-            <ThumbUp />
-          </IconButton>
-        </Grid>
-        <Grid item>
-          <IconButton edge="end" aria-label="share" onClick={open_share}>
-            <ShareRounded />
-          </IconButton>
-        </Grid>
-        <Grid item>
-          <IconButton edge="end" aria-label="comment">
-            <Comment />
-          </IconButton>
-        </Grid>
-
-        <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="Delete"
-            onClick={() => handleRemove(item)}
+          <Grid
+            container
+            spacing={1}
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="flex-end"
           >
-            <Delete />
-          </IconButton>
+            <Grid item>
+              <IconButton edge="end" aria-label="thumbup">
+                <ThumbUp />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton edge="end" aria-label="share" onClick={open_share}>
+                <ShareRounded />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton edge="end" aria-label="comment">
+                <Comment />
+              </IconButton>
+            </Grid>
+
+            <Grid item>
+              <IconButton
+                edge="end"
+                aria-label="Delete"
+                onClick={() => handleRemove(item)}
+              >
+                <Delete />
+              </IconButton>
+            </Grid>
+          </Grid>
         </Grid>
-      </Grid>
-    </Grid>
-  ));
+      )
+    );
+  } else if (InboxToggle === 1) {
+    // Likes
+    listItems = InboxList1.filter((item) => item.type === "Likes").map(
+      (items) => <div></div>
+    );
+  } else if (InboxToggle === 2) {
+    // Folows
+    listItems = InboxList1.filter((item) => item.type === "Follow").map(
+      (items) => <div></div>
+    );
+  }
 
   return (
     <div>
