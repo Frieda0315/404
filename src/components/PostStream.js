@@ -7,7 +7,7 @@ import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import { Delete, ShareRounded, ThumbUp, Comment} from "@material-ui/icons";
+import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 
@@ -335,7 +335,7 @@ function PostStream(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios.get(`${baseUrl2}posts/`).then((res) => {
+    axios.get(`${baseUrl2}/posts/`).then((res) => {
       //console.log(res.data);
       newList = res.data;
     });

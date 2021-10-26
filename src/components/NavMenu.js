@@ -45,7 +45,7 @@ function NavMenu(is_logged_in) {
   const [loggedIn, setLoggedIn] = useState(is_logged_in);
   const login = () => setLoggedIn(!loggedIn);
   const toggle = () => setIsOpen(!isOpen);
-  if (isEmpty(cookies)) {
+  if (isEmpty(cookies) && !window.location.pathname.startsWith("/service/")) {
     return <Redirect to="/login" />;
   }
 
