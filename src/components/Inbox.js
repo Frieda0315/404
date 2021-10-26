@@ -6,6 +6,8 @@ import {
   Typography,
   IconButton,
   Avatar,
+  Divider,
+  Fab,
 } from "@material-ui/core";
 import { Delete, Edit } from "@material-ui/icons";
 import { Grid } from "@mui/material";
@@ -181,12 +183,16 @@ const Inbox = () => {
   } else if (InboxToggle === 1) {
     // Likes
     listItems = InboxList1.filter((item) => item.type === "Likes").map(
-      (items) => <div></div>
+      (item) => (
+        <Grid item>
+          <Divider orientation="horizontal" flexItem></Divider>
+        </Grid>
+      )
     );
   } else if (InboxToggle === 2) {
     // Folows
     listItems = InboxList1.filter((item) => item.type === "Follow").map(
-      (items) => <div></div>
+      (item) => <Grid item></Grid>
     );
   }
 
@@ -199,6 +205,23 @@ const Inbox = () => {
       >
         <Share></Share>
       </Popup>
+      <Grid container direction="row">
+        <Grid item>
+          <Fab color="primary" onClick={() => setInboxToggle(0)}>
+            Posts
+          </Fab>
+        </Grid>
+        <Grid item>
+          <Fab color="primary" onClick={() => setInboxToggle(1)}>
+            Likes
+          </Fab>
+        </Grid>
+        <Grid item>
+          <Fab color="primary" onClick={() => setInboxToggle(2)}>
+            Follows
+          </Fab>
+        </Grid>
+      </Grid>
       <Grid
         container
         spacing={10}
