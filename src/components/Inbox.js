@@ -1,5 +1,18 @@
-import { CardActionArea, Grid } from "@mui/material";
-import "./font/style.css";
+import React, { StyleSheet, useState, useEffect, Text } from "react";
+import {
+  Card,
+  CardMedia,
+  CardActionArea,
+  Typography,
+  IconButton,
+  Avatar,
+} from "@material-ui/core";
+import { Delete, Edit } from "@material-ui/icons";
+import { Grid } from "@mui/material";
+import { useHistory } from "react-router-dom";
+import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import Popup from "./Popup";
+import Share from "./Share";
 
 const tempInbox = {
   type: "inbox",
@@ -59,32 +72,120 @@ const tempInbox = {
   ],
 };
 
-function Inbox(props) {
-  return (
-    <Grid container direction="row">
-      <Grid item xs={2}>
-        <Grid container direction="column">
+const Inbox = () => {
+  const history = useHistory();
+  const inboxList = tempInbox.items;
+  const [InboxList1, setInboxList] = React.useState(inboxList);
+  const [openPopup2, setOpenPopup2] = React.useState(false);
+  const open_share = () => setOpenPopup2(true);
+
+  const handleRemove = (e) => {
+    const id = e.id;
+    const newList = InboxList1.filter((item) => item.id !== id);
+    setInboxList(newList);
+  };
+
+  const listItems = InboxList1.map((item) => (
+    <Grid
+      item
+      xs={8}
+      justifyContent="flex-start"
+      alignItems="flex-start"
+      backgroundColor="#fff"
+      borderBottom="1.2px solid #f0f2f7"
+      padding="30px"
+      boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
+      marginLeft={20}
+      marginRight={20}
+    >
+      <Grid item>
+        <Grid
+          container
+          spacing={2}
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="flex-start"
+        >
           <Grid item>
-            <CardActionArea>temp</CardActionArea>
+            <Avatar src={item.author.profileImage}></Avatar>
           </Grid>
           <Grid item>
-            <CardActionArea>temp</CardActionArea>
-          </Grid>
-          <Grid item>
-            <CardActionArea>temp</CardActionArea>
+            <Grid container direction="column">
+              <Grid item>
+                <Typography>{item.author.displayName}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography>{item.published}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
-      <Grid items xs={10}>
-        <Grid container direction="column">
-          <Grid item>temp1</Grid>
-          <Grid item>temp1</Grid>
-          <Grid item>temp1</Grid>
-          <Grid item>temp1</Grid>
+
+      <Grid item>
+        <Typography variant="h5">{item.title}</Typography>
+      </Grid>
+
+      <Grid item spacing={2}>
+        <Typography>{item.content}</Typography>
+      </Grid>
+
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton edge="end" aria-label="thumbup">
+            <ThumbUp />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton edge="end" aria-label="share" onClick={open_share}>
+            <ShareRounded />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton edge="end" aria-label="comment">
+            <Comment />
+          </IconButton>
+        </Grid>
+
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Delete"
+            onClick={() => handleRemove(item)}
+          >
+            <Delete />
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
+  ));
+
+  return (
+    <div>
+      <Popup
+        title={"Who do you want to share with?"}
+        openPopup={openPopup2}
+        setOpenPopup={setOpenPopup2}
+      >
+        <Share></Share>
+      </Popup>
+      <Grid
+        container
+        spacing={10}
+        direction="column"
+        alignSelf="center"
+        marginTop={2}
+      >
+        {listItems}
+      </Grid>
+    </div>
   );
-}
+};
 
 export default Inbox;
