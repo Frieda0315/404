@@ -29,7 +29,7 @@ class Login extends React.Component {
     super(props);
     this.state = {
       username: "",
-      github_user: "",
+      github_name: "",
       password: "",
       authflag: 1,
     };
@@ -59,7 +59,11 @@ class Login extends React.Component {
   };
   handleSubmit(event) {
     event.preventDefault();
-    if (this.state.username == "" && this.state.password == "") {
+    if (
+      this.state.username != "" &&
+      this.state.password != "" &&
+      this.state.github_name != ""
+    ) {
       this.props.history.push("/signup");
     } else {
       alert("Incorrect Credntials!");
@@ -67,7 +71,12 @@ class Login extends React.Component {
   }
   render() {
     const { selected } = this.state;
-
+    var signup = {
+      id: "063fa248-adc4-47c0-acdd-ef6ad129db01",
+      user_name: "abacfdsafsddasfsadf",
+      github_name: "aaa",
+      password: "pass",
+    };
     return (
       <div>
         <Grid
@@ -126,9 +135,9 @@ class Login extends React.Component {
                         <TextField
                           placeholder="Github Username"
                           fullWidth
-                          name="github_user"
+                          name="github_name"
                           variant="outlined"
-                          value={this.state.github_user}
+                          value={this.state.github_name}
                           onChange={(event) =>
                             this.setState({
                               [event.target.name]: event.target.value,
