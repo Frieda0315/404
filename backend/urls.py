@@ -35,6 +35,7 @@ urlpatterns = [
     path('author/<uuid:author_id>/inbox',
          inbox_views.inbox_list, name='inbox_list'),
 
+    
     path('admin/', admin.site.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html'))
 # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
