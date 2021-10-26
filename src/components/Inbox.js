@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Share from "./Share";
+import makeStyles from "@material-ui/styles/makeStyles";
 
 const tempInbox = {
   type: "inbox",
@@ -112,9 +113,21 @@ const tempInbox = {
   ],
 };
 
+const useStyles = makeStyles(() => ({
+  FollowItem: {
+    padding: "2em",
+  },
+  LikeItem: {
+    padding: "2em",
+  },
+}));
+
 const Inbox = () => {
   const history = useHistory();
+
   const inboxList = tempInbox.items;
+
+  const styleClasses = useStyles();
   const [InboxList1, setInboxList] = React.useState(inboxList);
 
   // 0 for post;
@@ -236,8 +249,8 @@ const Inbox = () => {
       (item) => (
         <Grid item>
           <Card>
-            <Grid container direction="row">
-              <Grid item xs={8}>
+            <Grid container direction="row" className={styleClasses.FollowItem}>
+              <Grid item xs={10}>
                 <Typography>{item.summary}</Typography>
               </Grid>
               <Grid item xs>
