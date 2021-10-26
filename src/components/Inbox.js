@@ -131,6 +131,9 @@ const Inbox = () => {
     setInboxList(newList);
   };
 
+  const acceptFriendRequest = (id) => {};
+  const declineFriendRequest = (id) => {};
+
   var listItems;
   if (InboxToggle === 0) {
     // Posts
@@ -232,11 +235,29 @@ const Inbox = () => {
     listItems = InboxList1.filter((item) => item.type === "Follow").map(
       (item) => (
         <Grid item>
-          <Grid container direction="row">
-            <Grid item xs={8}>
-              <Card>{item.summary}</Card>
+          <Card>
+            <Grid container direction="row">
+              <Grid item xs={8}>
+                <Typography>{item.summary}</Typography>
+              </Grid>
+              <Grid item xs>
+                <Fab
+                  variant="extended"
+                  color="primary"
+                  onClick={acceptFriendRequest}
+                >
+                  accecpt
+                </Fab>
+                <Fab
+                  variant="extended"
+                  color="primary"
+                  onClick={declineFriendRequest}
+                >
+                  decline
+                </Fab>
+              </Grid>
             </Grid>
-          </Grid>
+          </Card>
         </Grid>
       )
     );
