@@ -6,6 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
     user_name = serializers.CharField(required=True)
     github_name = serializers.CharField(required=True)
+    type = serializers.CharField(required=True)
 
     def create(self, validated_data):
         """
@@ -15,4 +16,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'user_name', 'github_name']
+        fields = ['id', 'user_name', 'github_name', 'type']

@@ -17,8 +17,9 @@ urlpatterns = [
 
     path('service/posts/', post_views.public_post, name='public_post'),
 
-    path('service/users/', user_views.user_list, name='user_list'),
-    path('service/users/<uuid:id>/', user_views.user_detail, name='user_detail'),
+
+    path('service/authors/', user_views.author_list, name='author_list'),
+    path('service/author/<uuid:id>/', user_views.author_detail, name='author_detail'),
 
     re_path('^service/users/signup/?$',user_views.signup,name='signup'),
     re_path('^service/users/login/?$', user_views.login, name='login'),
