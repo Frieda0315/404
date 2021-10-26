@@ -18,6 +18,9 @@ urlpatterns = [
     path('service/users/', user_views.user_list, name='user_list'),
     path('service/users/<uuid:id>/', user_views.user_detail, name='user_detail'),
 
+    path('service/users/signup/', user_views.signup, name='signup'),
+    path('service/users/login/', user_views.login, name='login'),
+
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
