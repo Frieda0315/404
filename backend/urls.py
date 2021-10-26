@@ -7,6 +7,8 @@ from posts import post_views
 from comments import comment_views
 from likes import like_views
 from inbox import inbox_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -14,13 +16,11 @@ urlpatterns = [
     path('service/authors/<uuid:author_id>/posts/', post_views.post_list, name='post_list'),
     path('service/authors/<uuid:author_id>/posts/<uuid:id>', post_views.post_detail, name='post_detail'),
 
+    path('service/posts/', post_views.public_post, name='public_post'),
+
     path('service/users/', user_views.user_list, name='user_list'),
     path('service/users/<uuid:id>', user_views.user_detail, name='user_detail'),
 
-<<<<<<< HEAD
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments',
-         comment_views.comment_list, name='comments_list'),
-=======
     path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments',
          comment_views.comment_list, name='comment_list'),
 
@@ -34,8 +34,8 @@ urlpatterns = [
     # inbox
     path('author/<uuid:author_id>/inbox',
          inbox_views.inbox_list, name='inbox_list'),
->>>>>>> main
 
     path('admin/', admin.site.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html'))
+# ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ]
