@@ -71,6 +71,44 @@ const tempInbox = {
       visibility: "FRIENDS",
       unlisted: false,
     },
+    {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      summary: "Lara Croft Likes your post",
+      type: "Like",
+      author: {
+        type: "author",
+        id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        host: "http://127.0.0.1:5454/",
+        displayName: "Lara Croft",
+        url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        github: "http://github.com/laracroft",
+        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+      },
+      object:
+        "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+    },
+    {
+      type: "Follow",
+      summary: "Greg wants to follow Lara",
+      actor: {
+        type: "author",
+        id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+        url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+        host: "http://127.0.0.1:5454/",
+        displayName: "Greg Johnson",
+        github: "http://github.com/gjohnson",
+        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+      },
+      object: {
+        type: "author",
+        id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        host: "http://127.0.0.1:5454/",
+        displayName: "Lara Croft",
+        url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        github: "http://github.com/laracroft",
+        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+      },
+    },
   ],
 };
 
@@ -182,17 +220,25 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 1) {
     // Likes
-    listItems = InboxList1.filter((item) => item.type === "Likes").map(
+    listItems = InboxList1.filter((item) => item.type === "Like").map(
       (item) => (
         <Grid item>
-          <Divider orientation="horizontal" flexItem></Divider>
+          <Card>{item.summary}</Card>
         </Grid>
       )
     );
   } else if (InboxToggle === 2) {
     // Folows
     listItems = InboxList1.filter((item) => item.type === "Follow").map(
-      (item) => <Grid item></Grid>
+      (item) => (
+        <Grid item>
+          <Grid container direction="row">
+            <Grid item xs={8}>
+              <Card>{item.summary}</Card>
+            </Grid>
+          </Grid>
+        </Grid>
+      )
     );
   }
 
@@ -207,18 +253,30 @@ const Inbox = () => {
       </Popup>
       <Grid container direction="row">
         <Grid item>
-          <Fab color="primary" onClick={() => setInboxToggle(0)}>
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={() => setInboxToggle(0)}
+          >
             Posts
           </Fab>
         </Grid>
         <Grid item>
-          <Fab color="primary" onClick={() => setInboxToggle(1)}>
-            Likes
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={() => setInboxToggle(1)}
+          >
+            <Typography>{"likes"}</Typography>
           </Fab>
         </Grid>
         <Grid item>
-          <Fab color="primary" onClick={() => setInboxToggle(2)}>
-            Follows
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={() => setInboxToggle(2)}
+          >
+            <Typography>{"follow"}</Typography>
           </Fab>
         </Grid>
       </Grid>
