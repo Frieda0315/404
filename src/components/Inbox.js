@@ -1,3 +1,6 @@
+import { CardActionArea, Grid } from "@mui/material";
+import "./font/style.css";
+
 const tempInbox = {
   type: "inbox",
   author: "http://127.0.0.1:5454/author/c1e3db8ccea4541a0f3d7e5c75feb3fb",
@@ -56,6 +59,32 @@ const tempInbox = {
   ],
 };
 
-function Inbox(props) {}
+function Inbox(props) {
+  return (
+    <Grid container direction="row">
+      <Grid item xs={2}>
+        <Grid container direction="column">
+          <Grid item>
+            <CardActionArea>temp</CardActionArea>
+          </Grid>
+          <Grid item>
+            <CardActionArea>temp</CardActionArea>
+          </Grid>
+          <Grid item>
+            <CardActionArea>temp</CardActionArea>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid items xs={10}>
+        <Grid container direction="column">
+          <Grid item>temp1</Grid>
+          <Grid item>temp1</Grid>
+          <Grid item>temp1</Grid>
+          <Grid item>temp1</Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+}
 
 export default Inbox;
