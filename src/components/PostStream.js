@@ -335,17 +335,24 @@ function PostStream(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios.get(`${baseUrl2}/posts/`).then((res) => {
-      //console.log(res.data);
-      newList = res.data;
-    });
+    axios
+      .get(`${baseUrl2}/posts/`)
+      .then((res) => {
+        if (res.data[0].id) {
+          newList = newList.concat(res.data);
+        }
+      })
+      .catch(function (error) {
+        console.log("Show error notification!");
+        return Promise.reject(error);
+      });
     axios.get(`${baseUrl}/xius666/events`).then((res) => {
       console.log(res.data);
       res.data.map((single) => {
         //console.log(single.actor);
         newList.push({
           id: single.id,
-          date: single.created_at,
+          published: single.created_at,
           content: "from repo: " + single.repo.name,
           author: single.actor.login,
           title: "Github Activity: " + single.type,
@@ -376,7 +383,7 @@ function PostStream(props) {
         </Grid>
         <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
-          <Typography>{post != null ? post.date : "null date"}</Typography>
+          <Typography>{post != null ? post.published : "null date"}</Typography>
         </Grid>
       </Grid>
       <Grid container>
