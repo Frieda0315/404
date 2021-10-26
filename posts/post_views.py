@@ -10,6 +10,11 @@ from users.models import User
 
 # Create your views here.
 
+@api_view(['GET'])
+def public_post(request):
+    posts = Post.objects.filter(visibility="PUBLIC")
+    serializer = PostSerializer(posts, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 @api_view(['GET', 'POST'])
 def post_list(request, author_id):
