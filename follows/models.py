@@ -5,8 +5,6 @@ from users.models import User
 # Create your models here.
 
 class Follow(models.Model):
-    class Meta:
-        unique_together = (('follower', 'following'),)
     type = models.CharField(max_length=100)
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
