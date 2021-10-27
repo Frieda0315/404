@@ -38,11 +38,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Profile({ user_id, is_follow }) {
+export default function Profile({ user, post_github_user, is_follow }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-
+  console.log(user);
   const cancel = () => setIsEdit(false);
 
   const [github_user, set_github_user] = useState("");
@@ -59,6 +59,10 @@ export default function Profile({ user_id, is_follow }) {
   useEffect(() => {
     set_github_user(localStorage.getItem("github_user"));
     setUserName(localStorage.getItem("user_name"));
+    if (is_follow) {
+      setUserName(user);
+      set_github_user(post_github_user);
+    }
     axios.get(`${baseUrl}/${github_user}`).then((res) => {
       console.log(res.data["avatar_url"]);
       seturl(res.data["avatar_url"]);
