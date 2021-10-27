@@ -8,6 +8,7 @@ import head2 from "../static/2.JPG";
 import {ShareRounded, ThumbUp, Comment} from "@material-ui/icons"; 
 import Popup from "./Popup";
 import Share from "./Share";
+import axios from "axios";
 const PostList = [
     {
       title: "Hello world",
@@ -66,18 +67,25 @@ const PostList = [
       contentType: "text/plain",
     },
   ];
+
   
 
 const MyPostList = () => {
     const history = useHistory();
-    const [PostList1, setPostList] = React.useState(PostList);
+    const [PostList1, setPostList] = React.useState([]);
     const [openPopup2, setOpenPopup2] = React.useState(false);
     const open_share = () => setOpenPopup2(true);
+    const baseUrl = "https://api.github.com/users";
+    const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+    const current =  window.location.href;
 
     const handleRemove = (e) => {
             const id = e.id;
             const newList = PostList1.filter((item) => item.id !== id);
             setPostList(newList);
+            // axios.delete(`${baseUrl}/xius666/events/${id}`).then(
+
+            // )
     };
 
     const handleEdit= (e) => {
@@ -87,6 +95,29 @@ const MyPostList = () => {
         history.push({pathname: '/mypost/edit',state:item});
         alert(item.content);
     };
+    
+  
+  
+
+  useEffect(() => {
+    var newList = [];
+    axios.get(`${baseUrl}/xius666/events`).then((res) => {
+      console.log(res.data);
+      res.data.map((single) => {
+        //console.log(single.actor);
+        newList.push({
+          id: single.id,
+          date: single.created_at,
+          content: "from repo: " + single.repo.name,
+          author: single.actor.login,
+          title: "Github Activity: " + single.type,
+          contentType:"text/plain",
+
+        });
+      });
+      setPostList(newList)
+   });
+  }, []);
       
   const listItems = PostList1.map((post) =>
    
@@ -111,6 +142,7 @@ const MyPostList = () => {
               <Grid container  direction="column">
                   <Grid item>
                      <Typography >{post.author}</Typography>
+                    
                   </Grid>
                   <Grid item>
                       <Typography >{post.date}</Typography>
@@ -188,8 +220,7 @@ const MyPostList = () => {
        
         
    
-  );
+  );}
     
-}
 
 export default MyPostList

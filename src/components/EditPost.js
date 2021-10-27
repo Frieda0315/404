@@ -8,12 +8,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Button,Typography,CardContent, Card, CardMedia} from '@mui/material';
+import { Button,Typography,CardContent, Card} from '@mui/material';
 import { useHistory,useLocation} from "react-router-dom";
-import { Axios } from 'axios';
-
-
-
+import axios from 'axios';
 
 
 const heading = {
@@ -40,12 +37,13 @@ const EditPost = () => {
     const history = useHistory();
     const location = useLocation();
     const [item1, setItem] = React.useState(location.state)
+    const [date, setDate] = React.useState(location.date)
     const [image, setImage] = React.useState(null);
     const [preview, setPreview] = React.useState();
     const [value, setValue] = React.useState(item1.contentType);
     const [state, setState] = React.useState('public');
     const [title, setTitle] = React.useState(item1.title);
-    const [common, setCommon] = React.useState(item1.content);
+    const [content, setContent] = React.useState(item1.content);
     
     const uploadImage = (files) => {
         //accept = 'image/*';
@@ -83,12 +81,19 @@ const EditPost = () => {
     }, [image])
  
     
-    
+    const baseUrl = "https://api.github.com/users";
+    axios.get(`${baseUrl}/xius666/events`).then((res) => {
+        console.log(res.data);
+            
+        });
     const imageUpload = () =>{
         alert("Your file is being uploaded!")
     }
     
     const submited = () =>{
+        const currentDateTime = Date().toLocaleString();
+        setDate(currentDateTime);
+        
         if (value == 'image'){
             const item2 = {
                 title: title,
@@ -103,23 +108,20 @@ const EditPost = () => {
             history.push({pathname: '/mypost/',state:item2});
             
         }
+
         if (value == 'text/plain'){
-            const item2 = {
+          
+            axios.post(`${baseUrl}/xius666/events`,{
+                date: date,
+                content: content,
                 title: title,
-                content: common,
-                author: item1.author,
-                date: "xxxx-xx-xx xx:xx",
-                id: item1.id,
-                contentType: value,
-            };
-            setItem(item2);
-            alert(item2.title);
-            history.push({pathname: '/mypost/',state:item2});
+                contentType:value
+            }).then((res) => {
+                console.log(res.data)
+            }).catch(res => console.log(res))
         }
     }
     
-    
-
     return (
     
             <Grid
@@ -206,8 +208,8 @@ const EditPost = () => {
                 variant="filled"
                 multiline
                 rows={10}
-                value = {common}
-                onChange={(e) => setCommon(e.target.value)} 
+                value = {content}
+                onChange={(e) => setContent(e.target.value)} 
                     />   
                 )}      
                   
