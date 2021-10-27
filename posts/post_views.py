@@ -123,8 +123,8 @@ def post_detail(request, author_id, id):  # this id here is postID
                 print(serializer.data)
                 return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return JsonResponse({"Error": "bad permission"}, status=status.HTTP_400_BAD_REQUEST)
-        return JsonResponse({"Error": "serilizer is not valid"}, status.HTTP_403_FORBIDDEN)
+                return JsonResponse({"Error": "bad permission"}, status=status.HTTP_403_FORBIDDEN)
+        return JsonResponse({"Error": "serilizer is not valid"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # helper function under
