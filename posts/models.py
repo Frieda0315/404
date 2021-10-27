@@ -14,7 +14,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     # image type
     # TODO: image field
-    #image = models.ImageField(blank=True, upload_to='img')
+    image = models.ImageField(blank=True, upload_to='img')
 
     # the first column is the actual value in databse, the second column is the human-readable value in admin selecting page
     visibilityTypes = [("PUBLIC",     "Public"),
@@ -24,5 +24,3 @@ class Post(models.Model):
                        ("SERVERONLY", "Local Frchiends")]
     visibility = models.CharField(
         max_length=30, choices=visibilityTypes, default="PUBLIC")
-    # class Meta:
-    #     db_table = "post"
