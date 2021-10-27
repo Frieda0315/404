@@ -45,8 +45,8 @@ export default function Profile({ user_id, is_follow }) {
 
   const cancel = () => setIsEdit(false);
 
-  const [github_user, set_github_user] = useState("xius666");
-  const [username, setUserName] = useState("404notfound");
+  const [github_user, set_github_user] = useState("");
+  const [username, setUserName] = useState("");
 
   const [textinput1, setTextinput1] = useState(github_user);
   const [textinput2, setTextinput2] = useState(username);
@@ -54,9 +54,11 @@ export default function Profile({ user_id, is_follow }) {
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
+  const userid = localStorage.getItem("current_user_id");
 
   useEffect(() => {
-    //TODO:handle 404 case
+    set_github_user(localStorage.getItem("github_user"));
+    setUserName(localStorage.getItem("user_name"));
     axios.get(`${baseUrl}/${github_user}`).then((res) => {
       console.log(res.data["avatar_url"]);
       seturl(res.data["avatar_url"]);
@@ -67,10 +69,27 @@ export default function Profile({ user_id, is_follow }) {
     e.preventDefault();
     set_github_user(textinput1);
     setUserName(textinput2);
-    console.log("hll");
     setIsEdit(false);
+
+    const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+
+    /*axios
+      .post(`${baseUrl2}/author/${userid}/`, {
+        github_user: github_user,
+        user_name: username,
+      })
+      .then(
+        (response) => {
+          console.log(response);
+          localStorage.setItem("github_user", github_user);
+          localStorage.setItem("user_name", username);
+        },
+        (error) => {
+          alert("Incorrect Credntials!");
+          console.log(error);
+        }
+      );*/
   };
-  //fetch the github profile image
 
   return (
     <Form onSubmit={handleSubmit}>

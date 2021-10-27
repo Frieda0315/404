@@ -335,7 +335,7 @@ function PostStream(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios
+    /* axios
       .get(`${baseUrl2}/posts/`)
       .then((res) => {
         if (res.data[0].id) {
@@ -345,7 +345,7 @@ function PostStream(props) {
       .catch(function (error) {
         console.log("Show error notification!");
         return Promise.reject(error);
-      });
+      });*/
     axios.get(`${baseUrl}/xius666/events`).then((res) => {
       console.log(res.data);
       res.data.map((single) => {

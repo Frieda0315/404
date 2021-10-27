@@ -7,7 +7,7 @@ import Post from "./components/Post";
 import Comments from "./components/Comment";
 import MyPostList from "./components/MyPostList";
 import EditPost from "./components/EditPost";
-import friedaList from "./components/friedaList";
+import FriedaList from "./components/friedaList";
 import Inbox from "./components/Inbox";
 
 import { useCookies } from "react-cookie";
@@ -16,57 +16,67 @@ import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
 import { useEffect, useState } from "react";
 import ParticlesBg from "particles-bg";
+import NavMenu from "./components/NavMenu";
 
 function App() {
-  const [cookies, setCookie] = useCookies([]);
-  console.log(isEmpty(cookies));
-  console.log(window.location.pathname);
-
-  if (window.location.pathname === "/signup") {
+  //const [cookies, setCookie] = useCookies([]);
+  //console.log(isEmpty(cookies));
+  //console.log(window.location.pathname);
+  //const [loggedin, setLoggedIn] = useState(false);
+  /*if (window.location.pathname === "/signup") {
     return (
       <header>
-        <Route exact path="/signup" component={Signup} />{" "}
+        <Route exact path="/signup" component={Signup} />
         <ParticlesBg type="square" bg={true} />
       </header>
     );
-  }
+  }*/
+
   return (
     <header>
-      <Route exact path="/login">
-        <Login></Login>
-        <ParticlesBg type="square" bg={true} />
-      </Route>
-      <Route exact path="/signup">
-        <Signup></Signup>
-        <ParticlesBg type="square" bg={true} />
-      </Route>
-
       <Layout>
-        <Route
-          exact
-          path="/"
-          render={() =>
-            isEmpty(cookies) ? <Redirect to="/login" /> : <Redirect to="/" />
-          }
-        ></Route>
+        <Route exact path="/login">
+          <Login></Login>
+          <ParticlesBg type="square" bg={true} />
+        </Route>
+        <Route exact path="/signup">
+          <Signup></Signup>
+          <ParticlesBg type="square" bg={true} />
+        </Route>
         <Route exact path="/">
+          <NavMenu />
           <MainPage></MainPage>
         </Route>
 
         <Route exact path="/posts/*/comments">
+          <NavMenu />
           <Comments></Comments>
         </Route>
 
         <Route exact path="/profile">
+          <NavMenu />
           <Profile is_follow={false}></Profile>
         </Route>
-        <Switch>
-          <Route path={"/new"} component={Post} exact={true} />
-        </Switch>
-        <Route path={"/mypost"} component={MyPostList} exact={true} />
-        <Route path={"/inbox"} component={Inbox} exact={true} />
-        <Route path={"/mypost/edit"} component={EditPost} exact={true} />
-        <Route path={"/friends"} component={friedaList} exact={true} />
+        <Route exact path="/new">
+          <NavMenu />
+          <Post></Post>
+        </Route>
+        <Route exact path="/mypost">
+          <NavMenu />
+          <MyPostList></MyPostList>
+        </Route>
+        <Route exact path="/inbox">
+          <NavMenu />
+          <Inbox></Inbox>
+        </Route>
+        <Route exact path="/mypost/edit">
+          <NavMenu />
+          <EditPost></EditPost>
+        </Route>
+        <Route exact path="/friends">
+          <NavMenu />
+          <FriedaList></FriedaList>
+        </Route>
       </Layout>
     </header>
   );
