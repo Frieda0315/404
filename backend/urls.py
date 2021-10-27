@@ -7,40 +7,41 @@ from posts import post_views
 from comments import comment_views
 from likes import like_views
 from inbox import inbox_views
-from django.conf import settings
-from django.conf.urls.static import static
-
 
 urlpatterns = [
     # TODO: update urls for post and authors
+    # TODO: update all urls using posts, in order to support with/without slash in the end
     path('service/authors/<uuid:author_id>/posts/',
          post_views.post_list, name='post_list'),
-    path('service/authors/<uuid:author_id>/posts/<uuid:id>',
+    path('service/authors/<uuid:author_id>/posts/<uuid:id>/',
          post_views.post_detail, name='post_detail'),
 
     path('service/posts/', post_views.public_post, name='public_post'),
 
     path('service/users/', user_views.user_list, name='user_list'),
-    path('service/users/<uuid:id>', user_views.user_detail, name='user_detail'),
+    path('service/users/<uuid:id>/', user_views.user_detail, name='user_detail'),
 
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments',
+    re_path('^service/users/signup/?$', user_views.signup, name='signup'),
+    re_path('^service/users/login/?$', user_views.login, name='login'),
+
+    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes',
+    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/likes/?',
          like_views.post_like_list, name='post_like_list'),
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes',
+    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/?',
          like_views.comment_like_list, name='comment_like_list'),
-    path('author/<uuid:author_id>/liked',
+    path('service/author/<uuid:author_id>/liked/',
          like_views.author_like_list, name='author_like_list'),
 
     # inbox
-    path('author/<uuid:author_id>/inbox',
+    path('service/author/<uuid:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
 
 
     path('admin/', admin.site.urls),
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html'))
-    # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    re_path('(^(?!(service)).*$)',
+            TemplateView.as_view(template_name='index.html'))
 ]
 # # image debug
 # if settings.DEBUG:
