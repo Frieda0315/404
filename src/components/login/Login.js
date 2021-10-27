@@ -7,7 +7,8 @@ import React from "react";
 import "./login.css";
 import "../font/style.css";
 import { instanceOf } from "prop-types";
-import ParticlesBg from "particles-bg";
+import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 import {
   Button,
@@ -25,19 +26,24 @@ import {
 import { withCookies, Cookies } from "react-cookie";
 import logo from "./logo.png";
 class Login extends React.Component {
-  static propTypes = {
+  /*static propTypes = {
     cookies: instanceOf(Cookies).isRequired,
-  };
+  };*/
   constructor(props) {
     super(props);
     this.state = {
-      username: this.props.cookies.get("username") || "",
-      password: this.props.cookies.get("password") || "",
-      authflag: 1,
+      //username: this.props.cookies.get("username") || "",
+      //password: this.props.cookies.get("password") || "",
+      username: "",
+      password: "",
       selected: "no",
+      current_user_id: "",
+      github_name: "",
+      user_name: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    //this.handleCookie = this.handleCookie.bind(this);
   }
 
   handleChange(event) {
@@ -49,29 +55,52 @@ class Login extends React.Component {
   handleRadio = (ev) => {
     this.setState({ selected: ev.target.value });
   };
-  handleCookie = () => {
-    if (this.state.selected === "yes") {
-      const { cookies } = this.props;
-      cookies.set("username", this.state.username, { path: "/" }); // setting the cookie
-      cookies.set("password", this.state.password, { path: "/" });
-
-      this.setState({
-        username: cookies.get("username"),
-        password: cookies.get("password"),
-      });
-    }
-  };
+  handleCookie = () => {};
   handleSubmit(event) {
     event.preventDefault();
-    if (this.state.username == "" && this.state.password == "") {
-      this.props.history.push("/login");
+    if (this.state.username != "" && this.state.password != "") {
+      const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+      axios
+        .post(`${baseUrl2}/users/login/`, {
+          user_name: this.state.username,
+          password: this.state.password,
+        })
+        .then(
+          (response) => {
+            /*if (this.state.selected === "yes") {
+              const { cookies } = this.props;
+              cookies.set("username", this.state.username, { path: "/" }); // setting the cookie
+              cookies.set("password", this.state.password, { path: "/" });
+              this.setState({
+                username: cookies.get("username"),
+                password: cookies.get("password"),
+              });
+            }*/
+            console.log(response.data);
+            this.setState({
+              current_user_id: response.data.id,
+              github_name: response.data.github_name,
+              user_name: response.data.user_name,
+            });
+          },
+          (error) => {
+            alert("Incorrect Credntials!");
+            console.log(error);
+          }
+        );
     } else {
       alert("Incorrect Credntials!");
     }
   }
+
   render() {
     const { selected } = this.state;
-
+    if (this.state.current_user_id != "") {
+      localStorage.setItem("current_user_id", this.state.current_user_id);
+      localStorage.setItem("github_user", this.state.github_name);
+      localStorage.setItem("user_name", this.state.user_name);
+      return <Redirect to="/"></Redirect>;
+    }
     return (
       <div>
         <Grid
@@ -156,10 +185,8 @@ class Login extends React.Component {
                           color="primary"
                           type="submit"
                           className="button-block"
-                          href="/"
-                          onClick={this.handleCookie}
                         >
-                          Log in
+                          Sign in
                         </Button>
                       </Grid>
                     </Grid>
@@ -188,4 +215,4 @@ class Login extends React.Component {
     );
   }
 }
-export default withCookies(Login);
+export default Login;

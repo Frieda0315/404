@@ -7,6 +7,8 @@ import React from "react";
 import "./signup.css";
 import "../font/style.css";
 import { instanceOf } from "prop-types";
+import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 import {
   Button,
@@ -20,18 +22,16 @@ import {
   RadioGroup,
 } from "@material-ui/core";
 import { withCookies, Cookies } from "react-cookie";
+import { v4 as uuidv4 } from "uuid";
 
-class Login extends React.Component {
-  static propTypes = {
-    cookies: instanceOf(Cookies).isRequired,
-  };
+class Signup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
-      github_user: "",
+      github_name: "",
       password: "",
-      authflag: 1,
+      finished: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,27 +46,42 @@ class Login extends React.Component {
   handleRadio = (ev) => {
     this.setState({ selected: ev.target.value });
   };
-  handleCookie = () => {
-    if (this.state.selected === "yes") {
-      const { cookies } = this.props;
-      cookies.set("username", this.state.username, { path: "/" }); // setting the cookie
-      cookies.set("password", this.state.password, { path: "/" });
-      this.setState({
-        username: cookies.get("username"),
-        password: cookies.get("password"),
-      });
-    }
-  };
+
   handleSubmit(event) {
     event.preventDefault();
-    if (this.state.username == "" && this.state.password == "") {
-      this.props.history.push("/signup");
+    if (
+      this.state.username != "" &&
+      this.state.password != "" &&
+      this.state.github_name != ""
+    ) {
+      const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+      axios
+        .post(`${baseUrl2}/users/signup/`, {
+          id: uuidv4(),
+          user_name: this.state.username,
+          password: this.state.password,
+          github_name: this.state.password,
+          type: "author",
+        })
+        .then(
+          (response) => {
+            console.log(response);
+            this.setState({ finished: 1 });
+          },
+          (error) => {
+            alert("username exists!");
+            console.log(error);
+          }
+        );
     } else {
       alert("Incorrect Credntials!");
     }
   }
   render() {
-    const { selected } = this.state;
+    if (this.state.finished === 1) {
+      console.log("fs");
+      return <Redirect to="/login"></Redirect>;
+    }
 
     return (
       <div>
@@ -126,9 +141,9 @@ class Login extends React.Component {
                         <TextField
                           placeholder="Github Username"
                           fullWidth
-                          name="github_user"
+                          name="github_name"
                           variant="outlined"
-                          value={this.state.github_user}
+                          value={this.state.github_name}
                           onChange={(event) =>
                             this.setState({
                               [event.target.name]: event.target.value,
@@ -160,8 +175,6 @@ class Login extends React.Component {
                           color="primary"
                           type="submit"
                           className="button-block"
-                          href="/login"
-                          onClick={this.handleCookie}
                         >
                           Sign Up
                         </Button>
@@ -177,4 +190,4 @@ class Login extends React.Component {
     );
   }
 }
-export default withCookies(Login);
+export default Signup;

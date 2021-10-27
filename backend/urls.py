@@ -12,8 +12,10 @@ from follows import follow_views
 urlpatterns = [
     # TODO: update urls for post and authors
     # TODO: update all urls using posts, in order to support with/without slash in the end
-    path('service/authors/<uuid:author_id>/posts/', post_views.post_list, name='post_list'),
-    path('service/authors/<uuid:author_id>/posts/<uuid:id>/', post_views.post_detail, name='post_detail'),
+    path('service/authors/<uuid:author_id>/posts/',
+         post_views.post_list, name='post_list'),
+    path('service/authors/<uuid:author_id>/posts/<uuid:id>/',
+         post_views.post_detail, name='post_detail'),
 
     path('service/posts/', post_views.public_post, name='public_post'),
 
@@ -21,7 +23,7 @@ urlpatterns = [
     path('service/authors/', user_views.author_list, name='author_list'),
     path('service/author/<uuid:id>/', user_views.author_detail, name='author_detail'),
 
-    re_path('^service/users/signup/?$',user_views.signup,name='signup'),
+    re_path('^service/users/signup/?$', user_views.signup, name='signup'),
     re_path('^service/users/login/?$', user_views.login, name='login'),
 
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
@@ -42,7 +44,12 @@ urlpatterns = [
     path('service/author/<uuid:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
 
-    
+
     path('admin/', admin.site.urls),
-    re_path('(^(?!(service)).*$)', TemplateView.as_view(template_name='index.html'))
+    re_path('(^(?!(service)).*$)',
+            TemplateView.as_view(template_name='index.html'))
 ]
+# # image debug
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL,
+#                           document_root=settings.MEDIA_ROOT)
