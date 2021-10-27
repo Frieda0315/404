@@ -20,7 +20,8 @@ urlpatterns = [
 
 
     path('service/authors/', user_views.author_list, name='author_list'),
-    path('service/author/<uuid:id>/', user_views.author_detail, name='author_detail'),
+    path('service/author/<uuid:id>/',
+         user_views.author_detail, name='author_detail'),
 
     re_path('^service/users/signup/?$', user_views.signup, name='signup'),
     re_path('^service/users/login/?$', user_views.login, name='login'),
@@ -28,9 +29,9 @@ urlpatterns = [
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/likes/?',
+    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/likes/',
          like_views.post_like_list, name='post_like_list'),
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/?',
+    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/',
          like_views.comment_like_list, name='comment_like_list'),
     path('service/author/<uuid:author_id>/liked/',
          like_views.author_like_list, name='author_like_list'),

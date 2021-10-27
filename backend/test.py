@@ -1,7 +1,9 @@
-from django.db.models.fields import DateField, DateTimeField
 from django.test import TestCase
 import uuid
+from comments.comment_views import comment_list
 from comments.models import Comment
+from inbox.inbox_views import inbox_list
+from likes.like_views import author_like_list, comment_like_list, post_like_list
 from users import *
 import users
 from users.models import User
@@ -10,6 +12,10 @@ from likes.models import Like
 from comments.models import Comment
 from inbox.models import Inbox
 from datetime import datetime
+from django.urls import reverse, resolve
+from posts.post_views import *
+from users.user_views import *
+from comments.comment_views import *
 
 
 class PostModelTests(TestCase):
@@ -122,5 +128,61 @@ class PostModelTests(TestCase):
 
 
 class URLTests(TestCase):
-    def postURL(self):
-        pass
+
+    def test_post_list(self):
+        url = reverse("post_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, post_list)
+
+    def test_post_detail(self):
+        url = reverse("post_detail", args=[
+                      "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, post_detail)
+
+    def test_posts(self):
+        url = reverse("public_post")
+        self.assertEqual(resolve(url).func, public_post)
+
+    def test_author_list(self):
+        url = reverse("author_list")
+        self.assertEqual(resolve(url).func, author_list)
+
+    def test_author_detail(self):
+        url = reverse("author_detail", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, author_detail)
+
+    def test_signup(self):
+        url = reverse("signup")
+        self.assertEqual(resolve(url).func, signup)
+
+    def test_login(self):
+        url = reverse("login")
+        self.assertEqual(resolve(url).func, login)
+
+    # two redirect path havn't done yet
+
+    def test_comment_list(self):
+        url = reverse("comment_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, comment_list)
+
+    def test_post_like_list(self):
+        url = reverse("post_like_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, post_like_list)
+
+    def test_comment_like_list(self):
+        url = reverse("comment_like_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, comment_like_list)
+
+    def test_author_like_list(self):
+        url = reverse("author_like_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, author_like_list)
+
+    def test_inbox_list(self):
+        url = reverse("inbox_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, inbox_list)
