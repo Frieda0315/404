@@ -1,0 +1,102 @@
+from django.db.models.fields import DateField, DateTimeField
+from django.test import TestCase
+import uuid
+from comments.models import Comment
+from users import *
+import users
+from users.models import User
+from posts.models import Post
+from likes.models import Like
+from comments.models import Comment
+from datetime import datetime
+
+
+class PostModelTests(TestCase):
+    def init_author(self, id=uuid.uuid4(), user_name="test_user", github_name="test_git", password='1234', type="author"):
+        return User(
+            id=id,
+            user_name=user_name,
+            password=password,
+            github_name=github_name,
+            type=type
+        )
+
+    def init_post(self, author=None, title="testingPost", content="testingContent", visibility='PUBLIC'):
+        if author == None:
+            a = self.init_author()
+        return Post(
+            author=a,
+            title=title,
+            content=content,
+            visibility=visibility,
+        )
+
+    def init_comment(self, post=None, type="testingType", author=None, comment="testingComment", contentType="testingType", published=datetime.now(), id=uuid.uuid4()):
+        if author == None:
+            a = self.init_author()
+        if post == None:
+            p = self.init_post()
+        return Comment(
+            post=p,
+            type=type,
+            author=a,
+            comment=comment,
+            contentType=contentType,
+            published=published,
+            id=id
+        )
+
+    def init_likes(self, id=uuid.uuid4(), author=None, post=None, comment="testingComment", summary="testingSummary", type="testingType"):
+        if author == None:
+            a = self.init_author()
+        if post == None:
+            p = self.init_post()
+        return Like(
+            id=id,
+            author=a,
+            post=p,
+            comment=comment,
+            type=type
+        )
+
+    def test_author(self):
+        authorInstance = self.init_author()
+        self.assertTrue(isinstance(authorInstance, User))
+
+    def test_post(self):
+        p = self.init_post()
+        self.assertTrue(isinstance(p, Post))
+        self.assertTrue(isinstance(p.author, User))
+
+        self.assertEqual(p.title, "testingPost")
+        self.assertEqual(p.content, "testingContent")
+        self.assertEqual(p.visibility, 'PUBLIC')
+
+        self.assertEqual(p.author.user_name, "test_user")
+        self.assertEqual(p.author.type, "author")
+        self.assertEqual(p.author.github_name, "test_git")
+
+    def test_comment(self):
+        comment = self.init_comment()
+        self.assertTrue(isinstance(comment, Comment))
+        self.assertTrue(isinstance(comment.author, User))
+        self.assertTrue(isinstance(comment.post, Post))
+        self.assertTrue(isinstance(comment.published, datetime))
+
+        self.assertEqual(comment.type, "testingType")
+        self.assertEqual(comment.comment, "testingComment")
+        self.assertEqual(comment.contentType, 'testingType')
+
+    # def test_like(self):
+    #     like = self.init_likes()
+    #     self.assertTrue(isinstance(like.author, User))
+    #     self.assertTrue(isinstance(like.post, Post))
+
+    #     self.assertEqual(like.comment, "testingComment")
+    #     self.assertEqual(like.summary, "testingSummary")
+    #     self.assertEqual(like.type, 'testingType')
+
+
+class URLTests(TestCase):
+    def postURL(self):
+        pass
