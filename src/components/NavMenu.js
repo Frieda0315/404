@@ -35,17 +35,32 @@ const useStyles = makeStyles(() => ({
 }));
 function NavMenu(is_logged_in) {
   const [cookies, setCookie, removeCookie] = useCookies();
-  function handleRemoveCookie() {
+  /*function handleRemoveCookie() {
     removeCookie("username", "/");
     removeCookie("password");
+  }*/
+  function handleSignOut() {
+    localStorage.removeItem("current_user_id");
+    localStorage.removeItem("github_user");
+    localStorage.removeItem("user_name");
+    setIsOut(true);
   }
+
   const styleClasses = useStyles();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isOut, setIsOut] = useState(false);
+
   const [loggedIn, setLoggedIn] = useState(is_logged_in);
-  const login = () => setLoggedIn(!loggedIn);
   const toggle = () => setIsOpen(!isOpen);
-  if (isEmpty(cookies) && !window.location.pathname.startsWith("/service/")) {
+  /*if (isEmpty(cookies) && !window.location.pathname.startsWith("/service/")) {
+    return <Redirect to="/login" />;
+  }*/
+  const user_id = localStorage.getItem("current_user_id");
+  if (!user_id) {
+    return <Redirect to="/login" />;
+  }
+  if (isOut) {
     return <Redirect to="/login" />;
   }
 
@@ -79,9 +94,7 @@ function NavMenu(is_logged_in) {
                 <DropdownItem divider />
                 <DropdownItem href="/inbox">Inbox</DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem onClick={handleRemoveCookie}>
-                  Sign out
-                </DropdownItem>
+                <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           ) : null}

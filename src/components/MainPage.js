@@ -16,7 +16,6 @@ import bg1 from "./assets/bg2.jpeg";
 import "./font/style.css";
 
 function MainPage() {
-
   //const history = useHistory();
   const [creatNew, setCreatNew] = React.useState(false);
   if (creatNew) {
@@ -51,7 +50,6 @@ function MainPage() {
         </Stack>
       </Grid>
       <Grid item>
-
         <PostStream />
       </Grid>
     </Grid>
