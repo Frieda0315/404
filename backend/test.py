@@ -8,6 +8,7 @@ from users.models import User
 from posts.models import Post
 from likes.models import Like
 from comments.models import Comment
+from inbox.models import Inbox
 from datetime import datetime
 
 
@@ -46,17 +47,34 @@ class PostModelTests(TestCase):
             id=id
         )
 
-    def init_likes(self, id=uuid.uuid4(), author=None, post=None, comment="testingComment", summary="testingSummary", type="testingType"):
+    def init_likes(self, id=uuid.uuid4(), author=None, post=None, comment=None, summary="testingSummary", type="testingType"):
         if author == None:
             a = self.init_author()
         if post == None:
             p = self.init_post()
+        if comment == None:
+            c = self.init_comment()
         return Like(
             id=id,
             author=a,
             post=p,
-            comment=comment,
+            comment=c,
+            summary=summary,
             type=type
+        )
+
+    def init_inbox(self, id=uuid.uuid4(), post=None, like=None, receive_author=None):
+        if post == None:
+            p = self.init_post()
+        if like == None:
+            l = self.init_likes()
+        if receive_author == None:
+            r = self.init_author()
+        return Inbox(
+            id=id,
+            post=p,
+            like=l,
+            receive_author=r
         )
 
     def test_author(self):
@@ -87,14 +105,20 @@ class PostModelTests(TestCase):
         self.assertEqual(comment.comment, "testingComment")
         self.assertEqual(comment.contentType, 'testingType')
 
-    # def test_like(self):
-    #     like = self.init_likes()
-    #     self.assertTrue(isinstance(like.author, User))
-    #     self.assertTrue(isinstance(like.post, Post))
+    def test_like(self):
+        like = self.init_likes()
+        self.assertTrue(isinstance(like.author, User))
+        self.assertTrue(isinstance(like.post, Post))
+        self.assertTrue(isinstance(like.comment, Comment))
 
-    #     self.assertEqual(like.comment, "testingComment")
-    #     self.assertEqual(like.summary, "testingSummary")
-    #     self.assertEqual(like.type, 'testingType')
+        self.assertEqual(like.summary, "testingSummary")
+        self.assertEqual(like.type, 'testingType')
+
+    def test_inbox(self):
+        inbox = self.init_inbox()
+        self.assertTrue(isinstance(inbox.receive_author, User))
+        self.assertTrue(isinstance(inbox.post, Post))
+        self.assertTrue(isinstance(inbox.like, Like))
 
 
 class URLTests(TestCase):
