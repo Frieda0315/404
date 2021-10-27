@@ -36,6 +36,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+APPEND_SLASH = True
 
 # Application definition
 
@@ -50,7 +51,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'posts',
-    'comments'
+    'comments',
+    'likes',
+    'inbox',
+    'followers'
 ]
 
 REST_FRAMEWORK = {

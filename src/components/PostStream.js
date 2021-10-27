@@ -7,10 +7,14 @@ import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import { Delete, ShareRounded, ThumbUp, Comment} from "@material-ui/icons";
+import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+
+import { Redirect } from "react-router";
+
 import Share from "./Share";
+
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -64,6 +68,31 @@ var tempPostList = [
     content: "Hello world Content",
     author: "author1",
     date: "xxxx-xx-xx xx:xx",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 1",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
     id: "1",
   },
   {
@@ -72,6 +101,31 @@ var tempPostList = [
     author: "author2",
     date: "xxxx-xx-xx xx:xx",
     id: "2",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 2",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
   {
     title: "I mean, a really simple one",
@@ -79,6 +133,31 @@ var tempPostList = [
     author: "author3",
     date: "xxxx-xx-xx xx:xx",
     id: "3",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 3",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
   {
     title: "so I decided to create some dummy strings",
@@ -86,6 +165,31 @@ var tempPostList = [
     author: "author4",
     date: "xxxx-xx-xx xx:xx",
     id: "4",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 4",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
   {
     title: "and this is one of them",
@@ -93,6 +197,31 @@ var tempPostList = [
     author: "author5",
     date: "xxxx-xx-xx xx:xx",
     id: "5",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 5",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
   {
     title: "this is two of them",
@@ -100,6 +229,31 @@ var tempPostList = [
     author: "author6",
     date: "xxxx-xx-xx xx:xx",
     id: "6",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 6",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
   {
     title: "",
@@ -107,6 +261,31 @@ var tempPostList = [
     author: "author6",
     date: "xxxx-xx-xx xx:xx",
     id: "7",
+    commentsSrc: {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+      comments: [
+        {
+          type: "comment",
+          author: {
+            type: "author",
+            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
+            host: "http://127.0.0.1:5454/",
+            displayName: "Greg Johnson",
+            github: "http://github.com/gjohnson",
+            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          },
+          comment: "Sick Olde English 7",
+          contentType: "text/markdown",
+          published: "2015-03-09T13:07:04+00:00",
+          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+        },
+      ],
+    },
   },
 ];
 const baseUrl = "https://api.github.com/users";
@@ -119,7 +298,7 @@ const tempPostOnClick = (ev) => {
 const dummyImages = [dummy_image, dummy_image1, null];
 /**/
 
-function PostStream() {
+function PostStream(props) {
   const handleRemove = (e) => {
     const id = e.id;
     const newList = postlist.filter((item) => item.id !== id);
@@ -128,12 +307,25 @@ function PostStream() {
   const changePage = (ev, value) => {
     setPage(value);
   };
+
+  const viewComments = (post) => {
+    setComments(post);
+    // console.log(props);
+    // props.history.push({
+    //   pathname: "/posts/" + post.id + "/comments",
+    //   state: {
+    //     commentsSrc: post.commentsSrc,
+    //   },
+    // });
+  };
   const [vote, setVote] = React.useState(0);
 
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
+  const [comments, setComments] = React.useState({});
+
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
 
@@ -143,7 +335,7 @@ function PostStream() {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios.get(`${baseUrl2}posts/`).then((res) => {
+    axios.get(`${baseUrl2}/posts/`).then((res) => {
       //console.log(res.data);
       newList = res.data;
     });
@@ -162,7 +354,9 @@ function PostStream() {
       setPostlist(newList);
     });
   }, []);
-
+  if (Object.keys(comments).length !== 0) {
+    return <Redirect to={"/posts/" + comments.id + "/comments"}></Redirect>;
+  }
   const postStream = postlist.map((post) => (
     <Grid
       item
@@ -271,7 +465,11 @@ function PostStream() {
           </IconButton>
         </Grid>
         <Grid item>
-          <IconButton edge="end" aria-label="comment">
+          <IconButton
+            edge="end"
+            aria-label="comment"
+            onClick={() => viewComments(post)}
+          >
             <Comment />
           </IconButton>
         </Grid>

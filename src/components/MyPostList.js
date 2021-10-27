@@ -1,11 +1,18 @@
-import React, { StyleSheet,useState, useEffect,Text} from 'react';
-import { Card, CardMedia, CardActionArea, Typography,IconButton, Avatar} from "@material-ui/core";
-import { Delete,Edit} from "@material-ui/icons";
-import { Grid } from '@mui/material';
+import React, { StyleSheet, useState, useEffect, Text } from "react";
+import {
+  Card,
+  CardMedia,
+  CardActionArea,
+  Typography,
+  IconButton,
+  Avatar,
+} from "@material-ui/core";
+import { Delete, Edit } from "@material-ui/icons";
+import { Grid } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import dummy_image from "../static/musle.png";
 import head2 from "../static/2.JPG";
-import {ShareRounded, ThumbUp, Comment} from "@material-ui/icons"; 
+import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Share from "./Share";
 import axios from "axios";
@@ -132,6 +139,18 @@ const MyPostList = () => {
     marginLeft = {20}
     marginRight = {20}
 
+  const listItems = PostList1.map((post) => (
+    <Grid
+      item
+      xs={8}
+      justifyContent="flex-start"
+      alignItems="flex-start"
+      backgroundColor="#fff"
+      borderBottom="1.2px solid #f0f2f7"
+      padding="30px"
+      boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
+      marginLeft={20}
+      marginRight={20}
     >
       <Grid item >
         <Grid container spacing={2} direction="row" justifyContent="flex-start" alignItems="flex-start" >
@@ -150,30 +169,39 @@ const MyPostList = () => {
               </Grid>
             </Grid>
           </Grid>
+        </Grid>
       </Grid>
-    
+
       <Grid item>
-        <Typography variant="h5" >{post.title}</Typography>
+        <Typography variant="h5">{post.title}</Typography>
       </Grid>
-         {post.contentType == "text/plain" ? (
-          <Grid item spacing={2}>
-              <Typography>{post.content}</Typography>
-          </Grid>
-          ):(
-          <Grid item>
-              <CardMedia style={{width: "auto", maxHeight: "200px",}} component="img" image={post.image}/>
-          </Grid> 
-          )}
-    
-      <Grid  container spacing={1} direction="row"  justifyContent="flex-end"  alignItems="flex-end">
+      {post.contentType == "text/plain" ? (
+        <Grid item spacing={2}>
+          <Typography>{post.content}</Typography>
+        </Grid>
+      ) : (
         <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="thumbup">
+          <CardMedia
+            style={{ width: "auto", maxHeight: "200px" }}
+            component="img"
+            image={post.image}
+          />
+        </Grid>
+      )}
+
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton edge="end" aria-label="thumbup">
             <ThumbUp />
           </IconButton>
-          </Grid>
-          <Grid item>
+        </Grid>
+        <Grid item>
           <IconButton edge="end" aria-label="share" onClick={open_share}>
             <ShareRounded />
           </IconButton>
@@ -183,25 +211,32 @@ const MyPostList = () => {
             <Comment />
           </IconButton>
         </Grid>
-          <Grid item>
-              <IconButton edge="end" aria-label="Edit" onClick={() => handleEdit(post)}>
-                  <Edit/>
-              </IconButton>
-          </Grid>
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Edit"
+            onClick={() => handleEdit(post)}
+          >
+            <Edit />
+          </IconButton>
+        </Grid>
 
-          <Grid item>
-              <IconButton edge="end" aria-label="Delete" onClick={() => handleRemove(post)}>
-                  <Delete />
-              </IconButton>
-          </Grid>
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Delete"
+            onClick={() => handleRemove(post)}
+          >
+            <Delete />
+          </IconButton>
+        </Grid>
       </Grid>
- </Grid> 
-   
-);
-    
-    return (
-        <div >
-          <Popup
+    </Grid>
+  ));
+
+  return (
+    <div>
+      <Popup
         title={"Who do you want to share with?"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
@@ -223,4 +258,4 @@ const MyPostList = () => {
   );}
     
 
-export default MyPostList
+export default MyPostList;

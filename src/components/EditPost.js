@@ -1,6 +1,5 @@
-
-import React, { StyleSheet,useState, useEffect} from 'react';
-import TextField from '@mui/material/TextField';
+import React, { StyleSheet, useState, useEffect } from "react";
+import TextField from "@mui/material/TextField";
 import noimage from "../static/noimage.png";
 import Grid from "@mui/material/Grid";
 import Radio from '@mui/material/Radio';
@@ -14,24 +13,22 @@ import axios from 'axios';
 
 
 const heading = {
-    fontSize: '30px',
-    color: 'black',
-    fontWeight: 'bold',
-    
-}
+  fontSize: "30px",
+  color: "black",
+  fontWeight: "bold",
+};
 const images = {
-    marginBottom: '15px',
-    height: '200px',
-    width: '200px' 
-   
-}
+  marginBottom: "15px",
+  height: "200px",
+  width: "200px",
+};
 
 const pic = {
-    maxHeight: 400,
-    maxWidth: 300,
-    marginBottom: "30px",
-    borderRadius: "50%",
-  }
+  maxHeight: 400,
+  maxWidth: 300,
+  marginBottom: "30px",
+  borderRadius: "50%",
+};
 
 const EditPost = () => {
     const history = useHistory();
@@ -134,45 +131,77 @@ const EditPost = () => {
                     <div style = {heading}>Edit Post</div>
                 </Grid>
 
-                <Grid item  
-                    //bgcolor = '#eeeeee'
-                    alignItems = 'flex-start'>
-                    <TextField
-                        style={{ marginTop: 5 ,
-                        marginBottom: 5,
-                        width: '50%',
-                        marginLeft: 5 }}
-                        id="addTitle"
-                        label="title"
-                        variant="filled"
-                        value = {title}
-                        onChange={(e) => setTitle(e.target.value)}/>
-                </Grid>
+            const imageUpload = () => {
+                alert("Your file is being uploaded!");
+  };
 
-                <Grid item
-                    alignItems = 'flex-start'>
-                    <Typography variant="body1" color="text.secondary">
-                          Post an Image or Plain text
-                    </Typography>
+  const submited = () => {
+    if (value == "image") {
+      const item2 = {
+        title: title,
+        image: image,
+        author: item1.author,
+        date: "xxxx-xx-xx xx:xx",
+        id: item1.id,
+        contentType: value,
+      };
+      setItem(item2);
+      alert(item2.title);
+      history.push({ pathname: "/mypost/", state: item2 });
+    }
+    if (value == "text/plain") {
+      const item2 = {
+        title: title,
+        content: common,
+        author: item1.author,
+        date: "xxxx-xx-xx xx:xx",
+        id: item1.id,
+        contentType: value,
+      };
+      setItem(item2);
+      alert(item2.title);
+      history.push({ pathname: "/mypost/", state: item2 });
+    }
+  };
 
-                    <FormControl component="fieldset">
-                        <RadioGroup row aria-label="gender" name="row-radio-buttons-group"
-                                value={value}
-                                defaultValue="Text"
-                                onChange = {(event) => {setValue(event.target.value);
-                                }}
-                                >
+  return (
+    <Grid container direction="column" justifyContent="center">
+      <Grid item alignItems="center">
+        <div style={heading}>Edit Post</div>
+      </Grid>
 
-                            <FormControlLabel value="image" 
-                                control={<Radio /> } label="Image" 
-                                />
+      <Grid
+        item
+        //bgcolor = '#eeeeee'
+        alignItems="flex-start"
+      >
+        <TextField
+          style={{ marginTop: 5, marginBottom: 5, width: "50%", marginLeft: 5 }}
+          id="addTitle"
+          label="title"
+          variant="filled"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Grid>
 
-                            <FormControlLabel value="text/plain" 
-                                control={<Radio />} label="Text" />
+      <Grid item alignItems="flex-start">
+        <Typography variant="body1" color="text.secondary">
+          Post an Image or Plain text
+        </Typography>
 
-                        </RadioGroup>
-                    </FormControl>
-                </Grid>
+        <FormControl component="fieldset">
+          <RadioGroup
+            row
+            aria-label="gender"
+            name="row-radio-buttons-group"
+            value={value}
+            defaultValue="Text"
+            onChange={(event) => {
+              setValue(event.target.value);
+            }}
+          >
+            <FormControlLabel value="image" control={<Radio />} label="Image" />
 
                 {value == "image" ?(
                     <CardContent>
@@ -214,66 +243,126 @@ const EditPost = () => {
                 )}      
                   
 
-                <Grid  item
-                    alignItems = 'flex-start'>   
-                        
-                    <FormControl component="fieldset">
-                    <FormLabel component="legend"
-                                sx={{   
-                                    marginInlineStart : '5px',
-                                    }}
-                        >State</FormLabel>
-                    <RadioGroup
-                        aria-label="private?"
-                        defaultValue= {state}
-                        name="radio-buttons-group"
-                        >
-                    <FormControlLabel value="public" 
-                                        sx={{   
-                                            marginInlineStart : '5px',
-                                            }} 
-                                        control={<Radio />} label="Public" />
-                    <FormControlLabel value="private" 
-                                    sx={{   
-                                        marginInlineStart : '5px',
-                                        }}
-                                    control={<Radio />} label="Private" />
-                    <FormControlLabel value="friendOnly" 
-                                        sx={{   
-                                            marginInlineStart : '5px',
-                                            }} 
-                                        control={<Radio />} label="Friend Only" />
-                    </RadioGroup>
-                    </FormControl>
-                </Grid>
-                    
+      {value == "image" ? (
+        <CardContent>
+          <Grid container spacing={2} direction="column">
+            <Grid item>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  uploadImage(event.target.files);
+                }}
+              />
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ marginInlineStart: "5px" }}
+                onClick={() => {
+                  imageUpload();
+                }}
+              >
+                Upload
+              </Button>
+            </Grid>
+            <Card sx={{ maxWidth: 200, maxHeight: 200 }}>
+              <img style={images} src={preview} />
+            </Card>
+          </Grid>
+        </CardContent>
+      ) : (
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 5,
+            width: "90%",
+            height: "90%",
+            marginLeft: 5,
+          }}
+          id="addDescription"
+          label="add description"
+          variant="filled"
+          multiline
+          rows={10}
+          value={common}
+          onChange={(e) => setCommon(e.target.value)}
+        />
+      )}
 
-                <Grid item
-                    direction = 'row'
-                    //bgcolor = '#e0e0e0'
-                    >   
-                    <Button variant="contained" color="success" 
-                    sx={{   marginInlineStart : '5px',
-                        }}
-                    onClick= {(event) => {submited(event.target)}}>
-                        Save Post
-                    </Button>
+      <Grid item alignItems="flex-start">
+        <FormControl component="fieldset">
+          <FormLabel
+            component="legend"
+            sx={{
+              marginInlineStart: "5px",
+            }}
+          >
+            State
+          </FormLabel>
+          <RadioGroup
+            aria-label="private?"
+            defaultValue={state}
+            name="radio-buttons-group"
+          >
+            <FormControlLabel
+              value="public"
+              sx={{
+                marginInlineStart: "5px",
+              }}
+              control={<Radio />}
+              label="Public"
+            />
+            <FormControlLabel
+              value="private"
+              sx={{
+                marginInlineStart: "5px",
+              }}
+              control={<Radio />}
+              label="Private"
+            />
+            <FormControlLabel
+              value="friendOnly"
+              sx={{
+                marginInlineStart: "5px",
+              }}
+              control={<Radio />}
+              label="Friend Only"
+            />
+          </RadioGroup>
+        </FormControl>
+      </Grid>
 
-                    <Button variant="contained" 
-                        sx={{   
-                        marginInlineStart : '50px',
-                        }}
-                        
-                        onClick={() => {
-                            let path = `/mypost`; 
-                            history.push(path);
-                            }}> 
-                        Cancle
-                    </Button>
-                </Grid>               
-        </Grid>
+      <Grid
+        item
+        direction="row"
+        //bgcolor = '#e0e0e0'
+      >
+        <Button
+          variant="contained"
+          color="success"
+          sx={{ marginInlineStart: "5px" }}
+          onClick={(event) => {
+            submited(event.target);
+          }}
+        >
+          Save Post
+        </Button>
 
-    )
-}
+        <Button
+          variant="contained"
+          sx={{
+            marginInlineStart: "50px",
+          }}
+          onClick={() => {
+            let path = `/mypost`;
+            history.push(path);
+          }}
+        >
+          Cancle
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
 
-export default EditPost
+export default EditPost;

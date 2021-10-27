@@ -45,7 +45,7 @@ function NavMenu(is_logged_in) {
   const [loggedIn, setLoggedIn] = useState(is_logged_in);
   const login = () => setLoggedIn(!loggedIn);
   const toggle = () => setIsOpen(!isOpen);
-  if (isEmpty(cookies)) {
+  if (isEmpty(cookies) && !window.location.pathname.startsWith("/service/")) {
     return <Redirect to="/login" />;
   }
 
@@ -77,10 +77,11 @@ function NavMenu(is_logged_in) {
                 <DropdownItem divider />
                 <DropdownItem href="/friends">Friends</DropdownItem>
                 <DropdownItem divider />
+                <DropdownItem href="/inbox">Inbox</DropdownItem>
+                <DropdownItem divider />
                 <DropdownItem onClick={handleRemoveCookie}>
                   Sign out
                 </DropdownItem>
-
               </DropdownMenu>
             </UncontrolledDropdown>
           ) : null}
