@@ -36,18 +36,16 @@ def follower_detail(request, author_id, foreign_author_id):
     except User.DoesNotExist:
         return JsonResponse({"error": "cannot find the author or the follower"}, status=status.HTTP_404_NOT_FOUND)
 
+    follow = Follow.objects.filter(following=following, follower=follower)
+
     if(request.method == "DELETE"):
-        follow = Follow.objects.filter(following=following, follower=follower)
         if(not follow):
             return JsonResponse({"error": "cannot find the follow"}, status=status.HTTP_404_NOT_FOUND)
         follow[0].delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     elif(request.method == "PUT"):
-        follow = Follow.objects.filter(following=following, follower=follower)
-        
         if(follow):
             return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
-
         following = {
             "user_name": UserSerializer(following).data["user_name"],
             "github_name": UserSerializer(following).data["github_name"],
@@ -66,4 +64,7 @@ def follower_detail(request, author_id, foreign_author_id):
             return save_method(follow_seralizer)
         else:
             return JsonResponse(follow_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif(request.method == "DELETE"):
+        if(not follow):
+            return JsonResponse({"error": "No follow relationship found"}, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
