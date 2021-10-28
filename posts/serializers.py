@@ -34,6 +34,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
+        instance.content = validated_data.get('content', instance.content)
+        instance.published = validated_data.get(
+            'published', instance.published)
+        instance.visibility = validated_data.get(
+            'visibility', instance.visibility)
         instance.save()
         # instance is current data in DB, validated_data is new incoming data
         return instance

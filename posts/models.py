@@ -10,7 +10,7 @@ class Post(models.Model):
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     title = models.CharField(max_length=120)
     content = models.TextField()
-    published = models.DateTimeField(auto_now_add=True, null=True)
+    published = models.DateTimeField(auto_now=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     # image type
     # TODO: image field
