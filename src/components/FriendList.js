@@ -1,4 +1,4 @@
-import  React from "react";
+import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import head1 from "../static/1.JPG";
@@ -11,18 +11,21 @@ import { StyleSheet, useState, useEffect, Text } from "react";
 const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-  const [friendList,setFriends] = React.useState([]);
+  const [friendList, setFriends] = React.useState([]);
 
-  const newList = [];
-  axios.get(`${baseUrl2}/author/${userid}/followers/`).then((res) => {
-    res.data.map((infor) => {
-      newList.push({
-        github: infor.github_name,
-        follower: infor.user_name,
+  
+    const newList = [];
+    axios.get(`${baseUrl2}/author/${userid}/followers/`).then((res) => {
+      res.data.map((infor) => {
+        newList.push({
+          github: infor.github_name,
+          follower: infor.user_name,
+          friendType: "follower",
+        });
       });
+      setFriends(newList);
     });
-    setFriends(newList)
-  });
+ 
 
   const listItems = friendList.map((item) => (
     <Grid
@@ -47,7 +50,7 @@ const FriendList = () => {
               <Typography>{item.follower}</Typography>
             </Grid>
             <Grid item marginLeft={30}>
-              <Typography>{"hi"}</Typography>
+              <Typography>{item.friendType}</Typography>
             </Grid>
           </Grid>
         </Grid>

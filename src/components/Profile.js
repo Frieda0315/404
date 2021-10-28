@@ -75,8 +75,10 @@ export default function Profile({
     });
   }, [github_user]);
 
+
   const handleFollow = async () => {
     if (userid == userid_folllow) {
+      
     } else {
       const res1 = await axios.get(`${baseUrl2}/author/${userid}/`);
       const authorinfor = res1.data;
@@ -104,6 +106,7 @@ export default function Profile({
         );
       } catch (err) {
         console.log("erros")
+       
       }
     }
   };
@@ -232,6 +235,7 @@ export default function Profile({
                           className={styleClasses.button1}
                           variant="contained"
                           size="small"
+                          //disabled = {handleIfFollow}
                           onClick={handleFollow}
                         >
                           Follow
