@@ -13,7 +13,6 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         author_data = validated_data.pop('author')
         author = User.objects.get(**author_data)
-        print(author)
         return Comment.objects.create(author=author, **validated_data)
 
     class Meta:
