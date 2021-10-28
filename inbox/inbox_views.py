@@ -14,6 +14,26 @@ from backend.helper import *
 # Create your views here.
 
 
+def handleFollowRequest(json_data, receiver):
+    try:
+        actor = User.objects.get(pk=json_data["actor"]["id"])
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
+    existing_request = FriendRequest.objects.filter(
+        object=receiver, actor=actor)
+    if existing_request:
+        return JsonResponse({"error": "Already requested"}, status=status.HTTP_400_BAD_REQUEST)
+    existing_follow = Follow.objects.filter(
+        follower=actor, following=receiver)
+    if existing_follow:
+        return JsonResponse({"error": "Already following"}, status=status.HTTP_400_BAD_REQUEST)
+    request_serializer = FriendRequestSerializer(data=json_data)
+    if request_serializer.is_valid():
+        return save_method(request_serializer)
+    else:
+        return JsonResponse(request_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 def inbox_list(request, author_id):
     try:
@@ -23,21 +43,8 @@ def inbox_list(request, author_id):
     if request.method == 'POST':
         json_data = JSONParser().parse(request)
         if json_data["type"] == "follow":
-            try:
-                actor = User.objects.get(pk=json_data["actor"]["id"])
-            except User.DoesNotExist:
-                return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
-            existing_request = FriendRequest.objects.filter(
-                object=receiver, actor=actor)
-            if existing_request:
-                return JsonResponse({"error": "Already requested"}, status=status.HTTP_400_BAD_REQUEST)
-            existing_follow = Follow.objects.filter(
-                follower=actor, following=receiver)
-            if existing_follow:
-                return JsonResponse({"error": "Already following"}, status=status.HTTP_400_BAD_REQUEST)
-            request_serializer = FriendRequestSerializer(data=json_data)
-            if request_serializer.is_valid():
-                return save_method(request_serializer)
+            return handleFollowRequest(json_data, receiver)
+
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)
 
 # def add_like(like_object):
