@@ -15,6 +15,7 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
+import { TryRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   editbutton: {
@@ -48,10 +49,37 @@ export default function Profile({
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
   const cancel = () => setIsEdit(false);
+  const userid = localStorage.getItem("current_user_id");
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const [github_user, set_github_user] = useState("");
   const [username, setUserName] = useState("");
+  
+  const [ifFollowed, setIfFollowed] = useState(() =>{
+    if (userid == userid_folllow){
+      return true
+    }
+    else if(
+      axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then((res)=>{
+        if(res.data.result == "No follow relationship found"){
+          console.log("1not follow");
+          return false
+        }
+        else{
+          return true
+        }
+        
+      })
 
+    ){
+      console.log("2not follow");
+      return false
+    }
+    else{
+      return false
+    }
+    
+  })
   const [textinput1, setTextinput1] = useState(github_user);
   const [textinput2, setTextinput2] = useState(username);
 
@@ -59,8 +87,7 @@ export default function Profile({
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
 
-  const userid = localStorage.getItem("current_user_id");
-  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  
 
   useEffect(() => {
     set_github_user(localStorage.getItem("github_user"));
@@ -75,6 +102,15 @@ export default function Profile({
     });
   }, [github_user]);
 
+    const handleIfFollow = ()=> {
+    axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then((res)=>{
+      console.log(res.data) 
+      return true
+    }).catch((err) => {
+        return false
+      })
+  }
+
 
   const handleFollow = async () => {
     if (userid == userid_folllow) {
@@ -83,7 +119,23 @@ export default function Profile({
       const res1 = await axios.get(`${baseUrl2}/author/${userid}/`);
       const authorinfor = res1.data;
       const message = authorinfor.user_name + " want follow " + username;
-      console.log(message)
+      console.log(userid)
+      console.log({
+        type: "follow",
+        summary: message,
+        actor: {
+          id: userid,
+          user_name: authorinfor.user_name,
+          github_name: authorinfor.github_name,
+          type: "author",
+        },
+        object: {
+          id: userid_folllow,
+          user_name: username,
+          github_name: post_github_user,
+          type: "author",
+        },
+      })
       try {
         const res = await axios.post(
           `${baseUrl2}/author/${userid_folllow}/inbox/`,
@@ -110,6 +162,7 @@ export default function Profile({
       }
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -235,7 +288,7 @@ export default function Profile({
                           className={styleClasses.button1}
                           variant="contained"
                           size="small"
-                          //disabled = {handleIfFollow}
+                          disabled = {ifFollowed}
                           onClick={handleFollow}
                         >
                           Follow

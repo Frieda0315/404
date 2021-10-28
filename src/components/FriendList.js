@@ -2,22 +2,34 @@ import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import head1 from "../static/1.JPG";
-import head2 from "../static/2.JPG";
-import head3 from "../static/3.JPG";
+import { Delete } from "@material-ui/icons";
 import { Grid } from "@material-ui/core";
 import axios from "axios";
+import {IconButton,} from "@material-ui/core";
 import { StyleSheet, useState, useEffect, Text } from "react";
 
 const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
+  const handleRemove = (e) => {
+    const id = e.id;
+    const newList = friendList.filter((item) => item.id !== id);
+    setFriends(newList);
+    
+    axios.delete(`${baseUrl2}/author/${userid}/followers/${id}/`).then((res)=>{
+       console.log(res.data) })
 
-  
+
+  };
+
+  useEffect(() => {
     const newList = [];
     axios.get(`${baseUrl2}/author/${userid}/followers/`).then((res) => {
+      console.log(res.data)
       res.data.map((infor) => {
         newList.push({
+          id: infor.id,
           github: infor.github_name,
           follower: infor.user_name,
           friendType: "follower",
@@ -25,6 +37,7 @@ const FriendList = () => {
       });
       setFriends(newList);
     });
+  },[])
  
 
   const listItems = friendList.map((item) => (
@@ -57,6 +70,23 @@ const FriendList = () => {
 
         <Grid item marginLeft={7}>
           <Typography>{item.github}</Typography>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="Delete"
+            onClick={() => handleRemove(item)}
+          >
+            <Delete />
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
