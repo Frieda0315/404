@@ -9,6 +9,9 @@ from likes import like_views
 from inbox import inbox_views
 from follows import follow_views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     # TODO: update urls for post and authors
     # TODO: update all urls using posts, in order to support with/without slash in the end
@@ -38,11 +41,13 @@ urlpatterns = [
          like_views.author_like_list, name='author_like_list'),
 
     # follower
-    path('service/author/<uuid:author_id>/followers/', follow_views.follower_list, name='follower_list'),
-    path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>/', follow_views.follower_detail, name='follower_detail'),
+    path('service/author/<uuid:author_id>/followers/',
+         follow_views.follower_list, name='follower_list'),
+    path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>/',
+         follow_views.follower_detail, name='follower_detail'),
 
     # inbox
-    #r'^about$'
+    # r'^about$'
     path('service/author/<uuid:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
 
@@ -51,6 +56,8 @@ urlpatterns = [
     re_path('(^(?!(service)).*$)',
             TemplateView.as_view(template_name='index.html'))
 ]
+
+
 # # image debug
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL,
