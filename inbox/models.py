@@ -9,12 +9,10 @@ from users.models import User
 
 
 class Inbox(models.Model):
-    id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     post = models.ManyToManyField(
         Post, blank=True)
 
-    receive_author = models.ForeignKey(
-        User, on_delete=models.CASCADE
+    receive_author = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True
     )

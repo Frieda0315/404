@@ -41,9 +41,9 @@ def handlePostRequest(json_data, receiver):
         post = Post.objects.get(pk=json_data["id"])
     except Exception as e:
         return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
-    print((type(post.author)))
-    inbox_data = {"post": post.__dict__, "receive_author": receiver.__dict__}
-    inbox_data["post"]["author"] = post.author.__dict__
+    print([post.__dict__])
+    inbox_data = {"post": [post.__dict__], "receive_author": receiver.__dict__}
+    inbox_data["post"][0]["author"] = post.author.__dict__
     inbox_seralizer = InboxSerializer(data=inbox_data)
     if inbox_seralizer.is_valid():
         return save_method(inbox_seralizer)
