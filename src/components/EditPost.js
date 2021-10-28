@@ -111,7 +111,7 @@ const EditPost = () => {
       setDate(currentDateTime);
 
     const author = await axios.get(`${baseUrl2}/author/${userid}/`)
-    console.log(common)
+    console.log(state)
     const newpost = axios.post(`${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
         { id:item1.id,
           title: title,
@@ -122,10 +122,7 @@ const EditPost = () => {
       } 
       )
       console.log(newpost.data)
-     
-      
-    
-      //history.push({ pathname: "/mypost/" });
+      history.push({ pathname: "/mypost/" });
     }
   };
 
@@ -161,7 +158,6 @@ const EditPost = () => {
             aria-label="gender"
             name="row-radio-buttons-group"
             value={value}
-            defaultValue="Text"
             onChange={(event) => {
               setValue(event.target.value);
             }}
@@ -235,8 +231,10 @@ const EditPost = () => {
           </FormLabel>
           <RadioGroup
             aria-label="private?"
-            defaultValue={state}
             name="radio-buttons-group"
+            onChange={(event) => {
+              setState(event.target.value);
+            }}
           >
             <FormControlLabel
               value="PUBLIC"

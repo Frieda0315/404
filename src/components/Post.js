@@ -184,11 +184,11 @@ const Post = () => {
           </FormLabel>
           <RadioGroup
             aria-label="private?"
-            defaultValue="public"
+            defaultValue="PUBLIC"
             name="radio-buttons-group"
           >
             <FormControlLabel
-              value="public"
+              value="PUBLIC"
               sx={{
                 marginInlineStart: "5px",
               }}
@@ -196,7 +196,7 @@ const Post = () => {
               label="Public"
             />
             <FormControlLabel
-              value="private"
+              value="PRIVATE"
               sx={{
                 marginInlineStart: "5px",
               }}
@@ -204,7 +204,7 @@ const Post = () => {
               label="Private"
             />
             <FormControlLabel
-              value="friendOnly"
+              value="FRIRENDS"
               sx={{
                 marginInlineStart: "5px",
               }}

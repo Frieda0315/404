@@ -37,6 +37,7 @@ def inbox_list(request, author_id):
                 return JsonResponse({"error": "Already following"}, status=status.HTTP_400_BAD_REQUEST)
             request_serializer = FriendRequestSerializer(data=json_data)
             if request_serializer.is_valid():
+                #print(request_serializer.data)
                 return save_method(request_serializer)
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -38,11 +38,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Profile({ user, post_github_user, is_follow }) {
+export default function Profile({ user, post_github_user, is_follow,userid_folllow }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-  console.log(user);
   const cancel = () => setIsEdit(false);
 
   const [github_user, set_github_user] = useState("");
@@ -54,7 +53,9 @@ export default function Profile({ user, post_github_user, is_follow }) {
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
+
   const userid = localStorage.getItem("current_user_id");
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   useEffect(() => {
     set_github_user(localStorage.getItem("github_user"));
@@ -64,10 +65,45 @@ export default function Profile({ user, post_github_user, is_follow }) {
       set_github_user(post_github_user);
     }
     axios.get(`${baseUrl}/${github_user}`).then((res) => {
-      console.log(res.data["avatar_url"]);
+      //console.log(res.data["avatar_url"]);
       seturl(res.data["avatar_url"]);
     });
   }, [github_user]);
+
+
+ 
+  const handleFollow = async () => {
+    if(userid == userid_folllow){
+      
+    }
+    else{
+      const res1 = await axios.get(`${baseUrl2}/author/${userid}/`)
+      const authorinfor = res1.data
+      console.log("hi", authorinfor.user_name)
+      console.log(userid)
+      console.log(userid_folllow)
+      const res = await axios.post(`${baseUrl2}/author/${userid_folllow}/inbox/`,
+        {
+          "type" : "follow",
+          "summary" :  "want follow " ,
+          "actor": {
+            "id": userid,
+            "user_name": username,
+            "github_name": post_github_user,
+            "type": "author"
+          },
+          "object": {
+            "id": userid_folllow,
+            "user_name": authorinfor.user_name,
+            "github_name": authorinfor.github_name,
+            "type": "author"
+          }
+      }
+      )
+      console.log(res.data)
+    }
+  
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,8 +111,7 @@ export default function Profile({ user, post_github_user, is_follow }) {
     setUserName(textinput2);
     setIsEdit(false);
 
-    const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-
+    
     /*axios
       .post(`${baseUrl2}/author/${userid}/`, {
         github_user: github_user,
@@ -195,7 +230,7 @@ export default function Profile({ user, post_github_user, is_follow }) {
                           className={styleClasses.button1}
                           variant="contained"
                           size="small"
-                          
+                          onClick = {handleFollow}
                         >
                           Follow
                         </Button>
