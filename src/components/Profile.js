@@ -42,7 +42,6 @@ export default function Profile({ user, post_github_user, is_follow }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-  console.log(user);
   const cancel = () => setIsEdit(false);
 
   const [github_user, set_github_user] = useState("");
@@ -68,31 +67,44 @@ export default function Profile({ user, post_github_user, is_follow }) {
       seturl(res.data["avatar_url"]);
     });
   }, [github_user]);
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    set_github_user(textinput1);
-    setUserName(textinput2);
     setIsEdit(false);
+    //console.log(textinput1);
+    //console.log(textinput2);
+    //console.log(username);
 
-    const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-
-    /*axios
+    //in the case of textinput is not set， set the textinput to current github_user
+    if (textinput1 === "") {
+      setTextinput1(github_user);
+    }
+    if (textinput2 === "") {
+      setTextinput2(username);
+    }
+    axios
       .post(`${baseUrl2}/author/${userid}/`, {
-        github_user: github_user,
-        user_name: username,
+        id: userid,
+        github_name: textinput1,
+        user_name: textinput2,
+        type: "author",
       })
       .then(
         (response) => {
           console.log(response);
-          localStorage.setItem("github_user", github_user);
-          localStorage.setItem("user_name", username);
+          set_github_user(textinput1);
+          setUserName(textinput2);
+          localStorage.removeItem("github_user");
+          localStorage.removeItem("user_name");
+          localStorage.setItem("github_user", textinput1);
+          localStorage.setItem("user_name", textinput2);
         },
         (error) => {
-          alert("Incorrect Credntials!");
+          alert("error ");
           console.log(error);
         }
-      );*/
+      );
   };
 
   return (
