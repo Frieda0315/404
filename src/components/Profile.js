@@ -42,14 +42,10 @@ export default function Profile({ user, post_github_user, is_follow }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-  console.log(user);
   const cancel = () => setIsEdit(false);
 
   const [github_user, set_github_user] = useState("");
   const [username, setUserName] = useState("");
-
-  const [textinput1, setTextinput1] = useState(github_user);
-  const [textinput2, setTextinput2] = useState(username);
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
@@ -69,30 +65,52 @@ export default function Profile({ user, post_github_user, is_follow }) {
     });
   }, [github_user]);
 
+  const [textinput1, setTextinput1] = useState(
+    localStorage.getItem("github_user")
+  );
+  const [textinput2, setTextinput2] = useState(
+    localStorage.getItem("user_name")
+  );
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    set_github_user(textinput1);
-    setUserName(textinput2);
     setIsEdit(false);
 
-    const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+    //console.log(username);
 
-    /*axios
+    //in the case of textinput is not set， set the textinput to current github_user
+    /*if (textinput1 === "") {
+      setTextinput1(github_user);
+    }
+    if (textinput2 === "") {
+      console.log(username);
+
+      setTextinput2(username);
+    }*/
+
+    axios
       .post(`${baseUrl2}/author/${userid}/`, {
-        github_user: github_user,
-        user_name: username,
+        id: userid,
+        github_name: textinput1,
+        user_name: textinput2,
+        type: "author",
       })
       .then(
         (response) => {
           console.log(response);
-          localStorage.setItem("github_user", github_user);
-          localStorage.setItem("user_name", username);
+          set_github_user(textinput1);
+          setUserName(textinput2);
+          localStorage.removeItem("github_user");
+          localStorage.removeItem("user_name");
+          localStorage.setItem("github_user", textinput1);
+          localStorage.setItem("user_name", textinput2);
         },
         (error) => {
-          alert("Incorrect Credntials!");
+          alert("error ");
           console.log(error);
         }
-      );*/
+      );
   };
 
   return (
