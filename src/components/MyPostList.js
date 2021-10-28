@@ -15,6 +15,7 @@ import head2 from "../static/2.JPG";
 import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Share from "./Share";
+import axios from "axios";
 const PostList = [
   {
     title: "Hello world",
@@ -76,14 +77,22 @@ const PostList = [
 
 const MyPostList = () => {
   const history = useHistory();
-  const [PostList1, setPostList] = React.useState(PostList);
+  const [PostList1, setPostList] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const open_share = () => setOpenPopup2(true);
+
+  const userid = localStorage.getItem("current_user_id");
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handleRemove = (e) => {
     const id = e.id;
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
+    console.log(id)
+    axios.delete(`${baseUrl2}/authors/${userid}/posts/${id}/`).then((res)=>{
+      console.log(res.data)
+    })
+
   };
 
   const handleEdit = (e) => {
@@ -93,6 +102,34 @@ const MyPostList = () => {
     history.push({ pathname: "/mypost/edit", state: item });
     alert(item.content);
   };
+
+  axios.get(`${baseUrl2}/authors/${userid}/`).then((res)=>{
+    console.log(res.data)
+  })
+  //console.log(baseUrl2)
+  useEffect(() => {
+    var newList = [];
+    axios.get(`${baseUrl2}/authors/${userid}/posts/`).then((res) => {
+    //console.log(res.data)
+    res.data.map((single) => {
+      //console.log(single.content);
+      newList.push({  
+        id: single.id,
+        date: single.published,
+        content: single.content,
+        author: single.author.user_name,
+        github_user: single.author.github_name,
+        title: single.title,
+        state: single.visibility,
+        contentType: single.image  
+      });
+    });
+    setPostList(newList)
+  })
+},[])
+
+
+    
 
   const listItems = PostList1.map((post) => (
     <Grid
@@ -134,7 +171,7 @@ const MyPostList = () => {
       <Grid item>
         <Typography variant="h5">{post.title}</Typography>
       </Grid>
-      {post.contentType == "text/plain" ? (
+      {post.contentType == null ? (
         <Grid item spacing={2}>
           <Typography>{post.content}</Typography>
         </Grid>
