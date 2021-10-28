@@ -325,34 +325,83 @@ function PostStream(props) {
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
   const [comments, setComments] = React.useState({});
+  const [user, setUser] = React.useState();
+  const [github_user, setGit_user] = React.useState();
 
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
-
-  const open = () => setOpenPopup(true);
+  const open = (author, git) => {
+    console.log(git);
+    setUser(author);
+    setGit_user(git);
+    setOpenPopup(true);
+  };
   const open_share = () => setOpenPopup2(true);
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    axios.get(`${baseUrl2}/posts/`).then((res) => {
-      //console.log(res.data);
-      newList = res.data;
-    });
+    const requestOne = axios.get(`${baseUrl2}/posts/`);
+    const requestTwo = axios.get(`${baseUrl}/xius666/events`);
+    axios
+      .all([requestOne, requestTwo])
+      .then(
+        axios.spread((...responses) => {
+          const responseOne = responses[0];
+          responseOne.data.map((single) => {
+            newList.push({
+              id: single.id,
+              published: single.published,
+              content: single.content,
+              author: single.author.user_name,
+              github_user: single.author.github_name,
+              title: single.title,
+            });
+          });
+          const responseTwo = responses[1];
+          responseTwo.data.map((single) => {
+            //console.log(single.actor);
+            newList.push({
+              id: single.id,
+              published: single.created_at,
+              content: "from repo: " + single.repo.name,
+              author: single.actor.login,
+              github_user: "",
+              title: "Github Activity: " + single.type,
+            });
+          });
+          setPostlist(newList);
+        })
+      )
+      .catch((errors) => {
+        console.log(errors);
+      });
+    /*
+    axios
+      .get(`${baseUrl2}/posts/`)
+      .then((res) => {
+        if (res.data[0].id) {
+          newList = newList.concat(res.data);
+        }
+      })
+      .catch(function (error) {
+        console.log("Show error notification!");
+        return Promise.reject(error);
+      });
     axios.get(`${baseUrl}/xius666/events`).then((res) => {
       console.log(res.data);
       res.data.map((single) => {
         //console.log(single.actor);
         newList.push({
           id: single.id,
-          date: single.created_at,
+          published: single.created_at,
           content: "from repo: " + single.repo.name,
           author: single.actor.login,
           title: "Github Activity: " + single.type,
         });
       });
       setPostlist(newList);
-    });
+    });*/
   }, []);
   if (Object.keys(comments).length !== 0) {
     return <Redirect to={"/posts/" + comments.id + "/comments"}></Redirect>;
@@ -372,11 +421,14 @@ function PostStream(props) {
         alignItems="flex-start"
       >
         <Grid item>
-          <Avatar src={dummy_image} onClick={open}></Avatar>
+          <Avatar
+            src={dummy_image}
+            onClick={() => open(post.author, post.github_user)}
+          ></Avatar>
         </Grid>
         <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
-          <Typography>{post != null ? post.date : "null date"}</Typography>
+          <Typography>{post != null ? post.published : "null date"}</Typography>
         </Grid>
       </Grid>
       <Grid container>
@@ -493,7 +545,11 @@ function PostStream(props) {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <Profile user={1} is_follow={true}></Profile>
+        <Profile
+          user={user}
+          post_github_user={github_user}
+          is_follow={true}
+        ></Profile>
       </Popup>
       <Popup
         title={"Who do you want to share with?"}

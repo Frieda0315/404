@@ -9,11 +9,11 @@ import { CookiesProvider } from "react-cookie";
 import Login from "./components/login/Login";
 import signup from "./components/signup/signup";
 import Profile from "./components/Profile";
+import ParticlesBg from "particles-bg";
+
 ReactDOM.render(
   <BrowserRouter>
-    <CookiesProvider>
-      <App></App>
-    </CookiesProvider>
+    <App></App>
   </BrowserRouter>,
   document.getElementById("root")
 );

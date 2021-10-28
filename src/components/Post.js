@@ -18,6 +18,7 @@ import { useHistory } from "react-router-dom";
 import { Axios } from "axios";
 import { maxHeight } from "@mui/system";
 import "./font/style.css";
+import NavMenu from "./NavMenu";
 
 const heading = {
   fontSize: "30px",
