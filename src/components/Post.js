@@ -91,8 +91,8 @@ const Post = () => {
       setDate(currentDateTime);
 
       const author = await axios.get(`${baseUrl2}/author/${userid}/`);
-      var uuid = uuidv4();
-      const newpost = axios.put(
+      const uuid = uuidv4();
+      const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
         {
           type: "post",
