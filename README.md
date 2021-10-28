@@ -20,6 +20,7 @@ This project's background, description and requirement are based on Abram Hindle
   </tr>
 </table>
 
+Welcome to join us by joining our [slack channel](https://join.slack.com/t/i-connecttalk/shared_invite/zt-xqfp0679-DqE8bQSH0PDebsXG1r_Rzg)!
 # Please use npm ci instead of npm install to install all the dependency for the front end
 
 # Development Process(from root dir)
