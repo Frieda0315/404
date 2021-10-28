@@ -18,12 +18,10 @@ class InboxSerializer(serializers.ModelSerializer):
 
         posts = []
         posts.append(post)
-        print(posts)
 
         instance = Inbox.objects.get_or_create(
             receive_author=author)[0]
 
-        print(instance)
         instance.post.set(posts)
         return instance
 
