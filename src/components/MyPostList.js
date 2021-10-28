@@ -103,16 +103,14 @@ const MyPostList = () => {
     alert(item.content);
   };
 
-  axios.get(`${baseUrl2}/authors/${userid}/`).then((res)=>{
-    console.log(res.data)
-  })
+ 
   //console.log(baseUrl2)
   useEffect(() => {
     var newList = [];
     axios.get(`${baseUrl2}/authors/${userid}/posts/`).then((res) => {
     //console.log(res.data)
     res.data.map((single) => {
-      //console.log(single.content);
+      console.log(single.content);
       newList.push({  
         id: single.id,
         date: single.published,

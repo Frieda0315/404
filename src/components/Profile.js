@@ -195,6 +195,7 @@ export default function Profile({ user, post_github_user, is_follow }) {
                           className={styleClasses.button1}
                           variant="contained"
                           size="small"
+                          
                         >
                           Follow
                         </Button>

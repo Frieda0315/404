@@ -92,7 +92,7 @@ const EditPost = () => {
     alert("Your file is being uploaded!");
   };
 
-  const submited =  () => {
+  const submited = async () => {
     if (value == "image") {
       const item2 = {
         title: title,
@@ -110,17 +110,19 @@ const EditPost = () => {
       const currentDateTime = Date().toLocaleString();
       setDate(currentDateTime);
 
-      axios.post(`${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
-      { title: title,
-      content: common,
-      published:date,
-      visibility:state,
-      image:null,} ).then(
-        (res)=>{
-          console.log(res.data)
-        }
-      ).catch(err => console.log(err))
-      
+    const author = await axios.get(`${baseUrl2}/author/${userid}/`)
+    console.log(common)
+    const newpost = axios.post(`${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+        { id:item1.id,
+          title: title,
+        content: common,
+        published:date,
+        author:author.data,
+        visibility:state,
+      } 
+      )
+      console.log(newpost.data)
+     
       
     
       //history.push({ pathname: "/mypost/" });
