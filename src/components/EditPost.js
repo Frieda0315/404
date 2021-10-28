@@ -52,6 +52,7 @@ const EditPost = () => {
     }
   });
   const [state, setState] = React.useState(item1.state);
+  console.log("hi",state )
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
   const [date, setDate] = React.useState(location.date)
@@ -113,7 +114,8 @@ const EditPost = () => {
     const author = await axios.get(`${baseUrl2}/author/${userid}/`)
     console.log(state)
     const newpost = axios.post(`${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
-        { id:item1.id,
+        { type: "post",
+          id:item1.id,
           title: title,
         content: common,
         published:date,
@@ -232,6 +234,7 @@ const EditPost = () => {
           <RadioGroup
             aria-label="private?"
             name="radio-buttons-group"
+            value = {state}
             onChange={(event) => {
               setState(event.target.value);
             }}
