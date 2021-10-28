@@ -47,9 +47,6 @@ export default function Profile({ user, post_github_user, is_follow }) {
   const [github_user, set_github_user] = useState("");
   const [username, setUserName] = useState("");
 
-  const [textinput1, setTextinput1] = useState(github_user);
-  const [textinput2, setTextinput2] = useState(username);
-
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
@@ -67,22 +64,31 @@ export default function Profile({ user, post_github_user, is_follow }) {
       seturl(res.data["avatar_url"]);
     });
   }, [github_user]);
+
+  const [textinput1, setTextinput1] = useState(
+    localStorage.getItem("github_user")
+  );
+  const [textinput2, setTextinput2] = useState(
+    localStorage.getItem("user_name")
+  );
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsEdit(false);
-    //console.log(textinput1);
-    //console.log(textinput2);
+
     //console.log(username);
 
     //in the case of textinput is not set， set the textinput to current github_user
-    if (textinput1 === "") {
+    /*if (textinput1 === "") {
       setTextinput1(github_user);
     }
     if (textinput2 === "") {
+      console.log(username);
+
       setTextinput2(username);
-    }
+    }*/
+
     axios
       .post(`${baseUrl2}/author/${userid}/`, {
         id: userid,

@@ -331,7 +331,6 @@ function PostStream(props) {
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const open = (author, git) => {
-    console.log(git);
     setUser(author);
     setGit_user(git);
     setOpenPopup(true);
@@ -342,7 +341,9 @@ function PostStream(props) {
   useEffect(() => {
     var newList = [];
     const requestOne = axios.get(`${baseUrl2}/posts/`);
-    const requestTwo = axios.get(`${baseUrl}/xius666/events`);
+    const requestTwo = axios.get(
+      `${baseUrl}/${localStorage.getItem("github_user")}/events`
+    );
     axios
       .all([requestOne, requestTwo])
       .then(
@@ -356,6 +357,8 @@ function PostStream(props) {
               author: single.author.user_name,
               github_user: single.author.github_name,
               title: single.title,
+              img: single.image,
+              author_id: single.author.id,
             });
           });
           const responseTwo = responses[1];
@@ -368,6 +371,8 @@ function PostStream(props) {
               author: single.actor.login,
               github_user: "",
               title: "Github Activity: " + single.type,
+              img: "",
+              author_id: "github",
             });
           });
           setPostlist(newList);
@@ -404,7 +409,17 @@ function PostStream(props) {
     });*/
   }, []);
   if (Object.keys(comments).length !== 0) {
-    return <Redirect to={"/posts/" + comments.id + "/comments"}></Redirect>;
+    return (
+      <Redirect
+        to={
+          "/authors/" +
+          comments.author_id +
+          "/posts/" +
+          comments.id +
+          "/comments"
+        }
+      ></Redirect>
+    );
   }
   const postStream = postlist.map((post) => (
     <Grid
@@ -433,7 +448,7 @@ function PostStream(props) {
       </Grid>
       <Grid container>
         <Grid item xs>
-          {dummyImages[0] != null ? null : (
+          {post.image === "" ? null : (
             <div
               style={{
                 display: "flex",
@@ -447,7 +462,7 @@ function PostStream(props) {
                   maxHeight: "200px",
                 }}
                 component="img"
-                image={dummyImages[0]}
+                src={post.image}
               />
             </div>
           )}
@@ -491,51 +506,51 @@ function PostStream(props) {
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        spacing={1}
-        direction="row"
-        justifyContent="flex-end"
-        alignItems="flex-end"
-      >
-        <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="thumbup"
-            onClick={() => setVote(vote + 1)}
-          >
-            <ThumbUp />
-          </IconButton>
+      {post.author_id !== "github" ? (
+        <Grid
+          container
+          spacing={1}
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="flex-end"
+        >
+          <Grid item>
+            <IconButton
+              edge="end"
+              aria-label="thumbup"
+              onClick={() => setVote(vote + 1)}
+            >
+              <ThumbUp />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <Typography>{vote}</Typography>
+          </Grid>{" "}
+          <Grid item>
+            <IconButton edge="end" aria-label="share" onClick={open_share}>
+              <ShareRounded />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton
+              edge="end"
+              aria-label="comment"
+              onClick={() => viewComments(post)}
+            >
+              <Comment />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton
+              edge="end"
+              aria-label="Delete"
+              onClick={() => handleRemove(post)}
+            >
+              <Delete />
+            </IconButton>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Typography>{vote}</Typography>
-        </Grid>
-
-        <Grid item>
-          <IconButton edge="end" aria-label="share" onClick={open_share}>
-            <ShareRounded />
-          </IconButton>
-        </Grid>
-        <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="comment"
-            onClick={() => viewComments(post)}
-          >
-            <Comment />
-          </IconButton>
-        </Grid>
-
-        <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="Delete"
-            onClick={() => handleRemove(post)}
-          >
-            <Delete />
-          </IconButton>
-        </Grid>
-      </Grid>
+      ) : null}
     </Grid>
   ));
   return (
