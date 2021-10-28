@@ -60,7 +60,7 @@ class Signup extends React.Component {
           id: uuidv4(),
           user_name: this.state.username,
           password: this.state.password,
-          github_name: this.state.password,
+          github_name: this.state.github_name,
           type: "author",
         })
         .then(
