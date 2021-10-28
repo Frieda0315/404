@@ -16,13 +16,10 @@ class InboxSerializer(serializers.ModelSerializer):
         author = User.objects.get(**author_data)
         post = Post.objects.get(pk=post_data[0]["id"])
 
-        posts = []
-        posts.append(post)
-
         instance = Inbox.objects.get_or_create(
             receive_author=author)[0]
 
-        instance.post.set(posts)
+        instance.post.add(post)
         return instance
 
     class Meta:

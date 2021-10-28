@@ -1,16 +1,16 @@
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.response import Response
 from .serializers import InboxSerializer
-from users.serializers import UserSerializer
 from likes.serializers import LikeSerializer
 from .models import Inbox
 from users.models import User
 from follows.models import Follow, FriendRequest
 from follows.serializers import FriendRequestSerializer
 from posts.models import Post
+from posts.serializers import PostSerializer
 from backend.helper import *
 # Create your views here.
 
@@ -59,12 +59,13 @@ def handleLikeRequest(json_data, receiver):
         return JsonResponse(like_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'DELETE'])
 def inbox_list(request, author_id):
     try:
         receiver = User.objects.get(pk=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
+    # Post a shared post or a like or a friend request
     if request.method == 'POST':
         json_data = JSONParser().parse(request)
         if json_data["type"] == "follow":
@@ -73,16 +74,23 @@ def inbox_list(request, author_id):
             return handlePostRequest(json_data, receiver)
         elif json_data["type"] == "like":
             return handleLikeRequest(json_data, receiver)
+    # Get shared posts
     elif request.method == 'GET':
         try:
-            author = User.objects.get(pk=author_id)
-        except User.DoesNotExist:
-            return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            inbox = Inbox.objects.get(receive_author=author)
+            inbox = Inbox.objects.get(receive_author=receiver)
         except Inbox.DoesNotExist:
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
-        print(inbox.post.all())
+        post_serializer = PostSerializer(inbox.post.all(), many=True)
+        post_json = {"type": "inbox", "author": author_id,
+                     "items": post_serializer.data}
+        return JsonResponse(post_json, safe=False, status=status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        try:
+            inbox = Inbox.objects.get(receive_author=receiver)
+        except Inbox.DoesNotExist:
+            return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
+        inbox.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)

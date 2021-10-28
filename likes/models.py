@@ -11,7 +11,7 @@ from comments.models import Comment
 class Like(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    # author of the post/comment
+    # author of the like, not quite sure yet
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.ForeignKey(
