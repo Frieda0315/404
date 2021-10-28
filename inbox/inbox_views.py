@@ -22,6 +22,7 @@ def inbox_list(request, author_id):
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
     if request.method == 'POST':
         json_data = JSONParser().parse(request)
+        print(json_data)
         if json_data["type"] == "follow":
             try:
                 actor = User.objects.get(pk=json_data["actor"]["id"])
