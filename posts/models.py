@@ -8,13 +8,14 @@ from users.models import User
 class Post(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    type = models.CharField(max_length=120, default="post")
     title = models.CharField(max_length=120)
     content = models.TextField()
-    published = models.DateTimeField(auto_now_add=True, null=True)
+    published = models.DateTimeField(auto_now=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     # image type
     # TODO: image field
-    image = models.ImageField(blank=True, upload_to='img')
+    # image = models.ImageField(blank=True, upload_to='img')
 
     # the first column is the actual value in databse, the second column is the human-readable value in admin selecting page
     visibilityTypes = [("PUBLIC",     "Public"),

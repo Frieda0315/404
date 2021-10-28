@@ -21,7 +21,8 @@ urlpatterns = [
 
 
     path('service/authors/', user_views.author_list, name='author_list'),
-    path('service/author/<uuid:id>/', user_views.author_detail, name='author_detail'),
+    path('service/author/<uuid:id>/',
+         user_views.author_detail, name='author_detail'),
 
     re_path('^service/users/signup/?$', user_views.signup, name='signup'),
     re_path('^service/users/login/?$', user_views.login, name='login'),
