@@ -1,17 +1,16 @@
 from django.http.response import JsonResponse
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from .serializers import FollowSerializer
-from .models import Follow
+from .serializers import FollowSerializer, FriendSerializer
+from .models import Follow, Friend, FriendRequest
 from users.models import User
 from users.serializers import UserSerializer
 from backend.helper import *
-import uuid
-from django.forms.models import model_to_dict
 
 # Create your views here.
+
+
 @api_view(['GET'])
 def follower_list(request, author_id):
     try:
@@ -26,9 +25,10 @@ def follower_list(request, author_id):
     # follower_serializer.data
     return JsonResponse(follower_list, status=status.HTTP_200_OK, safe=False)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def follower_detail(request, author_id, foreign_author_id):
-    if(author_id==foreign_author_id):
+    if(author_id == foreign_author_id):
         return JsonResponse({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         following = User.objects.get(pk=author_id)
@@ -36,6 +36,7 @@ def follower_detail(request, author_id, foreign_author_id):
     except User.DoesNotExist:
         return JsonResponse({"error": "cannot find the author or the follower"}, status=status.HTTP_404_NOT_FOUND)
 
+    # try to find the follow relationship
     follow = Follow.objects.filter(following=following, follower=follower)
 
     if(request.method == "DELETE"):
@@ -44,27 +45,48 @@ def follower_detail(request, author_id, foreign_author_id):
         follow[0].delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     elif(request.method == "PUT"):
-        if(follow):
+        friend_request = FriendRequest.objects.filter(
+            actor=follower, object=following)
+        if follow:
             return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
-        following = {
+        if not friend_request:
+            return JsonResponse({"error": "haven't requested yet"}, status=status.HTTP_400_BAD_REQUEST)
+        following_dict = {
             "user_name": UserSerializer(following).data["user_name"],
             "github_name": UserSerializer(following).data["github_name"],
             "type": UserSerializer(following).data["type"],
             "id": UserSerializer(following).data["id"]
         }
-        follower = {
+        follower_dict = {
             "user_name": UserSerializer(follower).data["user_name"],
             "github_name": UserSerializer(follower).data["github_name"],
             "type": UserSerializer(follower).data["type"],
             "id": UserSerializer(follower).data["id"]
         }
-        follow_data = {"type": "follow", "following": following, "follower": follower}
+        follow_data = {"following": following_dict, "follower": follower_dict}
         follow_seralizer = FollowSerializer(data=follow_data)
-        if(follow_seralizer.is_valid()):
-            return save_method(follow_seralizer)
+        if follow_seralizer.is_valid():
+            result = save_method(follow_seralizer)
+            friend_request[0].delete()
+            reverse_follow = Follow.objects.filter(
+                following=follower, follower=following)
+            if reverse_follow:
+                friend_data = {"first_user": following_dict,
+                               "second_user": follower_dict}
+                friend_seralizer = FriendSerializer(data=friend_data)
+                if friend_seralizer.is_valid():
+                    try:
+                        friend_seralizer.save()
+                    except Exception as e:
+                        return JsonResponse({"error": "fail to store friend"}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return JsonResponse(friend_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return result
         else:
             return JsonResponse(follow_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif(request.method == "DELETE"):
+    elif(request.method == "GET"):
         if(not follow):
-            return JsonResponse({"error": "No follow relationship found"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"result": "No follow relationship found"}, status=status.HTTP_200_OK)
+        return JsonResponse({"result": "Follow relationship found"}, status=status.HTTP_200_OK)
+
     return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)

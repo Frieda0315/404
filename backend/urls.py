@@ -38,9 +38,10 @@ urlpatterns = [
 
     # follower
     path('service/author/<uuid:author_id>/followers/', follow_views.follower_list, name='follower_list'),
-    path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>', follow_views.follower_detail, name='follower_detail'),
+    path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>/', follow_views.follower_detail, name='follower_detail'),
 
     # inbox
+    #r'^about$'
     path('service/author/<uuid:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
 
