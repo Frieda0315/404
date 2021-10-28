@@ -11,6 +11,8 @@ from posts.models import Post
 from likes.models import Like
 from comments.models import Comment
 from inbox.models import Inbox
+from follows.models import *
+
 from datetime import datetime
 from django.urls import reverse, resolve
 from posts.post_views import *
@@ -83,6 +85,17 @@ class PostModelTests(TestCase):
             receive_author=r
         )
 
+    def init_follow(self, id=uuid.uuid4(), follower=None, following=None):
+        if follower == None:
+            Follower = self.init_author()
+        if following == None:
+            Following = self.init_author()
+        return Follow(
+            id=id,
+            follower=Follower,
+            following=Following
+        )
+
     def test_author(self):
         authorInstance = self.init_author()
         self.assertTrue(isinstance(authorInstance, User))
@@ -125,6 +138,11 @@ class PostModelTests(TestCase):
         self.assertTrue(isinstance(inbox.receive_author, User))
         self.assertTrue(isinstance(inbox.post, Post))
         self.assertTrue(isinstance(inbox.like, Like))
+
+    def test_follow(self):
+        follow = self.init_follow()
+        self.assertTrue(isinstance(follow.follower, User))
+        self.assertTrue(isinstance(follow.following, User))
 
 
 class URLTests(TestCase):
