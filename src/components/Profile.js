@@ -156,8 +156,9 @@ export default function Profile({
             },
           }
         );
+        //console.log("res",res.data)
       } catch (err) {
-        console.log("erros")
+        console.log("errors")
        
       }
     }
