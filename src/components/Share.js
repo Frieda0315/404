@@ -11,49 +11,21 @@ import ava from "./assets/avator.png";
 import { CardActionArea } from "@material-ui/core";
 import axios from "axios";
 import { responsiveFontSizes } from "@mui/material";
+import Popup from "./Popup";
 
 function Share(props) {
-  const tempUsers = [
-    {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-      host: "http://127.0.0.1:5454/",
-      displayName: "oliver",
-      url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-      github: "http://github.com/xius666",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-    {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40668e",
-      host: "http://127.0.0.1:5454/",
-      displayName: "Lara Croft",
-      url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-      github: "http://github.com/laracroft",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-    {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40668e",
-      host: "http://127.0.0.1:5454/",
-      displayName: "Rick",
-      url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-      github: "http://github.com/rick",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-  ];
-
   const postToShare = props.post;
   postToShare["type"] = "post";
   const [authorList, setAuthorList] = React.useState([]);
+  //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
-    axios.get(`${baseUrl2}/author/${user.id}/inbox/`).then((response) => {
-      console.log(response.data);
-    });
     axios
       .post(`${baseUrl2}/author/${user.id}/inbox/`, postToShare)
-      .then((response) => {})
+      .then((response) => {
+        console.log(response);
+        // setSuccess(true);
+      })
       .catch((error) => {
         console.log(error);
       });
