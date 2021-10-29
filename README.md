@@ -1,4 +1,4 @@
-# CMPUT404-project-socialdistribution
+# I-connect
 heroku link : https://i-connect.herokuapp.com/
 
 CMPUT404-project-socialdistribution
