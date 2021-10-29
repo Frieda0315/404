@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Typography, IconButton, Avatar, Fab } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import { Grid } from "@mui/material";
@@ -138,17 +138,50 @@ const Inbox = () => {
 
   const acceptFriendRequest = (id) => {};
   const declineFriendRequest = (id) => {};
-
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-  axios
-    .get(`${baseUrl2}/author/${userid}/inbox/`)
-    .then((res) => console.log("hi", res.data));
+
+  const handelClear = () => {
+    axios
+      .delete(`${baseUrl2}/author/${userid}/inbox/`)
+      .then((res) => {
+        setInboxList([]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    var newList = [];
+    axios
+      .get(`${baseUrl2}/author/${userid}/inbox/`)
+      .then((res) => {
+        console.log(res.data);
+        res.data.items.map((single) => {
+          console.log(single.author.user_name);
+          newList.push({
+            type: "inbox",
+            title: single.title,
+            content: single.content,
+            date: single.published,
+            image: single.image,
+            user_name: single.author.user_name,
+            id: single.author.id,
+            github_name: single.author.github_name,
+          });
+        });
+        setInboxList(newList);
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
+  }, []);
 
   var listItems;
   if (InboxToggle === 0) {
     // Posts
-    listItems = InboxList1.filter((item) => item.type === "post").map(
+    listItems = InboxList1.filter((item) => item.type === "inbox").map(
       (item) => (
         <Grid
           item
@@ -170,18 +203,18 @@ const Inbox = () => {
               justifyContent="flex-start"
               alignItems="flex-start"
             >
-              <Grid item>
+              {/* <Grid item>
                 <Avatar src={item.author.profileImage}></Avatar>
-              </Grid>
+              </Grid> */}
               <Grid item>
                 <Grid container direction="column">
                   <Grid item>
                     <Typography>
-                      {item.author.displayName + " makes a new post."}
+                      {item.user_name + " makes a new post."}
                     </Typography>
                   </Grid>
                   <Grid item>
-                    <Typography>{item.published}</Typography>
+                    <Typography>{item.date}</Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -309,6 +342,11 @@ const Inbox = () => {
             onClick={() => setInboxToggle(2)}
           >
             <Typography>{"follow"}</Typography>
+          </Fab>
+        </Grid>
+        <Grid item>
+          <Fab variant="extended" color="secondary" onClick={handelClear}>
+            <Typography>{"Clear"}</Typography>
           </Fab>
         </Grid>
       </Grid>
