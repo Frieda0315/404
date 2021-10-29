@@ -13,6 +13,7 @@ const FriendList = () => {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
   
+
   const handleRemove = (e) => {
     const id = e.id;
     const newList = friendList.filter((item) => item.id !== id);
@@ -39,17 +40,18 @@ const FriendList = () => {
     });
   },[])
 
-  const friendType = (id) =>{
-    axios.get(`${baseUrl2}/author/${userid}/friend/${id}`).then(
-      (res) =>{
-        if (res.data == ""){
-          return "friend"
-        }
-        else{
-          return "follower"
-        }
-      }
-    )
+
+  const friendType = async (id) =>{
+    const a = await axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`)
+    const b = await axios.get(`${baseUrl2}/author/${id}/followers/${userid}/`)
+    const friend = "friend"
+    const follower = "follower"
+    if(a.data.result === b.data.result){
+      return friend
+    }
+    else{
+      return follower
+    }
   }
  
 
