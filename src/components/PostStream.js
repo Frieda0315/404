@@ -348,7 +348,7 @@ function PostStream(props) {
       `${baseUrl}/${localStorage.getItem("github_user")}/events`
     );
     axios
-      .all([requestOne, responseTwo])
+      .all([requestOne, requestTwo])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
