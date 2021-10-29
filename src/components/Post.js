@@ -1,4 +1,4 @@
-import React, { StyleSheet, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import noimage from "../static/noimage.png";
 import Grid from "@mui/material/Grid";
@@ -7,17 +7,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-
-import {
-  Button,
-  Typography,
-  CardContent,
-  Card,
-  CardMedia,
-} from "@mui/material";
+import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import "./font/style.css";
-import NavMenu from "./NavMenu";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -55,14 +47,13 @@ const Post = () => {
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
 
-
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const uploadImage = (files) => {
     //accept = 'image/*';
     const file = files[0];
     if (file) {
       setImage(file);
-      encodeFileBase64(image)
+      encodeFileBase64(image);
     } else {
       setImage(noimage);
     }
@@ -73,7 +64,6 @@ const Post = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
-        
       };
       reader.readAsDataURL(image);
     } else {
@@ -81,37 +71,37 @@ const Post = () => {
     }
   }, [image]);
 
-  const encodeFileBase64 = (file) =>{
+  const encodeFileBase64 = (file) => {
     var reader = new FileReader();
-    if(file){
-      reader.readAsDataURL(file)
+    if (file) {
+      reader.readAsDataURL(file);
       reader.onloadend = () => {
-        setFileBase64String(reader.result)
+        setFileBase64String(reader.result);
       };
     }
-  }
+  };
 
-  const decodeBase64File=(base64String) =>{
+  const decodeBase64File = (base64String) => {
     return decodeURIComponent(
-      atob(base64String).split("").map(function(c){
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join("")
-    )
-  }
-
+      atob(base64String)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+  };
 
   const imageUpload = () => {
-    encodeFileBase64(image)
-    console.log(fileBase64String)
-    setPreview(fileBase64String)
-    
+    encodeFileBase64(image);
+    console.log(fileBase64String);
+    setPreview(fileBase64String);
   };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
 
     if (value == "Image") {
-    
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();
@@ -302,9 +292,7 @@ const Post = () => {
         >
           Cancel
         </Button>
-      
       </Grid>
-      
     </Grid>
   );
 };

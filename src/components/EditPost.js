@@ -1,4 +1,4 @@
-import React, { StyleSheet, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import noimage from "../static/noimage.png";
 import Grid from "@mui/material/Grid";
@@ -7,13 +7,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import {
-  Button,
-  Typography,
-  CardContent,
-  Card,
-  CardMedia,
-} from "@mui/material";
+import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -38,24 +32,23 @@ const pic = {
 const EditPost = () => {
   const history = useHistory();
   const location = useLocation();
-  
+
   const [item1, setItem] = React.useState(location.state);
-  
+
   const [image, setImage] = React.useState(null);
   const [preview, setPreview] = React.useState();
-  const [value, setValue] = React.useState( () =>{
-    if(item1.contentType==null){
-      return "text/plain"
-    }
-    else{
+  const [value, setValue] = React.useState(() => {
+    if (item1.contentType == null) {
+      return "text/plain";
+    } else {
       return "image";
     }
   });
   const [state, setState] = React.useState(item1.state);
-  console.log("hi",state )
+  console.log("hi", state);
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
-  const [date, setDate] = React.useState(location.date)
+  const [date, setDate] = React.useState(location.date);
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
@@ -89,9 +82,7 @@ const EditPost = () => {
     }
   }, [image]);
 
-  const imageUpload = () => {
-    
-  };
+  const imageUpload = () => {};
 
   const submited = async () => {
     if (value == "image") {
@@ -104,28 +95,30 @@ const EditPost = () => {
         contentType: value,
       };
       setItem(item2);
-      
+
       history.push({ pathname: "/mypost/", state: item2 });
     }
     if (value == "text/plain") {
       var now = new Date();
       var isoString = now.toISOString();
-      console.log(isoString)
+      console.log(isoString);
       setDate(isoString);
 
-    const author = await axios.get(`${baseUrl2}/author/${userid}/`)
-    console.log(state)
-    const newpost = axios.post(`${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
-        { type: "post",
-          id:item1.id,
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      console.log(state);
+      const newpost = axios.post(
+        `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+        {
+          type: "post",
+          id: item1.id,
           title: title,
-        content: common,
-        published:date,
-        author:author.data,
-        visibility:state,
-      } 
-      )
-      console.log(newpost.data)
+          content: common,
+          published: date,
+          author: author.data,
+          visibility: state,
+        }
+      );
+      console.log(newpost.data);
       history.push({ pathname: "/mypost/" });
     }
   };
@@ -236,7 +229,7 @@ const EditPost = () => {
           <RadioGroup
             aria-label="private?"
             name="radio-buttons-group"
-            value = {state}
+            value={state}
             onChange={(event) => {
               setState(event.target.value);
             }}

@@ -1,7 +1,7 @@
 import { Layout } from "./components/Layout";
 import MainPage from "./components/MainPage";
 
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Comments from "./components/Comment";
@@ -10,11 +10,8 @@ import EditPost from "./components/EditPost";
 import FriendList from "./components/FriendList";
 import Inbox from "./components/Inbox";
 
-import { useCookies } from "react-cookie";
-import { isEmpty } from "lodash";
 import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
-import { useEffect, useState } from "react";
 import ParticlesBg from "particles-bg";
 import NavMenu from "./components/NavMenu";
 

@@ -1,8 +1,8 @@
 import Grid from "@material-ui/core/Grid";
-import { Avatar, IconButton, Pagination } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
 import dummy_image from "../static/musle.png";
