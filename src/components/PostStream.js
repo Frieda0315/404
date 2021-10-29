@@ -348,7 +348,7 @@ function PostStream(props) {
       `${baseUrl}/${localStorage.getItem("github_user")}/events`
     );
     axios
-      .all([requestOne, requestTwo])
+      .all([requestOne])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -365,53 +365,14 @@ function PostStream(props) {
               author_id: single.author.id,
             });
           });
-          const responseTwo = responses[1];
-          responseTwo.data.map((single) => {
-            //console.log(single.actor);
-            newList.push({
-              id: single.id,
-              published: single.created_at,
-              content: "from repo: " + single.repo.name,
-              author: single.actor.login,
-              github_user: "",
-              title: "Github Activity: " + single.type,
-              img: "",
-              author_id: "github",
-            });
-          });
           setPostlist(newList);
         })
       )
       .catch((errors) => {
         console.log(errors);
       });
-    /*
-    axios
-      .get(`${baseUrl2}/posts/`)
-      .then((res) => {
-        if (res.data[0].id) {
-          newList = newList.concat(res.data);
-        }
-      })
-      .catch(function (error) {
-        console.log("Show error notification!");
-        return Promise.reject(error);
-      });
-    axios.get(`${baseUrl}/xius666/events`).then((res) => {
-      console.log(res.data);
-      res.data.map((single) => {
-        //console.log(single.actor);
-        newList.push({
-          id: single.id,
-          published: single.created_at,
-          content: "from repo: " + single.repo.name,
-          author: single.actor.login,
-          title: "Github Activity: " + single.type,
-        });
-      });
-      setPostlist(newList);
-    });*/
   }, []);
+
   if (Object.keys(comments).length !== 0) {
     return (
       <Redirect

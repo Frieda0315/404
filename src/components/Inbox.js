@@ -8,6 +8,7 @@ import Popup from "./Popup";
 import Share from "./Share";
 import makeStyles from "@material-ui/styles/makeStyles";
 import axios from "axios";
+
 const tempInbox = {
   type: "inbox",
   author: "http://127.0.0.1:5454/author/c1e3db8ccea4541a0f3d7e5c75feb3fb",
@@ -140,9 +141,9 @@ const Inbox = () => {
 
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-  axios.get(`${baseUrl2}/author/${userid}/inbox/`).then(
-    (res)=>console.log("hi",res.data)
-  );
+  axios
+    .get(`${baseUrl2}/author/${userid}/inbox/`)
+    .then((res) => console.log("hi", res.data));
 
   var listItems;
   if (InboxToggle === 0) {
