@@ -210,7 +210,7 @@ const Inbox = () => {
                 <Grid container direction="column">
                   <Grid item>
                     <Typography>
-                      {item.user_name + " makes a new post."}
+                      {item.user_name + " share a new post."}
                     </Typography>
                   </Grid>
                   <Grid item>
