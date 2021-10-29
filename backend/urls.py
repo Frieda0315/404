@@ -33,6 +33,7 @@ urlpatterns = [
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
+    # likes
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/likes/',
          like_views.post_like_list, name='post_like_list'),
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/',
@@ -45,6 +46,9 @@ urlpatterns = [
          follow_views.follower_list, name='follower_list'),
     path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>/',
          follow_views.follower_detail, name='follower_detail'),
+
+    path('service/author/<uuid:author_id>/friends/',
+         follow_views.friend_list, name='friend_list'),
 
     # inbox
     # r'^about$'
