@@ -90,3 +90,24 @@ def follower_detail(request, author_id, foreign_author_id):
         return JsonResponse({"result": "Follow relationship found"}, status=status.HTTP_200_OK)
 
     return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def friend_list(request, author_id):
+    try:
+        author = User.objects.get(pk=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"})
+    friend1_pairs = Friend.objects.filter(second_user=author)
+    friend2_pairs = Friend.objects.filter(first_user=author)
+    friends = []
+    for friend in friend1_pairs:
+        friends.append(friend.first_user)
+    for friend in friend2_pairs:
+        friends.append(friend.second_user)
+
+    friend_seralizer = UserSerializer(friends, many=True)
+    author_seralizer = UserSerializer(author)
+    return_json = {"type": "friends", "author": author_seralizer.data,
+                   "friends": friend_seralizer.data}
+    return JsonResponse(return_json, status=status.HTTP_200_OK)
