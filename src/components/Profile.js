@@ -51,6 +51,21 @@ export default function Profile({
   const cancel = () => setIsEdit(false);
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  const [isfollowed, setIsFollowed] = useState();
+  
+  axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then(
+    (res) =>{
+      console.log(res.data)
+      if(res.data.result == "No follow relationship found"){
+        setIsFollowed(false)
+        console.log(isfollowed)
+      }
+      else{
+        setIsFollowed(true)
+      }
+
+    }
+  )
 
   const [github_user, set_github_user] = useState("");
   const [username, setUserName] = useState("");
@@ -59,20 +74,7 @@ export default function Profile({
     if (userid == userid_folllow){
       return true
     }
-    else if(
-      axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then((res)=>{
-        if(res.data.result == "No follow relationship found"){
-          console.log("1not follow");
-          return false
-        }
-        else{
-          return true
-        }
-        
-      })
-
-    ){
-      console.log("2not follow");
+    else if(isfollowed){
       return false
     }
     else{

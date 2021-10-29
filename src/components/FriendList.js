@@ -12,6 +12,7 @@ const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
+  
   const handleRemove = (e) => {
     const id = e.id;
     const newList = friendList.filter((item) => item.id !== id);
@@ -32,12 +33,24 @@ const FriendList = () => {
           id: infor.id,
           github: infor.github_name,
           follower: infor.user_name,
-          friendType: "follower",
         });
       });
       setFriends(newList);
     });
   },[])
+
+  const friendType = (id) =>{
+    axios.get(`${baseUrl2}/author/${userid}/friend/${id}`).then(
+      (res) =>{
+        if (res.data == ""){
+          return "friend"
+        }
+        else{
+          return "follower"
+        }
+      }
+    )
+  }
  
 
   const listItems = friendList.map((item) => (
@@ -63,7 +76,7 @@ const FriendList = () => {
               <Typography>{item.follower}</Typography>
             </Grid>
             <Grid item marginLeft={30}>
-              <Typography>{item.friendType}</Typography>
+              <Typography>{friendType(item.id)}</Typography>
             </Grid>
           </Grid>
         </Grid>

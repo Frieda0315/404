@@ -344,11 +344,9 @@ function PostStream(props) {
   useEffect(() => {
     var newList = [];
     const requestOne = axios.get(`${baseUrl2}/posts/`);
-    const requestTwo = axios.get(
-      `${baseUrl}/${localStorage.getItem("github_user")}/events`
-    );
+    
     axios
-      .all([requestOne, requestTwo])
+      .all([requestOne])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -365,20 +363,8 @@ function PostStream(props) {
               author_id: single.author.id,
             });
           });
-          const responseTwo = responses[1];
-          responseTwo.data.map((single) => {
-            //console.log(single.actor);
-            newList.push({
-              id: single.id,
-              published: single.created_at,
-              content: "from repo: " + single.repo.name,
-              author: single.actor.login,
-              github_user: "",
-              title: "Github Activity: " + single.type,
-              img: "",
-              author_id: "github",
-            });
-          });
+          
+         
           setPostlist(newList);
         })
       )
