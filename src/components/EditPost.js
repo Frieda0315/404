@@ -108,8 +108,10 @@ const EditPost = () => {
       history.push({ pathname: "/mypost/", state: item2 });
     }
     if (value == "text/plain") {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
+      var now = new Date();
+      var isoString = now.toISOString();
+      console.log(isoString)
+      setDate(isoString);
 
     const author = await axios.get(`${baseUrl2}/author/${userid}/`)
     console.log(state)
