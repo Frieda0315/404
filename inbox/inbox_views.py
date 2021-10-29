@@ -52,7 +52,7 @@ def handlePostRequest(json_data, receiver):
 
 
 def handleLikeRequest(json_data, receiver):
-    like_seralizer = LikeSerializer(json_data)
+    like_seralizer = LikeSerializer(data=json_data)
     if like_seralizer.is_valid():
         return save_method(like_seralizer)
     else:

@@ -10,7 +10,7 @@ import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
-
+import { v4 as uuidv4 } from "uuid";
 import { Redirect } from "react-router";
 
 import Share from "./Share";
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
   },
+
   postCard: {
     backgroundColor: "#fff",
     borderBottom: "1.2px solid #f0f2f7",
@@ -322,7 +323,7 @@ function PostStream(props) {
 
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
-  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
+  //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
   const [authorids, setAuthorid] = React.useState();
   const [comments, setComments] = React.useState({});
@@ -344,9 +345,50 @@ function PostStream(props) {
     setShareBuffer(post);
   };
   const handle_vote = (post) => {
+    const vote_uuid = uuidv4();
+    const likeData = {
+      type: "like",
+      summary: localStorage.user_name + " likes your post. ",
+      id: vote_uuid,
+      author: {
+        id: localStorage.current_user_id,
+        user_name: localStorage.user_name,
+        github_name: localStorage.github_user,
+        type: "author",
+      },
+      post: {
+        id: post.id,
+        type: "post",
+        title: post.title,
+        content: post.content,
+        published: post.published,
+        author: {
+          id: post.authorid,
+          type: "author",
+          user_name: post.author,
+          github_name: post.github_user,
+        },
+        visibility: "PUBLIC",
+        image: "",
+      },
+      comment: null,
+    };
     axios
-      .post(`${baseUrl2}/`)
-      .then((response) => {})
+      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get(`${baseUrl2}/authors/${post.authorid}/posts/${post.id}/likes/`)
+      .then((response) => {
+        const likes = response.data.likes;
+        const likesNum = likes.length;
+        console.log(likes);
+        setVote(likesNum);
+      })
       .catch((error) => {
         console.log(error);
       });
