@@ -36,11 +36,11 @@ const Post = () => {
   const location = useLocation();
   const userid = localStorage.getItem("current_user_id");
 
-  const [image, setImage] = React.useState(null);
+  const [image, setImage] = React.useState("");
   const [preview, setPreview] = React.useState();
   const [value, setValue] = React.useState("Text");
-  const [title, setTitle] = React.useState(null);
-  const [common, setCommon] = React.useState(null);
+  const [title, setTitle] = React.useState("");
+  const [common, setCommon] = React.useState("");
   const [fileBase64String, setFileBase64String] = React.useState();
   const [decode, setDecode] = React.useState();
 
@@ -120,6 +120,7 @@ const Post = () => {
           visibility: visibility,
         }
       );
+      history.push({ pathname: "/" });
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();
@@ -134,14 +135,14 @@ const Post = () => {
           id: uuid,
           title: title,
           content: common,
-          image: null,
+          image: "",
           published: date,
           author: author.data,
           visibility: visibility,
         }
       );
-      console.log(newpost.data);
-      history.push({ pathname: "/mypost/" });
+      console.log("Fdafdsf");
+      history.push({ pathname: "/" });
     }
   };
 
@@ -153,11 +154,7 @@ const Post = () => {
         <div class="text text-3">Create A New Post</div>
       </Grid>
 
-      <Grid
-        item
-        //bgcolor = '#eeeeee'
-        alignItems="flex-start"
-      >
+      <Grid item alignItems="flex-start">
         <TextField
           style={{ marginTop: 5, marginBottom: 5, width: "50%", marginLeft: 5 }}
           id="addTitle"

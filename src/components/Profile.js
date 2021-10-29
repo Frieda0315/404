@@ -92,10 +92,15 @@ export default function Profile({
       setUserName(user);
       set_github_user(post_github_user);
     }
-    axios.get(`${baseUrl}/${github_user}`).then((res) => {
-      //console.log(res.data["avatar_url"]);
-      seturl(res.data["avatar_url"]);
-    });
+    axios
+      .get(`${baseUrl}/${github_user}`)
+      .then((res) => {
+        console.log(res.data["avatar_url"]);
+        seturl(res.data["avatar_url"]);
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
   }, [github_user]);
 
   const handleIfFollow = () => {
@@ -187,6 +192,8 @@ export default function Profile({
 
   return (
     <Form onSubmit={handleSubmit}>
+      {is_follow ? "" : <div class="text text-1">Profile</div>}
+
       <Grid
         container
         spacing={0}
@@ -194,8 +201,6 @@ export default function Profile({
         direction="column"
         alignItems="center"
       >
-        {is_follow ? "" : <div class="text text-1">Your Profile</div>}
-
         <Grid
           container
           spacing={2}
