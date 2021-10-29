@@ -348,7 +348,7 @@ function PostStream(props) {
       `${baseUrl}/${localStorage.getItem("github_user")}/events`
     );
     axios
-      .all([requestOne])
+      .all([requestOne, responseTwo])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -365,6 +365,20 @@ function PostStream(props) {
               author_id: single.author.id,
             });
             console.log(single.image === "");
+          });
+          const responseTwo = responses[1];
+          responseTwo.data.map((single) => {
+            //console.log(single.actor);
+            newList.push({
+              id: single.id,
+              published: single.created_at,
+              content: "from repo: " + single.repo.name,
+              author: single.actor.login,
+              github_user: "",
+              title: "Github Activity: " + single.type,
+              img: "",
+              author_id: "github",
+            });
           });
           setPostlist(newList);
         })
