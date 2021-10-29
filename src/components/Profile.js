@@ -58,10 +58,15 @@ export default function Profile({ user, post_github_user, is_follow }) {
       setUserName(user);
       set_github_user(post_github_user);
     }
-    axios.get(`${baseUrl}/${github_user}`).then((res) => {
-      console.log(res.data["avatar_url"]);
-      seturl(res.data["avatar_url"]);
-    });
+    axios
+      .get(`${baseUrl}/${github_user}`)
+      .then((res) => {
+        console.log(res.data["avatar_url"]);
+        seturl(res.data["avatar_url"]);
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
   }, [github_user]);
 
   const [textinput1, setTextinput1] = useState(
@@ -121,7 +126,7 @@ export default function Profile({ user, post_github_user, is_follow }) {
         direction="column"
         alignItems="center"
       >
-        {is_follow ? "" : <div class="text text-1">Your Profile</div>}
+        {is_follow ? "" : <div class="text text-1">Profile</div>}
 
         <Grid
           container
