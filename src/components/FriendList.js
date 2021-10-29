@@ -2,11 +2,11 @@ import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import head1 from "../static/1.JPG";
-import { Delete } from "@material-ui/icons";
 import { Grid } from "@material-ui/core";
 import axios from "axios";
-import { IconButton, Button } from "@material-ui/core";
-import { StyleSheet, useState, useEffect, Text } from "react";
+import { Button } from "@material-ui/core";
+import { useEffect } from "react";
+import "./font/style.css";
 
 const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
@@ -123,6 +123,7 @@ const FriendList = () => {
   return (
     <div>
       <Grid container direction="column" alignSelf="center" marginTop={2}>
+        <div class="text text-1">your friend</div>
         {listItems}
       </Grid>
     </div>

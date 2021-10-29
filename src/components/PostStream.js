@@ -364,6 +364,7 @@ function PostStream(props) {
               img: single.image,
               author_id: single.author.id,
             });
+            console.log(single.image === "");
           });
           setPostlist(newList);
         })
@@ -386,138 +387,126 @@ function PostStream(props) {
       ></Redirect>
     );
   }
-  const postStream = postlist.map((post) => (
-    <Grid
-      item
-      xs={8}
-      className={styleClasses.postCard}
-      key={post != null ? post.id : "123"}
-    >
+  const postStream = postlist
+    .slice(0)
+    .reverse()
+    .map((post) => (
       <Grid
-        container
-        spacing={1}
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="flex-start"
+        item
+        xs={8}
+        className={styleClasses.postCard}
+        key={post != null ? post.id : "123"}
       >
-        <Grid item>
-          <Avatar
-            src={dummy_image}
-            onClick={() => open(post.author, post.github_user, post.authorid)}
-          ></Avatar>
-        </Grid>
-        <Grid item>
-          <Typography>{post != null ? post.author : "null author"}</Typography>
-          <Typography>{post != null ? post.published : "null date"}</Typography>
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs>
-          {post.image === "" ? null : (
-            <div
-              style={{
-                display: "flex",
-                alignItem: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CardMedia
-                style={{
-                  width: "auto",
-                  maxHeight: "200px",
-                }}
-                component="img"
-                src={post.image}
-              />
-            </div>
-          )}
-
-          <Card className={styleClasses.cardInPost}>
-            <CardActionArea
-              onClick={tempPostOnClick}
-              className={styleClasses.clickBox}
-            >
-              {post.title.length > 0 ? (
-                <Grid container>
-                  <Grid item xs>
-                    <Typography variant="h5" component="div">
-                      {post.title}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      {post.content}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItem: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardMedia
-                    style={{
-                      width: "auto",
-                      maxHeight: "200px",
-                    }}
-                    component="img"
-                    image={dummyImages[1]}
-                  />
-                </div>
-              )}
-            </CardActionArea>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {post.author_id !== "github" ? (
         <Grid
           container
           spacing={1}
           direction="row"
-          justifyContent="flex-end"
-          alignItems="flex-end"
+          justifyContent="flex-start"
+          alignItems="flex-start"
         >
           <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="thumbup"
-              onClick={() => setVote(vote + 1)}
-            >
-              <ThumbUp />
-            </IconButton>
+            <Avatar
+              src={dummy_image}
+              onClick={() => open(post.author, post.github_user, post.authorid)}
+            ></Avatar>
           </Grid>
           <Grid item>
-            <Typography>{vote}</Typography>
-          </Grid>{" "}
-          <Grid item>
-            <IconButton edge="end" aria-label="share" onClick={open_share}>
-              <ShareRounded />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="comment"
-              onClick={() => viewComments(post)}
-            >
-              <Comment />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="Delete"
-              onClick={() => handleRemove(post)}
-            >
-              <Delete />
-            </IconButton>
+            <Typography>
+              {post != null ? post.author : "null author"}
+            </Typography>
+            <Typography>
+              {post != null ? post.published : "null date"}
+            </Typography>
           </Grid>
         </Grid>
-      ) : null}
-    </Grid>
-  ));
+        <Grid container>
+          <Grid item xs>
+            <Card className={styleClasses.cardInPost}>
+              <CardActionArea
+                onClick={tempPostOnClick}
+                className={styleClasses.clickBox}
+              >
+                {post.img === "" ? (
+                  <Grid container>
+                    <Grid item xs>
+                      <Typography variant="h5" component="div">
+                        {post.title}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        {post.content}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                ) : (
+                  <Grid container>
+                    <CardMedia
+                      component="img"
+                      height="150"
+                      image={post.img}
+                      alt="fda"
+                    />
+                    <Grid item xs>
+                      <Typography variant="h5" component="div">
+                        {post.title}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        {post.content}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+              </CardActionArea>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {post.author_id !== "github" ? (
+          <Grid
+            container
+            spacing={1}
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+          >
+            <Grid item>
+              <IconButton
+                edge="end"
+                aria-label="thumbup"
+                onClick={() => setVote(vote + 1)}
+              >
+                <ThumbUp />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography>{vote}</Typography>
+            </Grid>{" "}
+            <Grid item>
+              <IconButton edge="end" aria-label="share" onClick={open_share}>
+                <ShareRounded />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton
+                edge="end"
+                aria-label="comment"
+                onClick={() => viewComments(post)}
+              >
+                <Comment />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton
+                edge="end"
+                aria-label="Delete"
+                onClick={() => handleRemove(post)}
+              >
+                <Delete />
+              </IconButton>
+            </Grid>
+          </Grid>
+        ) : null}
+      </Grid>
+    ));
   return (
     <div>
       <Popup

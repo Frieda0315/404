@@ -185,7 +185,7 @@ function Comments(props) {
         alignItems="center"
         direction="column"
       >
-        <div className="text text-3">comments</div>
+        <div className="text text-1">comments</div>
         {commentStream}
       </Grid>
     </div>
