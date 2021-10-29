@@ -3,11 +3,11 @@ import Grid from "@material-ui/core/Grid";
 import { Avatar, IconButton, Pagination } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography } from "@material-ui/core";
 
 import dummy_image from "../static/musle.png";
-
+import axios from "axios";
 import { Delete } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
@@ -81,17 +81,30 @@ const useStyles = makeStyles(() => ({
 
 function Comments(props) {
   const styleClasses = useStyles();
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  const path = window.location.pathname;
+  const [user, setUser] = React.useState();
+  const [github_user, setGit_user] = React.useState();
 
   // const commentsList = tempCommentList;
 
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [comments, setComments] = React.useState(tempCommentList);
-
-  const open = () => setOpenPopup(true);
+  const [comments, setComments] = React.useState([]);
+  useEffect(() => {
+    axios.get(`${baseUrl2}${path}/`).then((response) => {
+      console.log(response.data.comments);
+      setComments(response.data.comments);
+    });
+  }, []);
   const handleRemove = (e) => {
     const id = e.id;
     const newList = comments.filter((item) => item.id !== id);
     setComments(newList);
+  };
+  const open = (author, git) => {
+    setUser(author);
+    setGit_user(git);
+    setOpenPopup(true);
   };
 
   const commentStream = comments.map((comment) => (
@@ -104,10 +117,15 @@ function Comments(props) {
         alignItems="flex-start"
       >
         <Grid item>
-          <Avatar src={dummy_image} onClick={open}></Avatar>
+          <Avatar
+            src={dummy_image}
+            onClick={() =>
+              open(comment.author.user_name, comment.author.github_name)
+            }
+          ></Avatar>
         </Grid>
         <Grid item>
-          <Typography>{comment.author.displayName}</Typography>
+          <Typography>{comment.author.user_name}</Typography>
           <Typography>{comment.published}</Typography>
         </Grid>
       </Grid>
@@ -153,7 +171,11 @@ function Comments(props) {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <Profile user={1} is_follow={true}></Profile>
+        <Profile
+          user={user}
+          post_github_user={github_user}
+          is_follow={true}
+        ></Profile>
       </Popup>
       <Grid
         container
@@ -161,7 +183,9 @@ function Comments(props) {
         className={styleClasses.stream}
         justifyContent="center"
         alignItems="center"
+        direction="column"
       >
+        <div className="text text-3">comments</div>
         {commentStream}
       </Grid>
     </div>

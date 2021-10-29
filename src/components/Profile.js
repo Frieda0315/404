@@ -44,7 +44,7 @@ export default function Profile({
   post_github_user,
   is_follow,
   userid_folllow,
-}) {
+  }) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
@@ -152,26 +152,42 @@ export default function Profile({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    set_github_user(textinput1);
-    setUserName(textinput2);
     setIsEdit(false);
 
-    /*axios
+    //console.log(username);
+
+    //in the case of textinput is not set， set the textinput to current github_user
+    /*if (textinput1 === "") {
+      setTextinput1(github_user);
+    }
+    if (textinput2 === "") {
+      console.log(username);
+
+      setTextinput2(username);
+    }*/
+
+    axios
       .post(`${baseUrl2}/author/${userid}/`, {
-        github_user: github_user,
-        user_name: username,
+        id: userid,
+        github_name: textinput1,
+        user_name: textinput2,
+        type: "author",
       })
       .then(
         (response) => {
           console.log(response);
-          localStorage.setItem("github_user", github_user);
-          localStorage.setItem("user_name", username);
+          set_github_user(textinput1);
+          setUserName(textinput2);
+          localStorage.removeItem("github_user");
+          localStorage.removeItem("user_name");
+          localStorage.setItem("github_user", textinput1);
+          localStorage.setItem("user_name", textinput2);
         },
         (error) => {
-          alert("Incorrect Credntials!");
+          alert("error ");
           console.log(error);
         }
-      );*/
+      );
   };
 
   return (

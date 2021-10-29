@@ -17,7 +17,10 @@ import {
 } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import "./font/style.css";
-
+import NavMenu from "./NavMenu";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const heading = {
   fontSize: "30px",
@@ -38,6 +41,9 @@ const pic = {
 };
 
 const Post = () => {
+  const location = useLocation();
+  const userid = localStorage.getItem("current_user_id");
+
   const [image, setImage] = React.useState(null);
   const [preview, setPreview] = React.useState();
   const [value, setValue] = React.useState("Text");
@@ -46,6 +52,11 @@ const Post = () => {
   const [fileBase64String, setFileBase64String] = React.useState();
   const [decode, setDecode] = React.useState();
 
+  const [date, setDate] = React.useState(location.date);
+  const [visibility, setVisibility] = React.useState("PUBLIC");
+
+
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const uploadImage = (files) => {
     //accept = 'image/*';
     const file = files[0];
@@ -105,12 +116,32 @@ const Post = () => {
     // )
   };
 
-  const submited = () => {
+  const submited = async () => {
+    const authorID = localStorage.getItem("current_user_id");
+
     if (value == "Image") {
       alert("image");
     }
     if (value == "Text") {
-      alert("text");
+      const currentDateTime = Date().toLocaleString();
+      setDate(currentDateTime);
+
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const uuid = uuidv4();
+      const newpost = await axios.put(
+        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+        {
+          type: "post",
+          id: uuid,
+          title: title,
+          content: common,
+          published: date,
+          author: author.data,
+          visibility: visibility,
+        }
+      );
+      console.log(newpost.data);
+      history.push({ pathname: "/mypost/" });
     }
   };
 
@@ -220,6 +251,9 @@ const Post = () => {
             aria-label="private?"
             defaultValue="PUBLIC"
             name="radio-buttons-group"
+            onChange={(event) => {
+              setVisibility(event.target.value);
+            }}
           >
             <FormControlLabel
               value="PUBLIC"
@@ -238,7 +272,7 @@ const Post = () => {
               label="Private"
             />
             <FormControlLabel
-              value="FRIRENDS"
+              value="FRIENDS"
               sx={{
                 marginInlineStart: "5px",
               }}
