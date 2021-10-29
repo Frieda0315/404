@@ -18,9 +18,10 @@ from django.urls import reverse, resolve
 from posts.post_views import *
 from users.user_views import *
 from comments.comment_views import *
+from follows.follow_views import *
 
 
-class PostModelTests(TestCase):
+class ModelTests(TestCase):
     def init_author(self, id=uuid.uuid4(), user_name="test_user", github_name="test_git", password='1234', type="author"):
         return User(
             id=id,
@@ -71,19 +72,16 @@ class PostModelTests(TestCase):
             type=type
         )
 
-    def init_inbox(self, id=uuid.uuid4(), post=None, like=None, receive_author=None):
-        if post == None:
-            p = self.init_post()
-        if like == None:
-            l = self.init_likes()
+    def init_inbox(self, post=None, receive_author=None):
         if receive_author == None:
             r = self.init_author()
-        return Inbox(
-            id=id,
-            post=p,
-            like=l,
-            receive_author=r
-        )
+            r.save()
+        instance = Inbox.objects.create(receive_author=r)
+        p = self.init_post()
+        p.save()
+        instance.post.add(p)
+        print(type(instance))
+        return instance
 
     def init_follow(self, id=uuid.uuid4(), follower=None, following=None):
         if follower == None:
@@ -94,6 +92,29 @@ class PostModelTests(TestCase):
             id=id,
             follower=Follower,
             following=Following
+        )
+
+    def init_friend(self, id=uuid.uuid4(), first_user=None, second_user=None):
+        if(first_user == None):
+            First_user = self.init_author()
+        if(second_user == None):
+            Second_user = self.init_author()
+        return Friend(
+            id=id,
+            first_user=First_user,
+            second_user=Second_user
+        )
+
+    def init_friendRequest(self, type="FriendRequest", id=uuid.uuid4(), summary="testSummary", actor=None, object=None):
+        if(actor == None):
+            Actor = self.init_author()
+        if(object == None):
+            Object = self.init_author()
+        return FriendRequest(
+            type=type,
+            summary=summary,
+            actor=Actor,
+            object=Object
         )
 
     def test_author(self):
@@ -126,6 +147,7 @@ class PostModelTests(TestCase):
 
     def test_like(self):
         like = self.init_likes()
+        print(type(like))
         self.assertTrue(isinstance(like.author, User))
         self.assertTrue(isinstance(like.post, Post))
         self.assertTrue(isinstance(like.comment, Comment))
@@ -135,14 +157,28 @@ class PostModelTests(TestCase):
 
     def test_inbox(self):
         inbox = self.init_inbox()
+        # print(type(inbox.post))
+        # print("haha")
         self.assertTrue(isinstance(inbox.receive_author, User))
-        self.assertTrue(isinstance(inbox.post, Post))
-        self.assertTrue(isinstance(inbox.like, Like))
+        #self.assertTrue(isinstance(inbox.post, Post))
 
     def test_follow(self):
         follow = self.init_follow()
         self.assertTrue(isinstance(follow.follower, User))
         self.assertTrue(isinstance(follow.following, User))
+
+    def test_friend(self):
+        friend = self.init_friend()
+        self.assertTrue(isinstance(friend.first_user, User))
+        self.assertTrue(isinstance(friend.second_user, User))
+
+    def test_friendRequest(self):
+        friendRequest = self.init_friendRequest()
+        self.assertTrue(isinstance(friendRequest.actor, User))
+        self.assertTrue(isinstance(friendRequest.object, User))
+
+        self.assertEqual(friendRequest.type, 'FriendRequest')
+        self.assertEqual(friendRequest.summary, 'testSummary')
 
 
 class URLTests(TestCase):
@@ -199,6 +235,22 @@ class URLTests(TestCase):
         url = reverse("author_like_list", args=[
                       "123e4567-e89b-12d3-a456-426614174000"])
         self.assertEqual(resolve(url).func, author_like_list)
+
+    def test_follower_list(self):
+        url = reverse("follower_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, follower_list)
+
+    # TODO:follower_detail, friend_list
+    def test_follower_detail(self):
+        url = reverse("follower_detail", args=[
+                      "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, follower_detail)
+
+    def test_friend_list(self):
+        url = reverse("friend_list", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
+        self.assertEqual(resolve(url).func, friend_list)
 
     def test_inbox_list(self):
         url = reverse("inbox_list", args=[
