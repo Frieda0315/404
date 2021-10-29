@@ -390,6 +390,7 @@ function PostStream(props) {
       .catch((errors) => {
         console.log(errors);
       });
+
     /*
     axios
       .get(`${baseUrl2}/posts/`)
@@ -417,6 +418,7 @@ function PostStream(props) {
       setPostlist(newList);
     });*/
   }, []);
+
   if (Object.keys(comments).length !== 0) {
     return (
       <Redirect
