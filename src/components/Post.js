@@ -103,7 +103,6 @@ const Post = () => {
   const imageUpload = () => {
     encodeFileBase64(image)
     console.log(fileBase64String)
-    alert("Your file is being uploaded!");
     setPreview(fileBase64String)
     
   };
@@ -112,7 +111,7 @@ const Post = () => {
     const authorID = localStorage.getItem("current_user_id");
 
     if (value == "Image") {
-      alert("image");
+    
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();
