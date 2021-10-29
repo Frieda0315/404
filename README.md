@@ -1,7 +1,7 @@
 # I-connect
 heroku link : https://i-connect.herokuapp.com/
 
-CMPUT404-project-socialdistribution
+CMPUT404-project-social-distribution-app
 
 See [Abram Hindle's project.org](https://github.com/abramhindle/CMPUT404-project-socialdistribution/blob/master/project.org) (plain-text/org-mode) for a description of the project.
 
