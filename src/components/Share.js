@@ -25,11 +25,11 @@ function Share(props) {
       .then((response) => {
         console.log(response);
         // setSuccess(true);
+        props.setOpen(false);
       })
       .catch((error) => {
         console.log(error);
       });
-    props.setOpen(false);
   };
   React.useEffect(() => {
     /**

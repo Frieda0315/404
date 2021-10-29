@@ -343,6 +343,14 @@ function PostStream(props) {
     setOpenPopup2(true);
     setShareBuffer(post);
   };
+  const handle_vote = (post) => {
+    axios
+      .post(`${baseUrl2}/`)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
@@ -517,7 +525,9 @@ function PostStream(props) {
               <IconButton
                 edge="end"
                 aria-label="thumbup"
-                onClick={() => setVote(vote + 1)}
+                onClick={() => {
+                  handle_vote(post);
+                }}
               >
                 <ThumbUp />
               </IconButton>
