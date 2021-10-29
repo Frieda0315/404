@@ -331,6 +331,7 @@ function PostStream(props) {
 
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
+  const [shareBuffer, setShareBuffer] = React.useState({});
   const open = (author, git, authorid) => {
     //onsole.log(authorid);
     setUser(author);
@@ -338,7 +339,18 @@ function PostStream(props) {
     setAuthorid(authorid);
     setOpenPopup(true);
   };
-  const open_share = () => setOpenPopup2(true);
+  const open_share = (post) => {
+    setOpenPopup2(true);
+    setShareBuffer(post);
+  };
+  const handle_vote = (post) => {
+    axios
+      .post(`${baseUrl2}/`)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
@@ -513,7 +525,9 @@ function PostStream(props) {
               <IconButton
                 edge="end"
                 aria-label="thumbup"
-                onClick={() => setVote(vote + 1)}
+                onClick={() => {
+                  handle_vote(post);
+                }}
               >
                 <ThumbUp />
               </IconButton>
@@ -522,7 +536,13 @@ function PostStream(props) {
               <Typography>{vote}</Typography>
             </Grid>{" "}
             <Grid item>
-              <IconButton edge="end" aria-label="share" onClick={open_share}>
+              <IconButton
+                edge="end"
+                aria-label="share"
+                onClick={() => {
+                  open_share(post);
+                }}
+              >
                 <ShareRounded />
               </IconButton>
             </Grid>
@@ -567,7 +587,7 @@ function PostStream(props) {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <Share></Share>
+        <Share post={shareBuffer} setOpen={setOpenPopup2}></Share>
       </Popup>
       <Grid
         container
