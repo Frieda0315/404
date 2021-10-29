@@ -5,55 +5,62 @@ import head1 from "../static/1.JPG";
 import { Delete } from "@material-ui/icons";
 import { Grid } from "@material-ui/core";
 import axios from "axios";
-import {IconButton,} from "@material-ui/core";
+import { IconButton, Button } from "@material-ui/core";
 import { StyleSheet, useState, useEffect, Text } from "react";
 
 const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
-  
 
   const handleRemove = (e) => {
     const id = e.id;
     const newList = friendList.filter((item) => item.id !== id);
     setFriends(newList);
-    
-    axios.delete(`${baseUrl2}/author/${userid}/followers/${id}/`).then((res)=>{
-       console.log(res.data) })
 
-
+    axios
+      .delete(`${baseUrl2}/author/${userid}/followers/${id}/`)
+      .then((res) => {
+        console.log(res.data);
+      });
   };
-
+  const [isFriend, setIsFriend] = React.useState();
   useEffect(() => {
     const newList = [];
     axios.get(`${baseUrl2}/author/${userid}/followers/`).then((res) => {
-      console.log(res.data)
+      console.log(res.data);
+
       res.data.map((infor) => {
+        if (friendType(infor.id)) {
+          setIsFriend("friend");
+        } else {
+          setIsFriend("follower");
+        }
+        console.log(friendType(infor.id));
         newList.push({
           id: infor.id,
           github: infor.github_name,
           follower: infor.user_name,
+          ftype: isFriend,
         });
       });
       setFriends(newList);
     });
-  },[])
+  }, []);
 
-
-  const friendType = async (id) =>{
-    const a = await axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`)
-    const b = await axios.get(`${baseUrl2}/author/${id}/followers/${userid}/`)
-    const friend = "friend"
-    const follower = "follower"
-    if(a.data.result === b.data.result){
-      return friend
-    }
-    else{
-      return follower
-    }
-  }
- 
+  const friendType = (id) => {
+    const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`);
+    const b = axios.get(`${baseUrl2}/author/${id}/followers/${userid}/`);
+    axios.all([a, b]).then(
+      axios.spread((...res) => {
+        if (res[0].data == res[1].data) {
+          return true;
+        } else {
+          return false;
+        } //console.log(res[0].data);
+      })
+    );
+  };
 
   const listItems = friendList.map((item) => (
     <Grid
@@ -78,7 +85,7 @@ const FriendList = () => {
               <Typography>{item.follower}</Typography>
             </Grid>
             <Grid item marginLeft={30}>
-              <Typography>{friendType(item.id)}</Typography>
+              <Typography>{item.ftype}</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -95,13 +102,20 @@ const FriendList = () => {
         alignItems="flex-end"
       >
         <Grid item>
-          <IconButton
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => handleRemove(item)}
+          >
+            UnFollow
+          </Button>
+          {/* <IconButton
             edge="end"
             aria-label="Delete"
             onClick={() => handleRemove(item)}
           >
             <Delete />
-          </IconButton>
+          </IconButton> */}
         </Grid>
       </Grid>
     </Grid>

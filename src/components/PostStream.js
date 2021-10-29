@@ -324,7 +324,7 @@ function PostStream(props) {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [authorids, setAuthorid] = React.useState()
+  const [authorids, setAuthorid] = React.useState();
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
@@ -335,7 +335,7 @@ function PostStream(props) {
     //onsole.log(authorid);
     setUser(author);
     setGit_user(git);
-    setAuthorid(authorid)
+    setAuthorid(authorid);
     setOpenPopup(true);
   };
   const open_share = () => setOpenPopup2(true);
@@ -344,9 +344,11 @@ function PostStream(props) {
   useEffect(() => {
     var newList = [];
     const requestOne = axios.get(`${baseUrl2}/posts/`);
-    
+    const requestTwo = axios.get(
+      `${baseUrl}/${localStorage.getItem("github_user")}/events`
+    );
     axios
-      .all([requestOne])
+      .all([requestOne, requestTwo])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -363,8 +365,20 @@ function PostStream(props) {
               author_id: single.author.id,
             });
           });
-          
-         
+          const responseTwo = responses[1];
+          responseTwo.data.map((single) => {
+            //console.log(single.actor);
+            newList.push({
+              id: single.id,
+              published: single.created_at,
+              content: "from repo: " + single.repo.name,
+              author: single.actor.login,
+              github_user: "",
+              title: "Github Activity: " + single.type,
+              img: "",
+              author_id: "github",
+            });
+          });
           setPostlist(newList);
         })
       )
@@ -553,7 +567,7 @@ function PostStream(props) {
         <Profile
           user={user}
           post_github_user={github_user}
-          userid_folllow = {authorids}
+          userid_folllow={authorids}
           is_follow={true}
         ></Profile>
       </Popup>

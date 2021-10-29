@@ -44,7 +44,7 @@ export default function Profile({
   post_github_user,
   is_follow,
   userid_folllow,
-  }) {
+}) {
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
@@ -52,44 +52,39 @@ export default function Profile({
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [isfollowed, setIsFollowed] = useState();
-  
-  axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then(
-    (res) =>{
-      console.log(res.data)
-      if(res.data.result == "No follow relationship found"){
-        setIsFollowed(false)
-        console.log(isfollowed)
-      }
-      else{
-        setIsFollowed(true)
-      }
 
-    }
-  )
+  if (isfollowed) {
+    axios
+      .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.result == "No follow relationship found") {
+          setIsFollowed(false);
+          console.log(isfollowed);
+        } else {
+          setIsFollowed(true);
+        }
+      });
+  }
 
   const [github_user, set_github_user] = useState("");
   const [username, setUserName] = useState("");
-  
-  const [ifFollowed, setIfFollowed] = useState(() =>{
-    if (userid == userid_folllow){
-      return true
+
+  const [ifFollowed, setIfFollowed] = useState(() => {
+    if (userid == userid_folllow) {
+      return true;
+    } else if (isfollowed) {
+      return false;
+    } else {
+      return false;
     }
-    else if(isfollowed){
-      return false
-    }
-    else{
-      return false
-    }
-    
-  })
+  });
   const [textinput1, setTextinput1] = useState(github_user);
   const [textinput2, setTextinput2] = useState(username);
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github_user;
   const baseUrl = "https://api.github.com/users";
-
-  
 
   useEffect(() => {
     set_github_user(localStorage.getItem("github_user"));
@@ -104,25 +99,26 @@ export default function Profile({
     });
   }, [github_user]);
 
-    const handleIfFollow = ()=> {
-    axios.get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`).then((res)=>{
-      console.log(res.data) 
-      return true
-    }).catch((err) => {
-        return false
+  const handleIfFollow = () => {
+    axios
+      .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`)
+      .then((res) => {
+        console.log(res.data);
+        return true;
       })
-  }
-
+      .catch((err) => {
+        return false;
+      });
+  };
 
   const handleFollow = async () => {
     if (userid == userid_folllow) {
-      
     } else {
       const res1 = await axios.get(`${baseUrl2}/author/${userid}/`);
       const authorinfor = res1.data;
       const message = authorinfor.user_name + " want follow " + username;
-      console.log(userid)
-    
+      console.log(userid);
+
       try {
         const res = await axios.post(
           `${baseUrl2}/author/${userid_folllow}/inbox/`,
@@ -145,12 +141,10 @@ export default function Profile({
         );
         //console.log("res",res.data)
       } catch (err) {
-        console.log("errors")
-       
+        console.log("errors");
       }
     }
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -292,7 +286,7 @@ export default function Profile({
                           className={styleClasses.button1}
                           variant="contained"
                           size="small"
-                          disabled = {ifFollowed}
+                          disabled={ifFollowed}
                           onClick={handleFollow}
                         >
                           Follow
