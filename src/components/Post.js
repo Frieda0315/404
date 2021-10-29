@@ -64,6 +64,7 @@ const Post = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        encodeFileBase64(image);
       };
       reader.readAsDataURL(image);
     } else {
@@ -102,6 +103,23 @@ const Post = () => {
     const authorID = localStorage.getItem("current_user_id");
 
     if (value == "Image") {
+      const currentDateTime = Date().toLocaleString();
+      setDate(currentDateTime);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const uuid = uuidv4();
+      const newpost = await axios.put(
+        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+        {
+          type: "post",
+          id: uuid,
+          title: title,
+          content: common,
+          image: fileBase64String,
+          published: date,
+          author: author.data,
+          visibility: visibility,
+        }
+      );
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();
@@ -116,6 +134,7 @@ const Post = () => {
           id: uuid,
           title: title,
           content: common,
+          image: null,
           published: date,
           author: author.data,
           visibility: visibility,
