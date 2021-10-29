@@ -102,18 +102,10 @@ const Post = () => {
 
   const imageUpload = () => {
     encodeFileBase64(image)
-    const b = fileBase64String.substring(fileBase64String.indexOf(",") + 1)
-    //console.log(fileBase64String.substring(fileBase64String.indexOf(",") + 1))
+    console.log(fileBase64String)
     alert("Your file is being uploaded!");
-    const c = URL.createObjectURL(new Blob([b], {type: "image/jpej"}))
-    //console.log(new Blob([b], {type: "image/jpej"}))
     setPreview(fileBase64String)
-    // var url = fileBase64String
-    // fetch(url).then(res => {
-    //   const a = res.blob()
-    //   console.log(a)
-    //   }
-    // )
+    
   };
 
   const submited = async () => {
