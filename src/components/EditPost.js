@@ -38,7 +38,7 @@ const EditPost = () => {
   const [image, setImage] = React.useState(location.image);
   const [preview, setPreview] = React.useState();
   const [value, setValue] = React.useState(() => {
-    if (item1.contentType == null) {
+    if (item1.contentType == "") {
       return "text/plain";
     } else {
       return "image";
@@ -131,7 +131,7 @@ const EditPost = () => {
       setDate(isoString);
 
       const author = await axios.get(`${baseUrl2}/author/${userid}/`);
-      console.log(state);
+      console.log("hi", common);
       const newpost = axios.post(
         `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
         {
@@ -142,7 +142,7 @@ const EditPost = () => {
           published: date,
           author: author.data,
           visibility: state,
-          image: null,
+          image: "",
         }
       );
       console.log(newpost.data);
