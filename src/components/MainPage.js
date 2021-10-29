@@ -10,7 +10,7 @@ function MainPage() {
   //const history = useHistory();
   const [creatNew, setCreatNew] = React.useState(false);
   if (creatNew) {
-    return <Redirect from="/" to="/new" />;
+    return <Redirect from="/" to="/new/" />;
   }
 
   return (

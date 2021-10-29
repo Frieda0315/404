@@ -32,10 +32,10 @@ const pic = {
 const EditPost = () => {
   const history = useHistory();
   const location = useLocation();
-
+  const [fileBase64String, setFileBase64String] = React.useState();
   const [item1, setItem] = React.useState(location.state);
-
-  const [image, setImage] = React.useState(null);
+  console.log("get", location.image);
+  const [image, setImage] = React.useState(location.image);
   const [preview, setPreview] = React.useState();
   const [value, setValue] = React.useState(() => {
     if (item1.contentType == null) {
@@ -49,6 +49,7 @@ const EditPost = () => {
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
   const [date, setDate] = React.useState(location.date);
+
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
@@ -65,12 +66,22 @@ const EditPost = () => {
       }
     }
   };
+  const encodeFileBase64 = (file) => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFileBase64String(reader.result);
+      };
+    }
+  };
 
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        encodeFileBase64(image);
       };
       reader.readAsDataURL(image);
     } else {
@@ -82,26 +93,41 @@ const EditPost = () => {
     }
   }, [image]);
 
-  const imageUpload = () => {};
+  const imageUpload = () => {
+    //encodeFileBase64(image);
+    console.log("hi", fileBase64String);
+    setPreview(fileBase64String);
+  };
 
   const submited = async () => {
     if (value == "image") {
-      const item2 = {
-        title: title,
-        image: image,
-        author: item1.author,
-        date: "xxxx-xx-xx xx:xx",
-        id: item1.id,
-        contentType: value,
-      };
-      setItem(item2);
+      const now = new Date();
+      const isoString = now.toISOString();
 
-      history.push({ pathname: "/mypost/", state: item2 });
+      setDate(isoString);
+
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      console.log(state);
+      const newpost = axios.post(
+        `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+        {
+          type: "post",
+          id: item1.id,
+          title: title,
+          content: common,
+          image: fileBase64String,
+          published: date,
+          author: author.data,
+          visibility: state,
+        }
+      );
+
+      history.push({ pathname: "/mypost/" });
     }
     if (value == "text/plain") {
-      var now = new Date();
-      var isoString = now.toISOString();
-      console.log(isoString);
+      const now = new Date();
+      const isoString = now.toISOString();
+
       setDate(isoString);
 
       const author = await axios.get(`${baseUrl2}/author/${userid}/`);
@@ -116,6 +142,7 @@ const EditPost = () => {
           published: date,
           author: author.data,
           visibility: state,
+          image: null,
         }
       );
       console.log(newpost.data);
