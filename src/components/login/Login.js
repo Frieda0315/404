@@ -6,7 +6,6 @@
 import React from "react";
 import "./login.css";
 import "../font/style.css";
-import { instanceOf } from "prop-types";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
@@ -14,16 +13,13 @@ import {
   Button,
   TextField,
   Grid,
-  Paper,
   Typography,
   Link,
   FormControlLabel,
   Radio,
   RadioGroup,
-  CardMedia,
   Avatar,
 } from "@material-ui/core";
-import { withCookies, Cookies } from "react-cookie";
 import logo from "./logo.png";
 class Login extends React.Component {
   /*static propTypes = {

@@ -1,25 +1,16 @@
 import PostStream from "./PostStream";
 import React from "react";
-import {
-  CardMedia,
-  Grid,
-  CardActionArea,
-  Typography,
-  Fab,
-} from "@material-ui/core";
+import { Grid, Fab } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-import Button from "@mui/material/Button";
-import { useHistory } from "react-router-dom";
 import Stack from "@mui/material/Stack";
-import { Route, Redirect } from "react-router";
-import bg1 from "./assets/bg2.jpeg";
+import { Redirect } from "react-router";
 import "./font/style.css";
 
 function MainPage() {
   //const history = useHistory();
   const [creatNew, setCreatNew] = React.useState(false);
   if (creatNew) {
-    return <Redirect from="/" to="/new" />;
+    return <Redirect from="/" to="/new/" />;
   }
 
   return (

@@ -66,5 +66,5 @@ def author_like_list(request, author_id):
     if(not likes):
         return JsonResponse({'status': 'false', 'message': 'like object not found'}, status=status.HTTP_404_NOT_FOUND)
     serializer = LikeSerializer(likes, many=True)
-    like_json = {'type': 'likes', 'items': serializer.data}
+    like_json = {'type': 'liked', 'items': serializer.data}
     return JsonResponse(like_json, safe=False)

@@ -1,22 +1,13 @@
-import React, { StyleSheet, useState, useEffect, Text } from "react";
-import {
-  Card,
-  CardMedia,
-  CardActionArea,
-  Typography,
-  IconButton,
-  Avatar,
-  Divider,
-  Fab,
-} from "@material-ui/core";
-import { Delete, Edit } from "@material-ui/icons";
+import React from "react";
+import { Card, Typography, IconButton, Avatar, Fab } from "@material-ui/core";
+import { Delete } from "@material-ui/icons";
 import { Grid } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Share from "./Share";
 import makeStyles from "@material-ui/styles/makeStyles";
-
+import axios from "axios";
 const tempInbox = {
   type: "inbox",
   author: "http://127.0.0.1:5454/author/c1e3db8ccea4541a0f3d7e5c75feb3fb",
@@ -146,6 +137,12 @@ const Inbox = () => {
 
   const acceptFriendRequest = (id) => {};
   const declineFriendRequest = (id) => {};
+
+  const userid = localStorage.getItem("current_user_id");
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  axios.get(`${baseUrl2}/author/${userid}/inbox/`).then(
+    (res)=>console.log("hi",res.data)
+  );
 
   var listItems;
   if (InboxToggle === 0) {

@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 
-import { Avatar, IconButton, Pagination } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import { Card } from "reactstrap";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
@@ -185,7 +185,7 @@ function Comments(props) {
         alignItems="center"
         direction="column"
       >
-        <div className="text text-3">comments</div>
+        <div className="text text-1">comments</div>
         {commentStream}
       </Grid>
     </div>

@@ -11,8 +11,7 @@ from posts.models import Post
 @api_view(['GET', 'POST'])
 def comment_list(request, author_id, post_id):
     if request.method == 'GET':
-        comments = Comment.objects.filter(author_id=author_id)
-        comments = comments.filter(post_id=post_id)
+        comments = Comment.objects.filter(post_id=post_id)
         serializer = CommentSerializer(comments, many=True)
         comment_json = {'type': 'comments',
                         'id': 'http://127.0.0.1:5454/author/...', 'comments': serializer.data}
