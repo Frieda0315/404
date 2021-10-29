@@ -30,11 +30,10 @@ const MyPostList = () => {
     const id = e.id;
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
-    console.log(id)
-    axios.delete(`${baseUrl2}/authors/${userid}/posts/${id}/`).then((res)=>{
-      console.log(res.data)
-    })
-
+    console.log(id);
+    axios.delete(`${baseUrl2}/authors/${userid}/posts/${id}/`).then((res) => {
+      console.log(res.data);
+    });
   };
 
   const handleEdit = (e) => {
@@ -45,31 +44,28 @@ const MyPostList = () => {
     alert(item.content);
   };
 
- 
   //console.log(baseUrl2)
   useEffect(() => {
     var newList = [];
     axios.get(`${baseUrl2}/authors/${userid}/posts/`).then((res) => {
-    //console.log(res.data)
-    res.data.map((single) => {
-      console.log(single.content);
-      newList.push({  
-        id: single.id,
-        date: single.published,
-        content: single.content,
-        author: single.author.user_name,
-        github_user: single.author.github_name,
-        title: single.title,
-        state: single.visibility,
-        contentType: single.image  
+      console.log(res.data);
+      res.data.map((single) => {
+        //console.log(single.content);
+        newList.push({
+          id: single.id,
+          date: single.published,
+          content: single.content,
+          author: single.author.user_name,
+          github_user: single.author.github_name,
+          title: single.title,
+          state: single.visibility,
+          contentType: single.image,
+          image: single.image,
+        });
       });
+      setPostList(newList);
     });
-    setPostList(newList)
-  })
-},[])
-
-
-    
+  }, []);
 
   const listItems = PostList1.map((post) => (
     <Grid
@@ -188,7 +184,6 @@ const MyPostList = () => {
       >
         {listItems}
       </Grid>
-      
     </div>
   );
 };
