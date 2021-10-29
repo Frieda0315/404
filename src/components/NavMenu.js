@@ -2,7 +2,6 @@ import {
   Collapse,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
   Nav,
   NavItem,
   NavLink,
@@ -11,13 +10,12 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Avatar } from "@mui/material";
 import dummy_img from "../static/musle.png";
 import { makeStyles } from "@material-ui/styles";
 import { useCookies } from "react-cookie";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { isEmpty } from "lodash";
+import { Redirect } from "react-router-dom";
 import "./font/style.css";
 import logo from "./assets/logo.png";
 import Link from "@mui/material/Link";

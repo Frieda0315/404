@@ -1,4 +1,4 @@
-import React, { StyleSheet, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import noimage from "../static/noimage.png";
 import Grid from "@mui/material/Grid";
@@ -7,18 +7,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import {
-  Button,
-  Typography,
-  CardContent,
-  Card,
-  CardMedia,
-} from "@mui/material";
+import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory } from "react-router-dom";
-import { Axios } from "axios";
-import { maxHeight } from "@mui/system";
 import "./font/style.css";
-import NavMenu from "./NavMenu";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";

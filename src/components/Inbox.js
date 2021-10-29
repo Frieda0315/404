@@ -1,15 +1,6 @@
-import React, { StyleSheet, useState, useEffect, Text } from "react";
-import {
-  Card,
-  CardMedia,
-  CardActionArea,
-  Typography,
-  IconButton,
-  Avatar,
-  Divider,
-  Fab,
-} from "@material-ui/core";
-import { Delete, Edit } from "@material-ui/icons";
+import React from "react";
+import { Card, Typography, IconButton, Avatar, Fab } from "@material-ui/core";
+import { Delete } from "@material-ui/icons";
 import { Grid } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
