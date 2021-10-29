@@ -386,6 +386,33 @@ function PostStream(props) {
       .catch((errors) => {
         console.log(errors);
       });
+
+    /*
+    axios
+      .get(`${baseUrl2}/posts/`)
+      .then((res) => {
+        if (res.data[0].id) {
+          newList = newList.concat(res.data);
+        }
+      })
+      .catch(function (error) {
+        console.log("Show error notification!");
+        return Promise.reject(error);
+      });
+    axios.get(`${baseUrl}/xius666/events`).then((res) => {
+      console.log(res.data);
+      res.data.map((single) => {
+        //console.log(single.actor);
+        newList.push({
+          id: single.id,
+          published: single.created_at,
+          content: "from repo: " + single.repo.name,
+          author: single.actor.login,
+          title: "Github Activity: " + single.type,
+        });
+      });
+      setPostlist(newList);
+    });*/
   }, []);
 
   if (Object.keys(comments).length !== 0) {
