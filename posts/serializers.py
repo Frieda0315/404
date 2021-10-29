@@ -8,7 +8,7 @@ from users.serializers import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
     title = serializers.CharField(required=True)
-    content = serializers.CharField(required=True)
+    content = serializers.CharField(required=True,allow_blank=True)
     author = UserSerializer()
 
     def create(self, validated_data):
@@ -35,7 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'type', 'title', 'content',
-                  'published', 'author', 'visibility']
+                  'published', 'author', 'visibility', 'image']
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
@@ -44,6 +44,8 @@ class PostSerializer(serializers.ModelSerializer):
             'published', instance.published)
         instance.visibility = validated_data.get(
             'visibility', instance.visibility)
+        instance.image = validated_data.get(
+            'image', instance.image)
         instance.save()
         # instance is current data in DB, validated_data is new incoming data
         return instance

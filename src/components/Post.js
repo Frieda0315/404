@@ -36,11 +36,14 @@ const Post = () => {
   const location = useLocation();
   const userid = localStorage.getItem("current_user_id");
 
-  const [image, setImage] = React.useState(null);
+  const [image, setImage] = React.useState("");
   const [preview, setPreview] = React.useState();
   const [value, setValue] = React.useState("Text");
-  const [title, setTitle] = React.useState(null);
-  const [common, setCommon] = React.useState(null);
+  const [title, setTitle] = React.useState("");
+  const [common, setCommon] = React.useState("");
+  const [fileBase64String, setFileBase64String] = React.useState();
+  const [decode, setDecode] = React.useState();
+
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
 
@@ -50,6 +53,7 @@ const Post = () => {
     const file = files[0];
     if (file) {
       setImage(file);
+      encodeFileBase64(image);
     } else {
       setImage(noimage);
     }
@@ -60,6 +64,7 @@ const Post = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        encodeFileBase64(image);
       };
       reader.readAsDataURL(image);
     } else {
@@ -67,15 +72,55 @@ const Post = () => {
     }
   }, [image]);
 
+  const encodeFileBase64 = (file) => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFileBase64String(reader.result);
+      };
+    }
+  };
+
+  const decodeBase64File = (base64String) => {
+    return decodeURIComponent(
+      atob(base64String)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+  };
+
   const imageUpload = () => {
-    alert("Your file is being uploaded!");
+    encodeFileBase64(image);
+    console.log(fileBase64String);
+    setPreview(fileBase64String);
   };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
 
     if (value == "Image") {
-      alert("image");
+      const currentDateTime = Date().toLocaleString();
+      setDate(currentDateTime);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const uuid = uuidv4();
+      const newpost = await axios.put(
+        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+        {
+          type: "post",
+          id: uuid,
+          title: title,
+          content: common,
+          image: fileBase64String,
+          published: date,
+          author: author.data,
+          visibility: visibility,
+        }
+      );
+      history.push({ pathname: "/" });
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();
@@ -90,13 +135,14 @@ const Post = () => {
           id: uuid,
           title: title,
           content: common,
+          image: "",
           published: date,
           author: author.data,
           visibility: visibility,
         }
       );
-      console.log(newpost.data);
-      history.push({ pathname: "/mypost/" });
+      console.log("Fdafdsf");
+      history.push({ pathname: "/" });
     }
   };
 
@@ -108,11 +154,7 @@ const Post = () => {
         <div class="text text-3">Create A New Post</div>
       </Grid>
 
-      <Grid
-        item
-        //bgcolor = '#eeeeee'
-        alignItems="flex-start"
-      >
+      <Grid item alignItems="flex-start">
         <TextField
           style={{ marginTop: 5, marginBottom: 5, width: "50%", marginLeft: 5 }}
           id="addTitle"

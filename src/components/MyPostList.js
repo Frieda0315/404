@@ -110,7 +110,7 @@ function MyPostList() {
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
   const history = useHistory();
-  const [PostList1, setPostList] = React.useState(PostList);
+  const [PostList1, setPostList] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [openPopup, setOpenPopup] = React.useState(false);
   const [vote, setVote] = React.useState(0);
@@ -215,27 +215,8 @@ function MyPostList() {
       </Grid>
       <Grid container>
         <Grid item xs>
-          {post.image === "" ? null : (
-            <div
-              style={{
-                display: "flex",
-                alignItem: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CardMedia
-                style={{
-                  width: "auto",
-                  maxHeight: "200px",
-                }}
-                component="img"
-                src={post.image}
-              />
-            </div>
-          )}
-
           <Card className={styleClasses.cardInPost}>
-            {post.contentType == null ? (
+            {post.image === "" ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">
@@ -248,6 +229,7 @@ function MyPostList() {
               </Grid>
             ) : (
               <Grid container>
+                <CardMedia component="img" height="150" image={post.image} />
                 <Grid item xs>
                   <Typography variant="h5" component="div">
                     {post.title}
@@ -256,22 +238,6 @@ function MyPostList() {
                     {post.content}
                   </Typography>
                 </Grid>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItem: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardMedia
-                    style={{
-                      width: "auto",
-                      maxHeight: "200px",
-                    }}
-                    component="img"
-                    image={post.image}
-                  />
-                </div>
               </Grid>
             )}
           </Card>
@@ -311,6 +277,8 @@ function MyPostList() {
             >
               <Comment />
             </IconButton>
+          </Grid>
+          <Grid item>
             <Grid item>
               <IconButton
                 edge="end"

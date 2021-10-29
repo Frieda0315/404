@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom";
+import axios from "axios";
 
 const heading = {
   fontSize: "30px",
@@ -31,13 +32,26 @@ const pic = {
 const EditPost = () => {
   const history = useHistory();
   const location = useLocation();
+  const [fileBase64String, setFileBase64String] = React.useState();
   const [item1, setItem] = React.useState(location.state);
-  const [image, setImage] = React.useState(null);
+  console.log("get", location.image);
+  const [image, setImage] = React.useState(location.image);
   const [preview, setPreview] = React.useState();
-  const [value, setValue] = React.useState(item1.contentType);
-  const [state, setState] = React.useState("public");
+  const [value, setValue] = React.useState(() => {
+    if (item1.contentType == null) {
+      return "text/plain";
+    } else {
+      return "image";
+    }
+  });
+  const [state, setState] = React.useState(item1.state);
+  console.log("hi", state);
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
+  const [date, setDate] = React.useState(location.date);
+
+  const userid = localStorage.getItem("current_user_id");
+  const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const uploadImage = (files) => {
     //accept = 'image/*';
@@ -52,12 +66,22 @@ const EditPost = () => {
       }
     }
   };
+  const encodeFileBase64 = (file) => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFileBase64String(reader.result);
+      };
+    }
+  };
 
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        encodeFileBase64(image);
       };
       reader.readAsDataURL(image);
     } else {
@@ -70,35 +94,59 @@ const EditPost = () => {
   }, [image]);
 
   const imageUpload = () => {
-    alert("Your file is being uploaded!");
+    //encodeFileBase64(image);
+    console.log("hi", fileBase64String);
+    setPreview(fileBase64String);
   };
 
-  const submited = () => {
+  const submited = async () => {
     if (value == "image") {
-      const item2 = {
-        title: title,
-        image: image,
-        author: item1.author,
-        date: "xxxx-xx-xx xx:xx",
-        id: item1.id,
-        contentType: value,
-      };
-      setItem(item2);
-      alert(item2.title);
-      history.push({ pathname: "/mypost/", state: item2 });
+      const now = new Date();
+      const isoString = now.toISOString();
+
+      setDate(isoString);
+
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      console.log(state);
+      const newpost = axios.post(
+        `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+        {
+          type: "post",
+          id: item1.id,
+          title: title,
+          content: common,
+          image: fileBase64String,
+          published: date,
+          author: author.data,
+          visibility: state,
+        }
+      );
+
+      history.push({ pathname: "/mypost/" });
     }
     if (value == "text/plain") {
-      const item2 = {
-        title: title,
-        content: common,
-        author: item1.author,
-        date: "xxxx-xx-xx xx:xx",
-        id: item1.id,
-        contentType: value,
-      };
-      setItem(item2);
-      alert(item2.title);
-      history.push({ pathname: "/mypost/", state: item2 });
+      const now = new Date();
+      const isoString = now.toISOString();
+
+      setDate(isoString);
+
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      console.log(state);
+      const newpost = axios.post(
+        `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+        {
+          type: "post",
+          id: item1.id,
+          title: title,
+          content: common,
+          published: date,
+          author: author.data,
+          visibility: state,
+          image: null,
+        }
+      );
+      console.log(newpost.data);
+      history.push({ pathname: "/mypost/" });
     }
   };
 
@@ -134,7 +182,6 @@ const EditPost = () => {
             aria-label="gender"
             name="row-radio-buttons-group"
             value={value}
-            defaultValue="Text"
             onChange={(event) => {
               setValue(event.target.value);
             }}
@@ -208,11 +255,14 @@ const EditPost = () => {
           </FormLabel>
           <RadioGroup
             aria-label="private?"
-            defaultValue={state}
             name="radio-buttons-group"
+            value={state}
+            onChange={(event) => {
+              setState(event.target.value);
+            }}
           >
             <FormControlLabel
-              value="public"
+              value="PUBLIC"
               sx={{
                 marginInlineStart: "5px",
               }}
@@ -220,7 +270,7 @@ const EditPost = () => {
               label="Public"
             />
             <FormControlLabel
-              value="private"
+              value="PRIVATE"
               sx={{
                 marginInlineStart: "5px",
               }}
@@ -228,7 +278,7 @@ const EditPost = () => {
               label="Private"
             />
             <FormControlLabel
-              value="friendOnly"
+              value="FRIENDS"
               sx={{
                 marginInlineStart: "5px",
               }}
