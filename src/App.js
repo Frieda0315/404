@@ -7,7 +7,7 @@ import Post from "./components/Post";
 import Comments from "./components/Comment";
 import MyPostList from "./components/MyPostList";
 import EditPost from "./components/EditPost";
-import FriedaList from "./components/friedaList";
+import FriendList from "./components/FriendList";
 import Inbox from "./components/Inbox";
 
 import Login from "./components/login/Login";
@@ -72,7 +72,7 @@ function App() {
         </Route>
         <Route exact path="/friends">
           <NavMenu />
-          <FriedaList></FriedaList>
+          <FriendList></FriendList>
         </Route>
       </Layout>
     </header>

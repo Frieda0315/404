@@ -41,6 +41,9 @@ const Post = () => {
   const [value, setValue] = React.useState("Text");
   const [title, setTitle] = React.useState(null);
   const [common, setCommon] = React.useState(null);
+  const [fileBase64String, setFileBase64String] = React.useState();
+  const [decode, setDecode] = React.useState();
+
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
 
@@ -50,6 +53,7 @@ const Post = () => {
     const file = files[0];
     if (file) {
       setImage(file);
+      encodeFileBase64(image);
     } else {
       setImage(noimage);
     }
@@ -67,15 +71,37 @@ const Post = () => {
     }
   }, [image]);
 
+  const encodeFileBase64 = (file) => {
+    var reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFileBase64String(reader.result);
+      };
+    }
+  };
+
+  const decodeBase64File = (base64String) => {
+    return decodeURIComponent(
+      atob(base64String)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+  };
+
   const imageUpload = () => {
-    alert("Your file is being uploaded!");
+    encodeFileBase64(image);
+    console.log(fileBase64String);
+    setPreview(fileBase64String);
   };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
 
     if (value == "Image") {
-      alert("image");
     }
     if (value == "Text") {
       const currentDateTime = Date().toLocaleString();

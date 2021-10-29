@@ -324,15 +324,18 @@ function PostStream(props) {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
+  const [authorids, setAuthorid] = React.useState();
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
 
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
-  const open = (author, git) => {
+  const open = (author, git, authorid) => {
+    //onsole.log(authorid);
     setUser(author);
     setGit_user(git);
+    setAuthorid(authorid);
     setOpenPopup(true);
   };
   const open_share = () => setOpenPopup2(true);
@@ -355,6 +358,7 @@ function PostStream(props) {
               published: single.published,
               content: single.content,
               author: single.author.user_name,
+              authorid: single.author.id,
               github_user: single.author.github_name,
               title: single.title,
               img: single.image,
@@ -438,7 +442,7 @@ function PostStream(props) {
         <Grid item>
           <Avatar
             src={dummy_image}
-            onClick={() => open(post.author, post.github_user)}
+            onClick={() => open(post.author, post.github_user, post.authorid)}
           ></Avatar>
         </Grid>
         <Grid item>
@@ -563,6 +567,7 @@ function PostStream(props) {
         <Profile
           user={user}
           post_github_user={github_user}
+          userid_folllow={authorids}
           is_follow={true}
         ></Profile>
       </Popup>
