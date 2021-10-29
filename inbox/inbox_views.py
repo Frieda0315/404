@@ -79,7 +79,7 @@ def inbox_list(request, author_id):
         try:
             inbox = Inbox.objects.get(receive_author=receiver)
         except Inbox.DoesNotExist:
-            return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
+            return JsonResponse([], status=status.HTTP_200_OK, safe=False)
         post_serializer = PostSerializer(inbox.post.all(), many=True)
         post_json = {"type": "inbox", "author": author_id,
                      "items": post_serializer.data}
