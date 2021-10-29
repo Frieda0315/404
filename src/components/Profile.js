@@ -120,22 +120,7 @@ export default function Profile({
       const authorinfor = res1.data;
       const message = authorinfor.user_name + " want follow " + username;
       console.log(userid)
-      console.log({
-        type: "follow",
-        summary: message,
-        actor: {
-          id: userid,
-          user_name: authorinfor.user_name,
-          github_name: authorinfor.github_name,
-          type: "author",
-        },
-        object: {
-          id: userid_folllow,
-          user_name: username,
-          github_name: post_github_user,
-          type: "author",
-        },
-      })
+    
       try {
         const res = await axios.post(
           `${baseUrl2}/author/${userid_folllow}/inbox/`,

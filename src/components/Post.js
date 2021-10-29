@@ -7,6 +7,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+
 import {
   Button,
   Typography,
@@ -15,10 +16,8 @@ import {
   CardMedia,
 } from "@mui/material";
 import { useHistory } from "react-router-dom";
-import { Axios } from "axios";
-import { maxHeight } from "@mui/system";
 import "./font/style.css";
-import NavMenu from "./NavMenu";
+
 
 const heading = {
   fontSize: "30px",
@@ -44,12 +43,15 @@ const Post = () => {
   const [value, setValue] = React.useState("Text");
   const [title, setTitle] = React.useState(null);
   const [common, setCommon] = React.useState(null);
+  const [fileBase64String, setFileBase64String] = React.useState();
+  const [decode, setDecode] = React.useState();
 
   const uploadImage = (files) => {
     //accept = 'image/*';
     const file = files[0];
     if (file) {
       setImage(file);
+      encodeFileBase64(image)
     } else {
       setImage(noimage);
     }
@@ -60,6 +62,7 @@ const Post = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        
       };
       reader.readAsDataURL(image);
     } else {
@@ -67,8 +70,39 @@ const Post = () => {
     }
   }, [image]);
 
+  const encodeFileBase64 = (file) =>{
+    var reader = new FileReader();
+    if(file){
+      reader.readAsDataURL(file)
+      reader.onloadend = () => {
+        setFileBase64String(reader.result)
+      };
+    }
+  }
+
+  const decodeBase64File=(base64String) =>{
+    return decodeURIComponent(
+      atob(base64String).split("").map(function(c){
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join("")
+    )
+  }
+
+
   const imageUpload = () => {
+    encodeFileBase64(image)
+    const b = fileBase64String.substring(fileBase64String.indexOf(",") + 1)
+    //console.log(fileBase64String.substring(fileBase64String.indexOf(",") + 1))
     alert("Your file is being uploaded!");
+    const c = URL.createObjectURL(new Blob([b], {type: "image/jpej"}))
+    //console.log(new Blob([b], {type: "image/jpej"}))
+    setPreview(fileBase64String)
+    // var url = fileBase64String
+    // fetch(url).then(res => {
+    //   const a = res.blob()
+    //   console.log(a)
+    //   }
+    // )
   };
 
   const submited = () => {
@@ -243,7 +277,9 @@ const Post = () => {
         >
           Cancel
         </Button>
+      
       </Grid>
+      
     </Grid>
   );
 };
