@@ -33,7 +33,8 @@ function MainPage() {
         >
           <Fab color="primary" aria-label="add">
             <Add
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 setCreatNew(true);
               }}
             />

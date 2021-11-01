@@ -35,12 +35,15 @@ def author_detail(request, id):
         user_json_data = JSONParser().parse(request)
         existing_users = User.objects.filter(user_name=user_json_data["user_name"])
         if(user.user_name != user_json_data["user_name"] and existing_users):
+            print(123)
             return Response({"error": "user_name already exists"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(user, data=user_json_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # need user object (including password)
 @api_view(['POST'])
@@ -56,6 +59,7 @@ def signup(request):
         new_user_object.password = password
         new_user_object.save()
         return JsonResponse(new_user_serializer.data, status=status.HTTP_201_CREATED)
+    
     return Response(new_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # need username and password

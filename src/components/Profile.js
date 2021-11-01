@@ -66,8 +66,10 @@ export default function Profile({
       });
   }
 
-  const [github_user, set_github_user] = useState("");
-  const [username, setUserName] = useState("");
+  const [github_user, set_github_user] = useState(
+    localStorage.getItem("github_user")
+  );
+  const [username, setUserName] = useState(localStorage.getItem("user_name"));
 
   const [ifFollowed, setIfFollowed] = useState(() => {
     if (userid == userid_folllow) {
@@ -165,7 +167,7 @@ export default function Profile({
 
       setTextinput2(username);
     }*/
-
+    console.log(textinput2);
     axios
       .post(`${baseUrl2}/author/${userid}/`, {
         id: userid,
@@ -234,7 +236,9 @@ export default function Profile({
 
                         <Input
                           defaultValue={username}
-                          onChange={(e) => setTextinput2(e.target.value)}
+                          onChange={(e) => {
+                            setTextinput2(e.target.value);
+                          }}
                         />
                         <Typography
                           variant="body1"
