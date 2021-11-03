@@ -1,10 +1,12 @@
 import Grid from "@material-ui/core/Grid";
 
 import { Avatar, IconButton } from "@material-ui/core";
-import { Card } from "reactstrap";
+import Button from "@mui/material/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
+import TextField from "@mui/material/TextField";
+import Divider from "@mui/material/Divider";
 
 import dummy_image from "../static/musle.png";
 import axios from "axios";
@@ -12,7 +14,7 @@ import { Delete } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import "./font/style.css";
-
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 const tempCommentList = [
   {
     type: "comment",
@@ -25,7 +27,7 @@ const tempCommentList = [
       github: "http://github.com/gjohnson",
       profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
     },
-    comment: "Sick Olde English 1",
+    comment: "Sick Olde English 1fdsafafasfffffdaoihohohoi",
     contentType: "text/markdown",
     published: "2015-03-09T13:07:04+00:00",
     id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c1",
@@ -67,6 +69,7 @@ const tempCommentList = [
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
+    marginTop: "100px",
   },
   postCard: {
     backgroundColor: "#fff",
@@ -108,10 +111,10 @@ function Comments(props) {
   };
 
   const commentStream = comments.map((comment) => (
-    <Grid item xs={8} className={styleClasses.postCard}>
+    <Grid item>
       <Grid
         container
-        spacing={1}
+        spacing={3}
         direction="row"
         justifyContent="flex-start"
         alignItems="flex-start"
@@ -129,18 +132,8 @@ function Comments(props) {
           <Typography>{comment.published}</Typography>
         </Grid>
       </Grid>
-      <Grid container>
-        <Grid item xs>
-          <Card className={styleClasses.cardInPost}>
-            <Grid container>
-              <Grid item xs>
-                <Typography variant="body1" color="text.secondary">
-                  {comment.comment}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Card>
-        </Grid>
+      <Grid container justifyContent="center" alignItems="center">
+        <Typography color="text.primary">{comment.comment}</Typography>
       </Grid>
 
       <Grid
@@ -160,12 +153,13 @@ function Comments(props) {
           </IconButton>
         </Grid>
       </Grid>
+      <Divider />
     </Grid>
   ));
   console.log(commentStream);
   // console.log(commentsList);
   return (
-    <div style={{ height: "100%", marginTop: "30px" }}>
+    <div>
       <Popup
         title={"Profile"}
         openPopup={openPopup}
@@ -177,6 +171,7 @@ function Comments(props) {
           is_follow={true}
         ></Profile>
       </Popup>
+
       <Grid
         container
         spacing={2}
@@ -185,7 +180,32 @@ function Comments(props) {
         alignItems="center"
         direction="column"
       >
-        <div className="text text-1">comments</div>
+        <div class="text text-1">Comments</div>
+        <Grid container alignItems="center" justifyContent="center">
+          <Box
+            sx={{
+              width: 600,
+              display: "flex",
+              alignItems: "flex-end",
+            }}
+          >
+            <AddReactionIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+            <TextField
+              fullWidth
+              label="Add your comments..."
+              variant="standard"
+            />
+            <Button
+              sx={{
+                marginLeft: 1,
+              }}
+              variant="contained"
+            >
+              Add
+            </Button>
+          </Box>
+        </Grid>
+
         {commentStream}
       </Grid>
     </div>
