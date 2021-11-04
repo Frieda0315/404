@@ -28,7 +28,6 @@ function App() {
       </header>
     );
   }*/
-
   return (
     <header>
       <Layout>
