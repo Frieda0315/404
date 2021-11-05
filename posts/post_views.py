@@ -1,6 +1,6 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
@@ -8,11 +8,15 @@ from .serializers import PostSerializer
 from .models import Post
 from users.models import User
 from backend.helper import *
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def public_post(request):
     posts = Post.objects.filter(visibility="PUBLIC")
     serializer = PostSerializer(posts, many=True)
@@ -20,6 +24,8 @@ def public_post(request):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def post_list(request, author_id):
 
     if request.method == 'GET':
@@ -55,6 +61,8 @@ def post_list(request, author_id):
 
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def post_detail(request, author_id, id):  # this id here is postID
     """
     Retrieve, create, update or delete a code snippet.

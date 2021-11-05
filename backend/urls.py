@@ -62,6 +62,7 @@ urlpatterns = [
     #admin server
     path('service/admin/handle/<uuid:id>/',admin_servers_views.handle_signup_request, name='handle_signup_request'),
     path('service/admin/get/',admin_servers_views.get_signup_requests, name='get_signup_request'),
+    path('service/admin/approveoption/',admin_servers_views.approve_option, name='approve_option'),
 
 
     path('admin/', admin.site.urls),

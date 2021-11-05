@@ -105,7 +105,12 @@ const Post = () => {
     if (value == "Image") {
       const currentDateTime = Date().toLocaleString();
       setDate(currentDateTime);
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
       const uuid = uuidv4();
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
@@ -118,6 +123,12 @@ const Post = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
         }
       );
       history.push({ pathname: "/" });
@@ -126,7 +137,12 @@ const Post = () => {
       const currentDateTime = Date().toLocaleString();
       setDate(currentDateTime);
 
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
       const uuid = uuidv4();
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
@@ -139,6 +155,12 @@ const Post = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
         }
       );
       console.log("Fdafdsf");

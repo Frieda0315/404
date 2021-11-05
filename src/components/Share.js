@@ -21,7 +21,12 @@ function Share(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
     axios
-      .post(`${baseUrl2}/author/${user.id}/inbox/`, postToShare)
+      .post(`${baseUrl2}/author/${user.id}/inbox/`, postToShare, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((response) => {
         console.log(response);
         // setSuccess(true);
@@ -43,10 +48,17 @@ function Share(props) {
      * TODO: change the following code accordingly once the author
      *       APIs are updated
      */
-    axios.get(`${baseUrl2}/authors/`).then((response) => {
-      // console.log(response.data);
-      setAuthorList(response.data);
-    });
+    axios
+      .get(`${baseUrl2}/authors/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((response) => {
+        // console.log(response.data);
+        setAuthorList(response.data);
+      });
   });
   //console.log(props.post);
   const friendList = authorList.map((s) => (

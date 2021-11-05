@@ -94,10 +94,17 @@ function Comments(props) {
   const [openPopup, setOpenPopup] = React.useState(false);
   const [comments, setComments] = React.useState([]);
   useEffect(() => {
-    axios.get(`${baseUrl2}${path}/`).then((response) => {
-      console.log(response.data.comments);
-      setComments(response.data.comments);
-    });
+    axios
+      .get(`${baseUrl2}${path}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((response) => {
+        console.log(response.data.comments);
+        setComments(response.data.comments);
+      });
   }, []);
   const handleRemove = (e) => {
     const id = e.id;

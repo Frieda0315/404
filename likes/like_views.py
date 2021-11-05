@@ -1,10 +1,12 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from .serializers import CommentSerializer, LikeSerializer
 from .models import Like
 from posts.models import Post
 from comments.models import Comment
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -16,6 +18,8 @@ from comments.models import Comment
 
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def post_like_list(request, author_id, post_id):
     if request.method == 'GET':
         # find the post with input post_id and author_id
@@ -40,6 +44,8 @@ def post_like_list(request, author_id, post_id):
 # @param {post_id} The post's id, we want to find the like under this post's comment
 # @param {comment_id} The comment's id, we want to find the like under this comment
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def comment_like_list(request, author_id, post_id, comment_id):
     if request.method == 'GET':
         # TODO: add author id filter
@@ -61,6 +67,8 @@ def comment_like_list(request, author_id, post_id, comment_id):
 # GET list what public things author_id liked
 # @param {author_id} The author's id, we want to find this author's likes
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def author_like_list(request, author_id):
     likes = Like.objects.filter(author_id=author_id)
     if(not likes):
