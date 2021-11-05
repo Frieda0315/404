@@ -56,11 +56,22 @@ class Login extends React.Component {
     event.preventDefault();
     if (this.state.username != "" && this.state.password != "") {
       const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+      console.log(this.state.username);
+      console.log(this.state.password);
       axios
-        .post(`${baseUrl2}/users/login/`, {
-          user_name: this.state.username,
-          password: this.state.password,
-        })
+        .post(
+          `${baseUrl2}/users/login/`,
+          {
+            user_name: this.state.username,
+            password: this.state.password,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        )
         .then(
           (response) => {
             /*if (this.state.selected === "yes") {

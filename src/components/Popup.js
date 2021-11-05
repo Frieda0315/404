@@ -28,7 +28,7 @@ function Popup(props) {
           </IconButton>
         </div>
       </DialogTitle>
-      <DialogContent style={{ overflow: "hidden" }}>{children}</DialogContent>
+      <DialogContent style={{ overflow: true }}>{children}</DialogContent>
     </Dialog>
   );
 }
