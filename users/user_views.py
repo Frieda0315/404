@@ -87,9 +87,12 @@ def login(request):
     login_json_data = JSONParser().parse(request)
     user_name = login_json_data["user_name"]
     password =login_json_data["password"]
+    print(user_name)
+    print(password)
     if((not user_name) or (not password)):
         return JsonResponse({"error": "incorrect form data"}, status=status.HTTP_400_BAD_REQUEST)
     existing_user = User.objects.filter(user_name=user_name, password=password)
+    print(existing_user)
     if(existing_user):
         existing_user_serializer = UserSerializer(existing_user[0])
         return JsonResponse(existing_user_serializer.data, status=status.HTTP_200_OK)

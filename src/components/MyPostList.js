@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { CardMedia, Typography, IconButton, Avatar } from "@material-ui/core";
+import {
+  CardMedia,
+  Typography,
+  IconButton,
+  Avatar,
+  CardActionArea,
+} from "@material-ui/core";
 import { Delete, Edit } from "@material-ui/icons";
 import { Grid } from "@mui/material";
 import { useHistory } from "react-router-dom";
@@ -13,7 +19,7 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import { Card } from "reactstrap";
 import { Redirect } from "react-router";
 import axios from "axios";
-
+import ImageHolder from "./ImageHolder";
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -54,13 +60,19 @@ function MyPostList() {
   const history = useHistory();
   const [PostList1, setPostList] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
+  const [openPopup3, setOpenPopup3] = React.useState(false);
   const [openPopup, setOpenPopup] = React.useState(false);
   const [vote, setVote] = React.useState(0);
   const [comments, setComments] = React.useState({});
   const styleClasses = useStyles();
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+  const [image, setImage] = React.useState();
 
+  const open_image_holder = (post) => {
+    setImage(post.image);
+    setOpenPopup3(true);
+  };
   useEffect(() => {
     var newList = [];
     axios
@@ -143,12 +155,7 @@ function MyPostList() {
   };
 
   const listItems = PostList1.map((post) => (
-    <Grid
-      item
-      xs={8}
-      className={styleClasses.postCard}
-      key={post != null ? post.id : "123"}
-    >
+    <Grid item xs={8} key={post != null ? post.id : "123"}>
       <Grid
         container
         spacing={1}
@@ -169,32 +176,32 @@ function MyPostList() {
       </Grid>
       <Grid container>
         <Grid item xs>
-          <Card className={styleClasses.cardInPost}>
-            {post.image === "" ? (
-              <Grid container>
-                <Grid item xs>
-                  <Typography variant="h5" component="div">
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
-                </Grid>
+          {post.image === "" ? (
+            <Grid container>
+              <Grid item xs>
+                <Typography variant="h5" component="div">
+                  {post.title}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {post.content}
+                </Typography>
               </Grid>
-            ) : (
-              <Grid container>
+            </Grid>
+          ) : (
+            <Grid container>
+              <CardActionArea onClick={() => open_image_holder(post)}>
                 <CardMedia component="img" height="150" image={post.image} />
-                <Grid item xs>
-                  <Typography variant="h5" component="div">
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
-                </Grid>
+              </CardActionArea>
+              <Grid item xs>
+                <Typography variant="h5" component="div">
+                  {post.title}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {post.content}
+                </Typography>
               </Grid>
-            )}
-          </Card>
+            </Grid>
+          )}
         </Grid>
       </Grid>
 
@@ -265,6 +272,9 @@ function MyPostList() {
         setOpenPopup={setOpenPopup2}
       >
         <Share></Share>
+      </Popup>
+      <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
+        <ImageHolder image={image}></ImageHolder>
       </Popup>
 
       <div class="text text-1">My Post</div>

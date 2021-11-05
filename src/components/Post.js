@@ -41,7 +41,7 @@ const Post = () => {
   const [value, setValue] = React.useState("Text");
   const [title, setTitle] = React.useState("");
   const [common, setCommon] = React.useState("");
-  const [fileBase64String, setFileBase64String] = React.useState();
+  const [fileBase64String, setFileBase64String] = React.useState("");
   const [decode, setDecode] = React.useState();
 
   const [date, setDate] = React.useState(location.date);
@@ -102,7 +102,7 @@ const Post = () => {
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
 
-    if (value == "Image") {
+    if (common === "") {
       const currentDateTime = Date().toLocaleString();
       setDate(currentDateTime);
       const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
@@ -118,7 +118,7 @@ const Post = () => {
           type: "post",
           id: uuid,
           title: title,
-          content: common,
+          content: "",
           image: fileBase64String,
           published: date,
           author: author.data,
@@ -132,8 +132,7 @@ const Post = () => {
         }
       );
       history.push({ pathname: "/" });
-    }
-    if (value == "Text") {
+    } else if (image !== "" || image !== noimage) {
       const currentDateTime = Date().toLocaleString();
       setDate(currentDateTime);
 
@@ -164,6 +163,36 @@ const Post = () => {
         }
       );
       console.log("Fdafdsf");
+      history.push({ pathname: "/" });
+    } else {
+      const currentDateTime = Date().toLocaleString();
+      setDate(currentDateTime);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
+      const uuid = uuidv4();
+      const newpost = await axios.put(
+        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+        {
+          type: "post",
+          id: uuid,
+          title: title,
+          content: common,
+          image: fileBase64String,
+          published: date,
+          author: author.data,
+          visibility: visibility,
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      );
       history.push({ pathname: "/" });
     }
   };

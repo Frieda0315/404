@@ -10,7 +10,7 @@ import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
-
+import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
 
 import Share from "./Share";
@@ -328,6 +328,8 @@ function PostStream(props) {
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
+  const [openPopup3, setOpenPopup3] = React.useState(false);
+  const [image, setImage] = React.useState();
 
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
@@ -342,6 +344,10 @@ function PostStream(props) {
   const open_share = (post) => {
     setOpenPopup2(true);
     setShareBuffer(post);
+  };
+  const open_image_holder = (post) => {
+    setImage(post.img);
+    setOpenPopup3(true);
   };
   const handle_vote = (post) => {
     axios
@@ -453,12 +459,7 @@ function PostStream(props) {
     .slice(0)
     .reverse()
     .map((post) => (
-      <Grid
-        item
-        xs={8}
-        className={styleClasses.postCard}
-        key={post != null ? post.id : "123"}
-      >
+      <Grid item xs={8} key={post != null ? post.id : "123"}>
         <Grid
           container
           spacing={1}
@@ -483,42 +484,38 @@ function PostStream(props) {
         </Grid>
         <Grid container>
           <Grid item xs>
-            <Card className={styleClasses.cardInPost}>
-              <CardActionArea
-                onClick={tempPostOnClick}
-                className={styleClasses.clickBox}
-              >
-                {post.img === "" ? (
-                  <Grid container>
-                    <Grid item xs>
-                      <Typography variant="h5" component="div">
-                        {post.title}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {post.content}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <Grid container>
-                    <CardMedia
-                      component="img"
-                      height="150"
-                      image={post.img}
-                      alt="fda"
-                    />
-                    <Grid item xs>
-                      <Typography variant="h5" component="div">
-                        {post.title}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {post.content}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                )}
-              </CardActionArea>
-            </Card>
+            {post.img === "" ? (
+              <Grid container>
+                <Grid item xs>
+                  <Typography variant="h5" component="div">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ) : (
+              <Grid container>
+                <CardActionArea onClick={() => open_image_holder(post)}>
+                  <CardMedia
+                    component="img"
+                    height="150"
+                    image={post.img}
+                    alt="fda"
+                  />
+                </CardActionArea>
+
+                <Grid item xs>
+                  <Typography variant="h5" component="div">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
 
@@ -590,6 +587,9 @@ function PostStream(props) {
           userid_folllow={authorids}
           is_follow={true}
         ></Profile>
+      </Popup>
+      <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
+        <ImageHolder image={image}></ImageHolder>
       </Popup>
       <Popup
         title={"Who do you want to share with?"}
