@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from .serializers import AdminUserSerializer, UserSerializer
 from .models import User,AdminUser
-
+import json
+import os
 # Create your views here.
 
 
@@ -45,6 +46,9 @@ def author_detail(request, id):
 # need user object (including password)
 @api_view(['POST'])
 def signup(request):
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, "../config.json")
+
     user_json_data = JSONParser().parse(request)
     current_user = User.objects.filter(Q(user_name = user_json_data["user_name"]) | Q(pk=user_json_data["id"]))
     if(current_user):
@@ -52,8 +56,16 @@ def signup(request):
     password = user_json_data.pop("password")
     new_user_serializer = UserSerializer(data=user_json_data)
     if new_user_serializer.is_valid():
+        try:
+            with open(file_path, 'r') as config_file:
+                config_data = json.load(config_file)
+        except:
+            return JsonResponse({"approve_option":"file not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, safe=False)
+        
         new_user_object = new_user_serializer.save()
         new_user_object.password = password
+        if not config_data["approve_option"]:
+            new_user_object.pending = False
         new_user_object.save()
         return JsonResponse(new_user_serializer.data, status=status.HTTP_201_CREATED)
     return JsonResponse(new_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
