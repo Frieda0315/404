@@ -29,7 +29,8 @@ const FriendList = () => {
         console.log(res.data);
       });
   };
-  const [isFriend, setIsFriend] = React.useState();
+  const [check, setCheck] = React.useState(false);
+  const [isFriend, setIsFriend] = React.useState("follower");
   useEffect(() => {
     const newList = [];
     axios
@@ -43,10 +44,11 @@ const FriendList = () => {
         res.data.map((infor) => {
           if (friendType(infor.id)) {
             setIsFriend("friend");
+            //console.log(isFriend);
           } else {
             setIsFriend("follower");
           }
-          console.log(friendType(infor.id));
+          console.log("friend Type", friendType(infor.id));
           newList.push({
             id: infor.id,
             github: infor.github_name,
@@ -54,11 +56,13 @@ const FriendList = () => {
             ftype: isFriend,
           });
         });
+        //console.log("this is check", isFriend);
         setFriends(newList);
       });
   }, []);
 
   const friendType = (id) => {
+    //let check = false;
     const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`, {
       auth: {
         username: "admin",
@@ -73,13 +77,17 @@ const FriendList = () => {
     });
     axios.all([a, b]).then(
       axios.spread((...res) => {
-        if (res[0].data == res[1].data) {
+        if (
+          res[0].data.result === "Follow relationship found" &&
+          res[1].data.result === "Follow relationship found"
+        ) {
+          setCheck(true);
+          console.log(check);
           return true;
-        } else {
-          return false;
-        } //console.log(res[0].data);
+        }
       })
     );
+    return false;
   };
 
   const listItems = friendList.map((item) => (
