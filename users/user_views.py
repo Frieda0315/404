@@ -1,17 +1,22 @@
 from django.http.response import JsonResponse
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from .serializers import AdminUserSerializer, UserSerializer
 from .models import User,AdminUser
 import json
 import os
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 # Create your views here.
 
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def author_list(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
@@ -19,6 +24,8 @@ def author_list(request):
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def author_detail(request, id):
     """
     Retrieve, update or delete a user profile info.
@@ -45,6 +52,8 @@ def author_detail(request, id):
 
 # need user object (including password)
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def signup(request):
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, "../config.json")
@@ -72,6 +81,8 @@ def signup(request):
 
 # need username and password
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def login(request):
     login_json_data = JSONParser().parse(request)
     user_name = login_json_data["user_name"]
@@ -89,6 +100,8 @@ def login(request):
 admin's signup
 '''
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def admin_signup(request):
     user_json_data = JSONParser().parse(request)
     current_admin_user = AdminUser.objects.filter(Q(user_name = user_json_data["user_name"]) | Q(pk=user_json_data["id"]))
@@ -110,6 +123,8 @@ def admin_signup(request):
 admin's login
 '''
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def admin_login(request):
     login_json_data = JSONParser().parse(request)
     user_name = login_json_data["user_name"]

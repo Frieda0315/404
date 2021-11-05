@@ -95,7 +95,12 @@ export default function Profile({
       set_github_user(post_github_user);
     }
     axios
-      .get(`${baseUrl}/${github_user}`)
+      .get(`${baseUrl}/${github_user}`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         console.log(res.data["avatar_url"]);
         seturl(res.data["avatar_url"]);
@@ -107,7 +112,12 @@ export default function Profile({
 
   const handleIfFollow = () => {
     axios
-      .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`)
+      .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         console.log(res.data);
         return true;
@@ -120,7 +130,12 @@ export default function Profile({
   const handleFollow = async () => {
     if (userid == userid_folllow) {
     } else {
-      const res1 = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const res1 = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
       const authorinfor = res1.data;
       const message = authorinfor.user_name + " want follow " + username;
       console.log(userid);
@@ -142,6 +157,12 @@ export default function Profile({
               user_name: username,
               github_name: post_github_user,
               type: "author",
+            },
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
             },
           }
         );
@@ -169,12 +190,21 @@ export default function Profile({
     }*/
     console.log(textinput2);
     axios
-      .post(`${baseUrl2}/author/${userid}/`, {
-        id: userid,
-        github_name: textinput1,
-        user_name: textinput2,
-        type: "author",
-      })
+      .post(
+        `${baseUrl2}/author/${userid}/`,
+        {
+          id: userid,
+          github_name: textinput1,
+          user_name: textinput2,
+          type: "author",
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
       .then(
         (response) => {
           console.log(response);

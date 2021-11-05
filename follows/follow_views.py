@@ -1,17 +1,20 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
 from .serializers import FollowSerializer, FriendSerializer
 from .models import Follow, Friend, FriendRequest
 from users.models import User
 from users.serializers import UserSerializer
 from backend.helper import *
-
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def follower_list(request, author_id):
     try:
         following = User.objects.get(pk=author_id)
@@ -27,6 +30,8 @@ def follower_list(request, author_id):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def follower_detail(request, author_id, foreign_author_id):
     if(author_id == foreign_author_id):
         return JsonResponse({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
@@ -93,6 +98,8 @@ def follower_detail(request, author_id, foreign_author_id):
 
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def friend_list(request, author_id):
     try:
         author = User.objects.get(pk=author_id)

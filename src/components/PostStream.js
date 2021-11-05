@@ -355,7 +355,16 @@ function PostStream(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    const requestOne = axios.get(`${baseUrl2}/posts/`);
+    const requestOne = axios.get(
+      `${baseUrl2}/posts/`,
+
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
     const requestTwo = axios.get(
       `${baseUrl}/${localStorage.getItem("github_user")}/events`
     );

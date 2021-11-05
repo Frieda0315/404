@@ -106,7 +106,12 @@ const EditPost = () => {
 
       setDate(isoString);
 
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
       console.log(state);
       const newpost = axios.post(
         `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
@@ -119,6 +124,12 @@ const EditPost = () => {
           published: date,
           author: author.data,
           visibility: state,
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
         }
       );
 
@@ -130,7 +141,12 @@ const EditPost = () => {
 
       setDate(isoString);
 
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`);
+      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      });
       console.log("hi", common);
       const newpost = axios.post(
         `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
@@ -143,6 +159,12 @@ const EditPost = () => {
           author: author.data,
           visibility: state,
           image: "",
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
         }
       );
       console.log(newpost.data);

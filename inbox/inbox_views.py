@@ -1,5 +1,5 @@
 from django.http.response import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,6 +12,8 @@ from follows.serializers import FriendRequestSerializer
 from posts.models import Post
 from posts.serializers import PostSerializer
 from backend.helper import *
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 
@@ -60,6 +62,8 @@ def handleLikeRequest(json_data, receiver):
 
 
 @api_view(['POST', 'GET', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def inbox_list(request, author_id):
     try:
         receiver = User.objects.get(pk=author_id)

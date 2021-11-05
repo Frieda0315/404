@@ -14,64 +14,6 @@ import { Card } from "reactstrap";
 import { Redirect } from "react-router";
 import axios from "axios";
 
-const PostList = [
-  {
-    title: "Hello world",
-    content: "Hello world Content",
-    author: "author1",
-    date: "xxxx-xx-xx xx:xx",
-    id: "1",
-    contentType: "text/plain",
-  },
-  {
-    title: "I am just trying to make a stream",
-    content: "I am just trying to make a stream ",
-    author: "author2",
-    date: "xxxx-xx-xx xx:xx",
-    id: "2",
-    contentType: "text/plain",
-  },
-  {
-    title: "I mean, a really simple one",
-    content: "I mean, a really simple one",
-    author: "author3",
-    date: "xxxx-xx-xx xx:xx",
-    id: "3",
-    contentType: "text/plain",
-  },
-  {
-    title: "so I decided to create some dummy strings",
-    content: "so I decided to create some dummy strings Content",
-    author: "author4",
-    date: "xxxx-xx-xx xx:xx",
-    id: "4",
-    contentType: "text/plain",
-  },
-  {
-    title: "and this is one of them",
-    author: "author5",
-    date: "xxxx-xx-xx xx:xx",
-    id: "5",
-    image: dummy_image,
-    contentType: "image",
-  },
-  {
-    title: "this is two of them",
-    content: "this is two of them Content",
-    author: "author6",
-    date: "xxxx-xx-xx xx:xx",
-    id: "6",
-    contentType: "text/plain",
-  },
-  {
-    title: "",
-    content: "this is two of them Content",
-    author: "author6",
-    date: "xxxx-xx-xx xx:xx",
-    id: "7",
-    contentType: "text/plain",
-  },
-];
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -122,7 +64,12 @@ function MyPostList() {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/authors/${userid}/posts/`)
+      .get(`${baseUrl2}/authors/${userid}/posts/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         console.log(res.data);
 
@@ -169,9 +116,16 @@ function MyPostList() {
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
     console.log(id);
-    axios.delete(`${baseUrl2}/authors/${userid}/posts/${id}/`).then((res) => {
-      console.log(res.data);
-    });
+    axios
+      .delete(`${baseUrl2}/authors/${userid}/posts/${id}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
   };
 
   const open_share = () => setOpenPopup2(true);

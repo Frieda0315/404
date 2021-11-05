@@ -19,7 +19,12 @@ const FriendList = () => {
     setFriends(newList);
 
     axios
-      .delete(`${baseUrl2}/author/${userid}/followers/${id}/`)
+      .delete(`${baseUrl2}/author/${userid}/followers/${id}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         console.log(res.data);
       });
@@ -27,30 +32,45 @@ const FriendList = () => {
   const [isFriend, setIsFriend] = React.useState();
   useEffect(() => {
     const newList = [];
-    axios.get(`${baseUrl2}/author/${userid}/followers/`).then((res) => {
-      console.log(res.data);
-
-      res.data.map((infor) => {
-        if (friendType(infor.id)) {
-          setIsFriend("friend");
-        } else {
-          setIsFriend("follower");
-        }
-        console.log(friendType(infor.id));
-        newList.push({
-          id: infor.id,
-          github: infor.github_name,
-          follower: infor.user_name,
-          ftype: isFriend,
+    axios
+      .get(`${baseUrl2}/author/${userid}/followers/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        res.data.map((infor) => {
+          if (friendType(infor.id)) {
+            setIsFriend("friend");
+          } else {
+            setIsFriend("follower");
+          }
+          console.log(friendType(infor.id));
+          newList.push({
+            id: infor.id,
+            github: infor.github_name,
+            follower: infor.user_name,
+            ftype: isFriend,
+          });
         });
+        setFriends(newList);
       });
-      setFriends(newList);
-    });
   }, []);
 
   const friendType = (id) => {
-    const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`);
-    const b = axios.get(`${baseUrl2}/author/${id}/followers/${userid}/`);
+    const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    const b = axios.get(`${baseUrl2}/author/${id}/followers/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
     axios.all([a, b]).then(
       axios.spread((...res) => {
         if (res[0].data == res[1].data) {
