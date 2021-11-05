@@ -30,36 +30,7 @@ const FriendList = () => {
       });
   };
   const [check, setCheck] = React.useState(false);
-  const [isFriend, setIsFriend] = React.useState("follower");
-  useEffect(() => {
-    const newList = [];
-    axios
-      .get(`${baseUrl2}/author/${userid}/followers/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        res.data.map((infor) => {
-          if (friendType(infor.id)) {
-            setIsFriend("friend");
-            //console.log(isFriend);
-          } else {
-            setIsFriend("follower");
-          }
-          console.log("friend Type", friendType(infor.id));
-          newList.push({
-            id: infor.id,
-            github: infor.github_name,
-            follower: infor.user_name,
-            ftype: isFriend,
-          });
-        });
-        //console.log("this is check", isFriend);
-        setFriends(newList);
-      });
-  }, []);
+  const [followerList, setFollowerList] = React.useState([]);
 
   const friendType = (id) => {
     //let check = false;
@@ -90,7 +61,36 @@ const FriendList = () => {
     return false;
   };
 
-  const listItems = friendList.map((item) => (
+  useEffect(() => {
+    axios
+      .get(`${baseUrl2}/author/${userid}/followers/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        setFollowerList(res.data);
+      });
+  }, []);
+  const newList = [];
+  followerList.map((infor) => {
+    let ismyfriend = false;
+    friendType(infor.id);
+    if (check) {
+      ismyfriend = true;
+      //console.log(isFriend);
+    }
+    newList.push({
+      id: infor.id,
+      github: infor.github_name,
+      follower: infor.user_name,
+      ftype: ismyfriend,
+    });
+  });
+  //console.log("this is check", isFriend);
+
+  const listItems = newList.map((item) => (
     <Grid
       item
       xs={8}
@@ -112,9 +112,15 @@ const FriendList = () => {
             <Grid item>
               <Typography>{item.follower}</Typography>
             </Grid>
-            <Grid item marginLeft={30}>
-              <Typography>{item.ftype}</Typography>
-            </Grid>
+            {item.ftype ? (
+              <Grid item marginLeft={30}>
+                <Typography>friend</Typography>
+              </Grid>
+            ) : (
+              <Grid item marginLeft={30}>
+                <Typography>follower</Typography>
+              </Grid>
+            )}
           </Grid>
         </Grid>
 
