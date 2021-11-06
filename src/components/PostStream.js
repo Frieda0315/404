@@ -334,6 +334,9 @@ function PostStream(props) {
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [shareBuffer, setShareBuffer] = React.useState({});
+  const baseUrl = "https://api.github.com/users";
+  const [url, setUrl] = React.useState([]);
+
   const open = (author, git, authorid) => {
     //onsole.log(authorid);
     setUser(author);
@@ -357,6 +360,19 @@ function PostStream(props) {
         console.log(error);
       });
   };
+  const getAvator = (github_user) => {
+    if (github_user !== "") {
+      axios
+        .get(`${baseUrl}/${github_user}`)
+        .then((res) => {
+          console.log(res.data["avatar_url"]);
+          setUrl(res.data["avatar_url"]);
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+    }
+  };
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
@@ -378,6 +394,22 @@ function PostStream(props) {
       .all([requestOne, requestTwo])
       .then(
         axios.spread((...responses) => {
+          const responseTwo = responses[1];
+          responseTwo.data.map((single) => {
+            //console.log(single.actor);
+            newList.push({
+              id: single.id,
+              published: single.created_at,
+              content: "Repo: " + single.repo.name,
+              author: single.actor.login,
+              github_user: "",
+              title: "Github Activity: " + single.type,
+              img: "",
+              avatar_url:
+                "https://avatars.githubusercontent.com/u/55036290?v=4",
+              author_id: "github",
+            });
+          });
           const responseOne = responses[0];
           responseOne.data.map((single) => {
             newList.push({
@@ -389,22 +421,8 @@ function PostStream(props) {
               github_user: single.author.github_name,
               title: single.title,
               img: single.image,
+              avatar_url: "",
               author_id: single.author.id,
-            });
-            console.log(single.image === "");
-          });
-          const responseTwo = responses[1];
-          responseTwo.data.map((single) => {
-            //console.log(single.actor);
-            newList.push({
-              id: single.id,
-              published: single.created_at,
-              content: "from repo: " + single.repo.name,
-              author: single.actor.login,
-              github_user: "",
-              title: "Github Activity: " + single.type,
-              img: "",
-              author_id: "github",
             });
           });
           setPostlist(newList);
@@ -413,33 +431,6 @@ function PostStream(props) {
       .catch((errors) => {
         console.log(errors);
       });
-
-    /*
-    axios
-      .get(`${baseUrl2}/posts/`)
-      .then((res) => {
-        if (res.data[0].id) {
-          newList = newList.concat(res.data);
-        }
-      })
-      .catch(function (error) {
-        console.log("Show error notification!");
-        return Promise.reject(error);
-      });
-    axios.get(`${baseUrl}/xius666/events`).then((res) => {
-      console.log(res.data);
-      res.data.map((single) => {
-        //console.log(single.actor);
-        newList.push({
-          id: single.id,
-          published: single.created_at,
-          content: "from repo: " + single.repo.name,
-          author: single.actor.login,
-          title: "Github Activity: " + single.type,
-        });
-      });
-      setPostlist(newList);
-    });*/
   }, []);
 
   if (Object.keys(comments).length !== 0) {
@@ -469,7 +460,7 @@ function PostStream(props) {
         >
           <Grid item>
             <Avatar
-              src={dummy_image}
+              src={post.avatar_url}
               onClick={() => open(post.author, post.github_user, post.authorid)}
             ></Avatar>
           </Grid>
