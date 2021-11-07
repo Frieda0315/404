@@ -13,11 +13,7 @@ const FriendList = () => {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
 
-  const handleRemove = (e) => {
-    const id = e.id;
-    const newList = friendList.filter((item) => item.id !== id);
-    setFriends(newList);
-
+  const handleRemove = (id) => {
     axios
       .delete(`${baseUrl2}/author/${userid}/followers/${id}/`, {
         auth: {
@@ -26,39 +22,16 @@ const FriendList = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        const newList = friendList.filter((item) => item.id !== id);
+        setFriends(newList);
+        console.log(newList);
       });
   };
-  const [isFriend, setIsFriend] = React.useState();
-  useEffect(() => {
-    const newList = [];
-    axios
-      .get(`${baseUrl2}/author/${userid}/followers/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        res.data.map((infor) => {
-          if (friendType(infor.id)) {
-            setIsFriend("friend");
-          } else {
-            setIsFriend("follower");
-          }
-          console.log(friendType(infor.id));
-          newList.push({
-            id: infor.id,
-            github: infor.github_name,
-            follower: infor.user_name,
-            ftype: isFriend,
-          });
-        });
-        setFriends(newList);
-      });
-  }, []);
+  const [check, setCheck] = React.useState(false);
+  const [followerList, setFollowerList] = React.useState([]);
 
   const friendType = (id) => {
+    //let check = false;
     const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`, {
       auth: {
         username: "admin",
@@ -73,16 +46,49 @@ const FriendList = () => {
     });
     axios.all([a, b]).then(
       axios.spread((...res) => {
-        if (res[0].data == res[1].data) {
+        if (
+          res[0].data.result === "Follow relationship found" &&
+          res[1].data.result === "Follow relationship found"
+        ) {
+          setCheck(true);
+          console.log(check);
           return true;
-        } else {
-          return false;
-        } //console.log(res[0].data);
+        }
       })
     );
+    return false;
   };
 
-  const listItems = friendList.map((item) => (
+  useEffect(() => {
+    axios
+      .get(`${baseUrl2}/author/${userid}/followers/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        setFollowerList(res.data);
+      });
+  }, []);
+  const newList = [];
+  followerList.map((infor) => {
+    let ismyfriend = false;
+    friendType(infor.id);
+    if (check) {
+      ismyfriend = true;
+      //console.log(isFriend);
+    }
+    newList.push({
+      id: infor.id,
+      github: infor.github_name,
+      follower: infor.user_name,
+      ftype: ismyfriend,
+    });
+  });
+  //console.log("this is check", isFriend);
+
+  const listItems = newList.map((item) => (
     <Grid
       item
       xs={8}
@@ -104,9 +110,15 @@ const FriendList = () => {
             <Grid item>
               <Typography>{item.follower}</Typography>
             </Grid>
-            <Grid item marginLeft={30}>
-              <Typography>{item.ftype}</Typography>
-            </Grid>
+            {item.ftype ? (
+              <Grid item marginLeft={30}>
+                <Typography>friend</Typography>
+              </Grid>
+            ) : (
+              <Grid item marginLeft={30}>
+                <Typography>follower</Typography>
+              </Grid>
+            )}
           </Grid>
         </Grid>
 
@@ -125,7 +137,7 @@ const FriendList = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleRemove(item)}
+            onClick={() => handleRemove(item.id)}
           >
             UnFollow
           </Button>

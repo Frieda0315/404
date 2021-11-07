@@ -31,8 +31,10 @@ urlpatterns = [
     re_path('^service/users/signup/?$', user_views.signup, name='signup'),
     re_path('^service/users/login/?$', user_views.login, name='login'),
 
-    re_path('^service/admin/signup/?$', user_views.admin_signup, name='admin_signup'),
-    re_path('^service/admin/login/?$', user_views.admin_login, name='admin_login'),
+    re_path('^service/admin/signup/?$',
+            user_views.admin_signup, name='admin_signup'),
+    re_path('^service/admin/login/?$',
+            user_views.admin_login, name='admin_login'),
 
     path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
@@ -54,15 +56,21 @@ urlpatterns = [
     path('service/author/<uuid:author_id>/friends/',
          follow_views.friend_list, name='friend_list'),
 
+    path('service/author/<uuid:author_id>/friendrequests/',
+         follow_views.friend_request_list, name='friend_request_list'),
+
     # inbox
     # r'^about$'
     path('service/author/<uuid:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
-     
-    #admin server
-    path('service/admin/handle/<uuid:id>/',admin_servers_views.handle_signup_request, name='handle_signup_request'),
-    path('service/admin/get/',admin_servers_views.get_signup_requests, name='get_signup_request'),
-    path('service/admin/approveoption/',admin_servers_views.approve_option, name='approve_option'),
+
+    # admin server
+    path('service/admin/handle/<uuid:id>/',
+         admin_servers_views.handle_signup_request, name='handle_signup_request'),
+    path('service/admin/get/', admin_servers_views.get_signup_requests,
+         name='get_signup_request'),
+    path('service/admin/approveoption/',
+         admin_servers_views.approve_option, name='approve_option'),
 
 
     path('admin/', admin.site.urls),
