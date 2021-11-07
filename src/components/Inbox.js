@@ -40,25 +40,51 @@ const Inbox = () => {
     setInboxList(newList);
   };
 
-  const acceptFriendRequest = (id) => {};
+  const acceptFriendRequest = (id) => {
+    axios
+      .put(
+        `${baseUrl2}/author/${userid}/followers/${id}/`,
+        {},
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
+      .then((res) => {
+        const newList1 = InboxList1.filter(
+          (item) => item.type !== "follower" && item.follower_id !== id
+        );
+        console.log("new", newList1);
+        setInboxList(newList);
+      });
+  };
   const declineFriendRequest = (id) => {};
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handelClear = () => {
-    axios
-      .delete(`${baseUrl2}/author/${userid}/inbox/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        setInboxList([]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (setInboxToggle == 0) {
+      axios
+        .delete(`${baseUrl2}/author/${userid}/inbox/`, {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        })
+        .then((res) => {
+          const newList = InboxList1.filter((item) => item.type !== "inbox");
+          setInboxList(newList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (setInboxToggle == 1) {
+    } else {
+      const newList = InboxList1.filter((item) => item.type !== "follower");
+      setInboxList(newList);
+    }
   };
   var newList = [];
   useEffect(() => {
@@ -216,6 +242,7 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 2) {
     // Folows
+
     listItems = InboxList1.filter((item) => item.type === "follower").map(
       (item) => (
         <Grid item>
@@ -228,14 +255,14 @@ const Inbox = () => {
                 <Fab
                   variant="extended"
                   color="primary"
-                  onClick={acceptFriendRequest(item.follower_id)}
+                  onClick={() => acceptFriendRequest(item.follower_id)}
                 >
                   accecpt
                 </Fab>
                 <Fab
                   variant="extended"
                   color="primary"
-                  onClick={declineFriendRequest}
+                  onClick={() => declineFriendRequest(item.follower_id)}
                 >
                   decline
                 </Fab>
