@@ -25,7 +25,6 @@ const Inbox = () => {
 
   const styleClasses = useStyles();
   const [InboxList1, setInboxList] = React.useState([]);
-  const [followerList, setFollowerList] = React.useState([]);
 
   // 0 for post;
   // 1 for likes;
@@ -61,9 +60,8 @@ const Inbox = () => {
         console.log(err);
       });
   };
-
+  var newList = [];
   useEffect(() => {
-    var newList = [];
     axios
       .get(`${baseUrl2}/author/${userid}/inbox/`, {
         auth: {
@@ -94,7 +92,6 @@ const Inbox = () => {
   }, []);
 
   useEffect(() => {
-    var newList1 = [];
     axios
       .get(`${baseUrl2}/author/${userid}/friendrequests/`, {
         auth: {
@@ -106,16 +103,14 @@ const Inbox = () => {
         console.log(res.data);
         res.data.map((single) => {
           console.log("name", single.summary);
-          newList1.push({
+          newList.push({
+            type: "follower",
             summary: single.summary,
             follower_user_name: single.actor.user_name,
             follower_id: single.actor.id,
-            github_name: single.actor.github_name,
           });
         });
-        console.log("list", newList1);
-        setFollowerList(newList1);
-        console.log("list", followerList);
+        setInboxList(newList);
       })
       .catch((errors) => {
         //console.log(errors);
@@ -123,6 +118,7 @@ const Inbox = () => {
   }, []);
 
   var listItems;
+
   if (InboxToggle === 0) {
     // Posts
     listItems = InboxList1.filter((item) => item.type === "inbox").map(
@@ -220,33 +216,35 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 2) {
     // Folows
-    followerList.map((item) => (
-      <Grid item>
-        <Card>
-          <Grid container direction="row" className={styleClasses.FollowItem}>
-            <Grid item xs={10}>
-              <Typography>{item.summary}</Typography>
+    listItems = InboxList1.filter((item) => item.type === "follower").map(
+      (item) => (
+        <Grid item>
+          <Card>
+            <Grid container direction="row" className={styleClasses.FollowItem}>
+              <Grid item xs={10}>
+                <Typography>{item.summary}</Typography>
+              </Grid>
+              <Grid item xs>
+                <Fab
+                  variant="extended"
+                  color="primary"
+                  onClick={acceptFriendRequest(item.follower_id)}
+                >
+                  accecpt
+                </Fab>
+                <Fab
+                  variant="extended"
+                  color="primary"
+                  onClick={declineFriendRequest}
+                >
+                  decline
+                </Fab>
+              </Grid>
             </Grid>
-            <Grid item xs>
-              <Fab
-                variant="extended"
-                color="primary"
-                onClick={acceptFriendRequest}
-              >
-                accecpt
-              </Fab>
-              <Fab
-                variant="extended"
-                color="primary"
-                onClick={declineFriendRequest}
-              >
-                decline
-              </Fab>
-            </Grid>
-          </Grid>
-        </Card>
-      </Grid>
-    ));
+          </Card>
+        </Grid>
+      )
+    );
   }
 
   return (
