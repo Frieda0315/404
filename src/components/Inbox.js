@@ -143,7 +143,12 @@ const Inbox = () => {
 
   const handelClear = () => {
     axios
-      .delete(`${baseUrl2}/author/${userid}/inbox/`)
+      .delete(`${baseUrl2}/author/${userid}/inbox/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         setInboxList([]);
       })
@@ -155,7 +160,12 @@ const Inbox = () => {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/author/${userid}/inbox/`)
+      .get(`${baseUrl2}/author/${userid}/inbox/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
         console.log(res.data);
         res.data.items.map((single) => {

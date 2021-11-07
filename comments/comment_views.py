@@ -1,14 +1,19 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.parsers import JSONParser
 from .serializers import CommentSerializer
 from .models import Comment
 from posts.models import Post
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 # Create your views here.
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def comment_list(request, author_id, post_id):
     if request.method == 'GET':
         comments = Comment.objects.filter(post_id=post_id)

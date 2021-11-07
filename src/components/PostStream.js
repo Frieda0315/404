@@ -11,6 +11,7 @@ import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import { v4 as uuidv4 } from "uuid";
+import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
 
 import Share from "./Share";
@@ -329,10 +330,15 @@ function PostStream(props) {
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
+  const [openPopup3, setOpenPopup3] = React.useState(false);
+  const [image, setImage] = React.useState();
 
   const [postlist, setPostlist] = React.useState([]);
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [shareBuffer, setShareBuffer] = React.useState({});
+  const baseUrl = "https://api.github.com/users";
+  const [url, setUrl] = React.useState([]);
+
   const open = (author, git, authorid) => {
     //onsole.log(authorid);
     setUser(author);
@@ -343,6 +349,10 @@ function PostStream(props) {
   const open_share = (post) => {
     setOpenPopup2(true);
     setShareBuffer(post);
+  };
+  const open_image_holder = (post) => {
+    setImage(post.img);
+    setOpenPopup3(true);
   };
   const handle_vote = (post) => {
     const vote_uuid = uuidv4();
@@ -393,11 +403,33 @@ function PostStream(props) {
         console.log(error);
       });
   };
+  const getAvator = (github_user) => {
+    if (github_user !== "") {
+      axios
+        .get(`${baseUrl}/${github_user}`)
+        .then((res) => {
+          console.log(res.data["avatar_url"]);
+          setUrl(res.data["avatar_url"]);
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+    }
+  };
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
     var newList = [];
-    const requestOne = axios.get(`${baseUrl2}/posts/`);
+    const requestOne = axios.get(
+      `${baseUrl2}/posts/`,
+
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
     const requestTwo = axios.get(
       `${baseUrl}/${localStorage.getItem("github_user")}/events`
     );
@@ -405,6 +437,22 @@ function PostStream(props) {
       .all([requestOne, requestTwo])
       .then(
         axios.spread((...responses) => {
+          const responseTwo = responses[1];
+          responseTwo.data.map((single) => {
+            //console.log(single.actor);
+            newList.push({
+              id: single.id,
+              published: single.created_at,
+              content: "Repo: " + single.repo.name,
+              author: single.actor.login,
+              github_user: "",
+              title: "Github Activity: " + single.type,
+              img: "",
+              avatar_url:
+                "https://avatars.githubusercontent.com/u/55036290?v=4",
+              author_id: "github",
+            });
+          });
           const responseOne = responses[0];
           responseOne.data.map((single) => {
             newList.push({
@@ -416,22 +464,8 @@ function PostStream(props) {
               github_user: single.author.github_name,
               title: single.title,
               img: single.image,
+              avatar_url: "",
               author_id: single.author.id,
-            });
-            console.log(single.image === "");
-          });
-          const responseTwo = responses[1];
-          responseTwo.data.map((single) => {
-            //console.log(single.actor);
-            newList.push({
-              id: single.id,
-              published: single.created_at,
-              content: "from repo: " + single.repo.name,
-              author: single.actor.login,
-              github_user: "",
-              title: "Github Activity: " + single.type,
-              img: "",
-              author_id: "github",
             });
           });
           setPostlist(newList);
@@ -440,33 +474,6 @@ function PostStream(props) {
       .catch((errors) => {
         console.log(errors);
       });
-
-    /*
-    axios
-      .get(`${baseUrl2}/posts/`)
-      .then((res) => {
-        if (res.data[0].id) {
-          newList = newList.concat(res.data);
-        }
-      })
-      .catch(function (error) {
-        console.log("Show error notification!");
-        return Promise.reject(error);
-      });
-    axios.get(`${baseUrl}/xius666/events`).then((res) => {
-      console.log(res.data);
-      res.data.map((single) => {
-        //console.log(single.actor);
-        newList.push({
-          id: single.id,
-          published: single.created_at,
-          content: "from repo: " + single.repo.name,
-          author: single.actor.login,
-          title: "Github Activity: " + single.type,
-        });
-      });
-      setPostlist(newList);
-    });*/
   }, []);
 
   if (Object.keys(comments).length !== 0) {
@@ -486,12 +493,7 @@ function PostStream(props) {
     .slice(0)
     .reverse()
     .map((post) => (
-      <Grid
-        item
-        xs={8}
-        className={styleClasses.postCard}
-        key={post != null ? post.id : "123"}
-      >
+      <Grid item xs={8} key={post != null ? post.id : "123"}>
         <Grid
           container
           spacing={1}
@@ -501,7 +503,7 @@ function PostStream(props) {
         >
           <Grid item>
             <Avatar
-              src={dummy_image}
+              src={post.avatar_url}
               onClick={() => open(post.author, post.github_user, post.authorid)}
             ></Avatar>
           </Grid>
@@ -516,42 +518,38 @@ function PostStream(props) {
         </Grid>
         <Grid container>
           <Grid item xs>
-            <Card className={styleClasses.cardInPost}>
-              <CardActionArea
-                onClick={tempPostOnClick}
-                className={styleClasses.clickBox}
-              >
-                {post.img === "" ? (
-                  <Grid container>
-                    <Grid item xs>
-                      <Typography variant="h5" component="div">
-                        {post.title}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {post.content}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <Grid container>
-                    <CardMedia
-                      component="img"
-                      height="150"
-                      image={post.img}
-                      alt="fda"
-                    />
-                    <Grid item xs>
-                      <Typography variant="h5" component="div">
-                        {post.title}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {post.content}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                )}
-              </CardActionArea>
-            </Card>
+            {post.img === "" ? (
+              <Grid container>
+                <Grid item xs>
+                  <Typography variant="h5" component="div">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ) : (
+              <Grid container>
+                <CardActionArea onClick={() => open_image_holder(post)}>
+                  <CardMedia
+                    component="img"
+                    height="150"
+                    image={post.img}
+                    alt="fda"
+                  />
+                </CardActionArea>
+
+                <Grid item xs>
+                  <Typography variant="h5" component="div">
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
 
@@ -623,6 +621,9 @@ function PostStream(props) {
           userid_folllow={authorids}
           is_follow={true}
         ></Profile>
+      </Popup>
+      <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
+        <ImageHolder image={image}></ImageHolder>
       </Popup>
       <Popup
         title={"Who do you want to share with?"}
