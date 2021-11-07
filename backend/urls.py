@@ -56,7 +56,7 @@ urlpatterns = [
     path('service/author/<uuid:author_id>/friends/',
          follow_views.friend_list, name='friend_list'),
 
-    path('service/author/<uuid:author_id/friendrequests/>',
+    path('service/author/<uuid:author_id>/friendrequests/',
          follow_views.friend_request_list, name='friend_request_list'),
 
     # inbox

@@ -129,4 +129,4 @@ def friend_request_list(request, author_id):
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     friend_requests = FriendRequest.objects.filter(object=following)
     request_seralizer = FriendRequestSerializer(friend_requests, many=True)
-    return JsonResponse(request_seralizer.data, status=status.HTTP_200_OK)
+    return JsonResponse(request_seralizer.data, status=status.HTTP_200_OK, safe=False)
