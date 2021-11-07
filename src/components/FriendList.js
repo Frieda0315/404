@@ -13,11 +13,7 @@ const FriendList = () => {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [friendList, setFriends] = React.useState([]);
 
-  const handleRemove = (e) => {
-    const id = e.id;
-    const newList = friendList.filter((item) => item.id !== id);
-    setFriends(newList);
-
+  const handleRemove = (id) => {
     axios
       .delete(`${baseUrl2}/author/${userid}/followers/${id}/`, {
         auth: {
@@ -26,7 +22,9 @@ const FriendList = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        const newList = friendList.filter((item) => item.id !== id);
+        setFriends(newList);
+        console.log(newList);
       });
   };
   const [check, setCheck] = React.useState(false);
@@ -139,7 +137,7 @@ const FriendList = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleRemove(item)}
+            onClick={() => handleRemove(item.id)}
           >
             UnFollow
           </Button>
