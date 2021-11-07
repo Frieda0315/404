@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar } from "@mui/material";
 import dummy_img from "../static/musle.png";
 import { makeStyles } from "@material-ui/styles";
@@ -19,6 +19,7 @@ import { Redirect } from "react-router-dom";
 import "./font/style.css";
 import logo from "./assets/logo.png";
 import Link from "@mui/material/Link";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   pic: {
@@ -32,6 +33,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 function NavMenu(is_logged_in) {
+  const [url, setUrl] = useState();
+
   const [cookies, setCookie, removeCookie] = useCookies();
   /*function handleRemoveCookie() {
     removeCookie("username", "/");
@@ -43,6 +46,19 @@ function NavMenu(is_logged_in) {
     localStorage.removeItem("user_name");
     setIsOut(true);
   }
+  useEffect(() => {
+    const baseUrl = "https://api.github.com/users";
+
+    axios
+      .get(`${baseUrl}/${localStorage.getItem("github_user")}`)
+      .then((res) => {
+        console.log(res.data["avatar_url"]);
+        setUrl(res.data["avatar_url"]);
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
+  }, []);
 
   const styleClasses = useStyles();
 
@@ -81,7 +97,7 @@ function NavMenu(is_logged_in) {
                 Account
               </DropdownToggle>
               <DropdownMenu right>
-                <Avatar src={dummy_img} className={styleClasses.pic}></Avatar>
+                <Avatar src={url} className={styleClasses.pic}></Avatar>
                 <DropdownItem divider />
                 <DropdownItem href="/profile">Profile</DropdownItem>
                 <DropdownItem divider />

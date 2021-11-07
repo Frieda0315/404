@@ -6,6 +6,7 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { Typography, Box } from "@material-ui/core";
 import TextField from "@mui/material/TextField";
+import { Form } from "reactstrap";
 import Divider from "@mui/material/Divider";
 
 import dummy_image from "../static/musle.png";
@@ -15,6 +16,8 @@ import Popup from "./Popup";
 import Profile from "./Profile";
 import "./font/style.css";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
+import { v4 as uuidv4 } from "uuid";
+
 const tempCommentList = [
   {
     type: "comment",
@@ -88,6 +91,7 @@ function Comments(props) {
   const path = window.location.pathname;
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
+  const [newComment, setNewComment] = React.useState("");
 
   // const commentsList = tempCommentList;
 
@@ -116,6 +120,48 @@ function Comments(props) {
     setGit_user(git);
     setOpenPopup(true);
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const now = new Date();
+    const isoString = now.toISOString();
+    axios
+      .post(
+        `${baseUrl2}${path}/`,
+        {
+          author: {
+            id: localStorage.getItem("current_user_id"),
+            github_name: localStorage.getItem("github_user"),
+            user_name: localStorage.getItem("user_name"),
+            type: "author",
+          },
+          comment: newComment,
+          published: isoString,
+          id: uuidv4(),
+          type: "comment",
+          contentType: "text",
+        },
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
+      .then(
+        (response) => {
+          console.log(response);
+          console.log(comments);
+          const newComments = comments.concat([response.data]);
+
+          setComments(newComments);
+          setNewComment("");
+        },
+        (error) => {
+          alert("error ");
+          console.log(error);
+        }
+      );
+  };
 
   const commentStream = comments.map((comment) => (
     <Grid item>
@@ -140,7 +186,9 @@ function Comments(props) {
         </Grid>
       </Grid>
       <Grid container justifyContent="center" alignItems="center">
-        <Typography color="text.primary">{comment.comment}</Typography>
+        <Typography variant="h5" color="text.primary">
+          {comment.comment}
+        </Typography>
       </Grid>
 
       <Grid
@@ -149,24 +197,13 @@ function Comments(props) {
         direction="row"
         justifyContent="flex-end"
         alignItems="flex-end"
-      >
-        <Grid item>
-          <IconButton
-            edge="end"
-            aria-label="Delete"
-            onClick={() => handleRemove(comment)}
-          >
-            <Delete />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <Divider />
+      ></Grid>
     </Grid>
   ));
   console.log(commentStream);
   // console.log(commentsList);
   return (
-    <div>
+    <Form onSubmit={handleSubmit}>
       <Popup
         title={"Profile"}
         openPopup={openPopup}
@@ -201,8 +238,11 @@ function Comments(props) {
               fullWidth
               label="Add your comments..."
               variant="standard"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
             />
             <Button
+              type="submit"
               sx={{
                 marginLeft: 1,
               }}
@@ -215,7 +255,7 @@ function Comments(props) {
 
         {commentStream}
       </Grid>
-    </div>
+    </Form>
   );
 }
 export default Comments;
