@@ -1,78 +1,77 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view, authentication_classes,permission_classes
-from .serializers import CommentSerializer, LikeSerializer
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from .serializers import LikeSerializer
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from .models import Like
 from posts.models import Post
 from comments.models import Comment
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-
-# Create your views here.
-
-# TODO: check if the author_id matches the post/comment's author
-
-# GET a list of likes from other authors on author_id’s post post_id
-# @param {author_id} The author's id, we want to find the like under this author's post
-# @param {post_id} The post's id, we want to find the like under this post
+from users.models import User
 
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def post_like_list(request, author_id, post_id):
-    if request.method == 'GET':
-        # find the post with input post_id and author_id
-        # TODO: add author id filter
-        # post = Post.objects.filter(author_id=author_id, post_id=post_id)
-        post = Post.objects.filter(id=post_id)[0]
-        if(not post):
-            return JsonResponse({'status': 'false', 'message': 'like object not found'}, status=status.HTTP_404_NOT_FOUND)
-        # search the like list of the found post
-        likes = Like.objects.filter(post=post)
-        if(not likes):
-            return JsonResponse({'status': 'false', 'message': 'like object not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = LikeSerializer(likes, many=True)
-        like_json = {'type': 'likes',
-                     'post': 'http://127.0.0.1:5454/author/.../posts/...', 'likes': serializer.data}
+    '''
+    Get all likes of the {author_id}'s {post_id}
+    '''
+    # might need to change to regex later
+    post_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/'
+    post_search_string = "/author/" + str(author_id) + "/posts/" + str(post_id)
+    try:
+        User.objects.get(pk=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        return JsonResponse(like_json, safe=False)
+    try:
+        Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    likes = Like.objects.filter(object__contains=post_search_string)
+    like_serializer = LikeSerializer(likes, many=True)
+    return JsonResponse(like_serializer.data, status=status.HTTP_200_OK, safe=False)
 
 
-# GET a list of likes from other authors on author_id’s post post_id comment comment_id
-# @param {author_id} The author's id, we want to find the like under this author's post's comment
-# @param {post_id} The post's id, we want to find the like under this post's comment
-# @param {comment_id} The comment's id, we want to find the like under this comment
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def comment_like_list(request, author_id, post_id, comment_id):
-    if request.method == 'GET':
-        # TODO: add author id filter
-        #post = Post.objects.filter(author_id=author_id, id=post_id)
-        post = Post.objects.filter(id=post_id)[0]
-        comment = Comment.objects.filter(post_id=post_id, id=comment_id)[0]
-        if((not post) or (not comment)):
-            return JsonResponse({"error": "like object not found"}, status=status.HTTP_404_NOT_FOUND)
-        likes = Like.objects.filter(post=post, comment=comment)
-        if(not likes):
-            return JsonResponse({"error": "like object not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = CommentSerializer(likes, many=True)
-        like_json = {"type": 'likes',
-                     "post": "http://127.0.0.1:5454/author/.../posts/.../comments/...", "likes": serializer.data}
+    comment_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/comments\/[-a-zA-Z0-9@:%._\+~#=]{2,256}'
+    comment_search_string = "/author/" + \
+        str(author_id) + "/posts/" + str(post_id) + \
+        "/comments/" + str(comment_id)
+    try:
+        User.objects.get(pk=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        return JsonResponse(like_json, safe=False)
+    try:
+        Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        Comment.objects.get(pk=post_id)
+    except Comment.DoesNotExist:
+        return JsonResponse({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    likes = Like.objects.filter(object__contains=comment_search_string)
+    like_serializer = LikeSerializer(likes, many=True)
+    return JsonResponse(like_serializer.data, status=status.HTTP_200_OK, safe=False)
 
 
-# GET list what public things author_id liked
-# @param {author_id} The author's id, we want to find this author's likes
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def author_like_list(request, author_id):
-    likes = Like.objects.filter(author_id=author_id)
-    if(not likes):
-        return JsonResponse({'status': 'false', 'message': 'like object not found'}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        like_author = User.objects.get(pk=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": 'Author not found'}, status=status.HTTP_404_NOT_FOUND)
+    likes = Like.objects.filter(author=like_author)
     serializer = LikeSerializer(likes, many=True)
     like_json = {'type': 'liked', 'items': serializer.data}
     return JsonResponse(like_json, safe=False)
