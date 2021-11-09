@@ -16,7 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'user_name', 'github_name', 'type']
+        fields = ['id', 'user_name', 'github_name',
+                  'type', 'host', 'profileImage']
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
