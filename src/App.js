@@ -76,6 +76,7 @@ function App() {
         </Route>
         <Route exact path="/admin/login">
           <AdminLogin />
+          <ParticlesBg type="square" bg={true} />
         </Route>
       </Layout>
     </header>
