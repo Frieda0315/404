@@ -71,7 +71,8 @@ urlpatterns = [
          name='get_signup_request'),
     path('service/admin/approveoption/',
          admin_servers_views.approve_option, name='approve_option'),
-
+    path('service/admin/nodes/',
+         admin_servers_views.node_list, name='nodes'),
 
     path('admin/', admin.site.urls),
     re_path('(^(?!(service)).*$)',

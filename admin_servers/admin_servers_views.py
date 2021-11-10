@@ -1,13 +1,17 @@
+from re import T
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from users.models import User
 from users.serializers import UserSerializer
+from .serializers import NodeSerializer
+
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 import json
 import os
+from .models import Node
 # Create your views here.
 '''
 1. get all users
@@ -54,3 +58,25 @@ def approve_option(request):
                 return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['GET','POST'])
+def node_list(request):
+    if request.method == 'GET':
+        nodes = Node.objects.all()
+        serialzier = NodeSerializer(nodes,many=True)
+        return JsonResponse(serialzier.data, status=status.HTTP_200_OK, safe=False)
+    elif request.method == 'POST':
+        new_node = JSONParser().parse(request)
+        existing_nodes = Node.objects.filter(pk=new_node["url"])
+        if existing_nodes:
+            return Response({"error":"node url already exists!!"},status=status.HTTP_400_BAD_REQUEST)
+        serializer = NodeSerializer(data=new_node)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+ 
+ 
