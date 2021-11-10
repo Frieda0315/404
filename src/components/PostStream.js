@@ -482,9 +482,13 @@ function PostStream(props) {
                   <Typography variant="h5" component="div">
                     {post.title}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
+                  {post.contentType === "text/markdown" ? (
+                    <ReactMarkdown>{post.content}</ReactMarkdown>
+                  ) : (
+                    <Typography variant="body1" color="text.secondary">
+                      {post.content}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             ) : (
@@ -502,13 +506,9 @@ function PostStream(props) {
                   <Typography variant="h5" component="div">
                     {post.title}
                   </Typography>
-                  {post.contentType === "text/markdown" ? (
-                    <ReactMarkdown>{post.content}</ReactMarkdown>
-                  ) : (
-                    <Typography variant="body1" color="text.secondary">
-                      {post.content}
-                    </Typography>
-                  )}
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
                 </Grid>
               </Grid>
             )}

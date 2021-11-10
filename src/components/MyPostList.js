@@ -20,6 +20,7 @@ import { Card } from "reactstrap";
 import { Redirect } from "react-router";
 import axios from "axios";
 import ImageHolder from "./ImageHolder";
+import ReactMarkdown from "react-markdown";
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -83,10 +84,9 @@ function MyPostList() {
         },
       })
       .then((res) => {
-        console.log(res.data);
-
         res.data.map((single) => {
           newList.push({
+            contentType: single.contentType,
             id: single.id,
             date: single.published,
             content: single.content,
@@ -94,7 +94,6 @@ function MyPostList() {
             github_user: single.author.github_name,
             title: single.title,
             state: single.visibility,
-            contentType: single.image,
             author_id: single.author.id,
             image: single.image,
           });
@@ -149,9 +148,9 @@ function MyPostList() {
 
   const handleEdit = (e) => {
     const id = e.id;
+    console.log(id);
     const item = PostList1.find((item) => item.id == id);
     history.push({ pathname: "/mypost/edit", state: item });
-    alert(item.content);
   };
 
   const listItems = PostList1.map((post) => (
@@ -182,9 +181,13 @@ function MyPostList() {
                 <Typography variant="h5" component="div">
                   {post.title}
                 </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {post.content}
-                </Typography>
+                {post.contentType === "text/markdown" ? (
+                  <ReactMarkdown>{post.content}</ReactMarkdown>
+                ) : (
+                  <Typography variant="body1" color="text.secondary">
+                    {post.content}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           ) : (

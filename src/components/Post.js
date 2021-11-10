@@ -47,7 +47,6 @@ const Post = () => {
   const [common, setCommon] = React.useState("");
   const [fileBase64String, setFileBase64String] = React.useState("");
   const [decode, setDecode] = React.useState();
-  const [commonMark, setCommonMark] = React.useState("");
   const [isImage, setIsImage] = React.useState(false);
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
@@ -319,19 +318,6 @@ const Post = () => {
             />{" "}
           </FormControl>
         </Grid>
-
-        {/* <RadioGroup
-            row
-            aria-label="gender"
-            name="row-radio-buttons-group"
-            value={value}
-            defaultValue="Text"
-            onChange={(event) => {
-              setValue(event.target.value);
-            }}
-          >
-            <FormControlLabel value="Image" control={<Radio />} label="Image" />
-          </RadioGroup> */}
       </Grid>
 
       <Grid item>
