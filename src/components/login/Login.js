@@ -36,6 +36,7 @@ class Login extends React.Component {
       current_user_id: "",
       github_name: "",
       user_name: "",
+      error: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -91,7 +92,11 @@ class Login extends React.Component {
             });
           },
           (error) => {
-            alert("Incorrect Credntials!");
+            if (error.response.status === 401) {
+              this.setState({
+                error: "invalid credentials",
+              });
+            }
             console.log(error);
           }
         );
@@ -166,6 +171,7 @@ class Login extends React.Component {
                               [event.target.name]: event.target.value,
                             })
                           }
+                          error={this.state.error === "" ? false : true}
                           required
                           autoFocus
                         />
@@ -183,9 +189,15 @@ class Login extends React.Component {
                               [event.target.name]: event.target.value,
                             })
                           }
+                          error={this.state.error === "" ? false : true}
                           required
                         />
                       </Grid>
+                      {this.state.error === "" ? null : (
+                        <Grid item className="errorInfo">
+                          {this.state.error}
+                        </Grid>
+                      )}
                       <Grid item>
                         <Button
                           variant="contained"
