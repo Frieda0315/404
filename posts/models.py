@@ -11,6 +11,7 @@ class Post(models.Model):
     type = models.CharField(max_length=120, default="post")
     title = models.CharField(max_length=120)
     content = models.TextField()
+    contentType = models.CharField(max_length=120)
     published = models.DateTimeField(auto_now=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     # image type
