@@ -114,25 +114,71 @@ const Post = () => {
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
+    const currentDateTime = Date().toLocaleString();
+    const uuid = uuidv4();
+    setDate(currentDateTime);
+    const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
 
-    if (common === "") {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
+    if (textChoice === "text/plain") {
+      if (isImage === true) {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          {
+            type: "post",
+            id: uuid,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            // image: fileBase64String,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      } else {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          {
+            type: "post",
+            id: uuid,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      }
+    } else if (textChoice === "text/markdown") {
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
         {
           type: "post",
           id: uuid,
           title: title,
-          content: "",
-          image: fileBase64String,
+          contentType: textChoice,
+          content: common,
+          // image: fileBase64String,
           published: date,
           author: author.data,
           visibility: visibility,
@@ -145,55 +191,15 @@ const Post = () => {
         }
       );
       history.push({ pathname: "/" });
-    } else if (true) {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
+    } else if (common === "") {
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
         {
           type: "post",
           id: uuid,
           title: title,
-          content: common,
-          image: "",
-          published: date,
-          author: author.data,
-          visibility: visibility,
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      history.push({ pathname: "/" });
-    } else {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
-      const newpost = await axios.put(
-        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-        {
-          type: "post",
-          id: uuid,
-          title: title,
-          content: common,
-          image: fileBase64String,
+          contentType: "image",
+          content: fileBase64String,
           published: date,
           author: author.data,
           visibility: visibility,
@@ -207,6 +213,65 @@ const Post = () => {
       );
       history.push({ pathname: "/" });
     }
+
+    // if (common === "") {
+    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+    //     auth: {
+    //       username: "admin",
+    //       password: "admin",
+    //     },
+    //   });
+    //   const uuid = uuidv4();
+    //   const newpost = await axios.put(
+    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+    //     {
+    //       type: "post",
+    //       id: uuid,
+    //       title: title,
+
+    //       image: fileBase64String,
+    //       published: date,
+    //       author: author.data,
+    //       visibility: visibility,
+    //     },
+    //     {
+    //       auth: {
+    //         username: "admin",
+    //         password: "admin",
+    //       },
+    //     }
+    //   );
+    //   history.push({ pathname: "/" });
+    // } else if (true) {
+    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+    //     auth: {
+    //       username: "admin",
+    //       password: "admin",
+    //     },
+    //   });
+    //   const uuid = uuidv4();
+    //   const newpost = await axios.put(
+    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+    //     {
+    //       type: "post",
+    //       id: uuid,
+    //       title: title,
+    //       content: common,
+    //       image: "",
+    //       published: date,
+    //       author: author.data,
+    //       visibility: visibility,
+    //     },
+    //     {
+    //       auth: {
+    //         username: "admin",
+    //         password: "admin",
+    //       },
+    //     }
+    //   );
+    //   history.push({ pathname: "/" });
+    // } else {
+    // }
   };
 
   const history = useHistory();
@@ -269,6 +334,24 @@ const Post = () => {
           </RadioGroup> */}
       </Grid>
 
+      <Grid item>
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 5,
+            width: "90%",
+            height: "90%",
+            marginLeft: 5,
+          }}
+          id="addDescription"
+          label="add description"
+          variant="filled"
+          multiline
+          rows={10}
+          value={common}
+          onChange={(e) => setCommon(e.target.value)}
+        />
+      </Grid>
       {isImage ? (
         <CardContent>
           <Grid container spacing={2} direction="column">
@@ -297,24 +380,6 @@ const Post = () => {
           </Grid>
         </CardContent>
       ) : null}
-      <Grid item>
-        <TextField
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            width: "90%",
-            height: "90%",
-            marginLeft: 5,
-          }}
-          id="addDescription"
-          label="add description"
-          variant="filled"
-          multiline
-          rows={10}
-          value={common}
-          onChange={(e) => setCommon(e.target.value)}
-        />
-      </Grid>
 
       <Grid item alignItems="flex-start">
         <FormControl component="fieldset">
@@ -362,11 +427,7 @@ const Post = () => {
         </FormControl>
       </Grid>
 
-      <Grid
-        item
-        direction="row"
-        //bgcolor = '#e0e0e0'
-      >
+      <Grid item>
         <Button
           variant="contained"
           color="success"
