@@ -1,0 +1,54 @@
+[
+    {
+        "model": "users.user",
+        "fields": {
+            "type":"author",
+            "id":"123e4567-e89b-12d3-a456-426614174001",
+            "host":"https://i-connect.herokuapp.com/",
+            "user_name":"user1",
+            "github_name": "xichen1",
+            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg",
+            "password": "123",
+            "pending": false
+        }
+    },
+    {
+        "model": "users.user",
+        "fields": {
+            "type":"author",
+            "id":"123e4567-e89b-12d3-a456-426614174002",
+            "host":"https://i-connect.herokuapp.com/",
+            "user_name":"user2",
+            "github_name": "xius666",
+            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg",
+            "password": "123",
+            "pending": false
+        }
+    },
+    {
+        "model": "users.user",
+        "fields": {
+            "type":"author",
+            "id":"123e4567-e89b-12d3-a456-426614174003",
+            "host":"https://i-connect.herokuapp.com/",
+            "user_name":"user3",
+            "github_name": "xichen1",
+            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg",
+            "password": "123",
+            "pending": true
+        }
+    },
+    {
+        "model": "users.user",
+        "fields": {
+            "type":"author",
+            "id":"123e4567-e89b-12d3-a456-426614174004",
+            "host":"https://i-connect.herokuapp.com/",
+            "user_name":"user4",
+            "github_name": "xius666",
+            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg",
+            "password": "123",
+            "pending": true
+        }
+    }
+]
