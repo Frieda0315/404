@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Signup_request
+from .models import Node
 # Register your models here.
-admin.register(Signup_request)
+admin.site.register(Node)
