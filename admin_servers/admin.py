@@ -1,4 +1,4 @@
 from django.contrib import admin
 from .models import Node
 # Register your models here.
-admin.register(Node)
+admin.site.register(Node)
