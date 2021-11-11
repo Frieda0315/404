@@ -8,7 +8,7 @@ from users.serializers import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
     title = serializers.CharField(required=True)
-    content = serializers.CharField(required=True,allow_blank=True)
+    content = serializers.CharField(required=True, allow_blank=True)
     author = UserSerializer()
 
     def create(self, validated_data):
