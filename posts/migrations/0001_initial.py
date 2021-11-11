@@ -17,14 +17,18 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Post',
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False,
+                 primary_key=True, serialize=False, unique=True)),
                 ('type', models.CharField(default='post', max_length=120)),
                 ('title', models.CharField(max_length=120)),
                 ('content', models.TextField()),
+                ('contentType', models.CharField(max_length=120)),
                 ('published', models.DateTimeField(auto_now=True, null=True)),
                 ('image', models.TextField(blank=True)),
-                ('visibility', models.CharField(choices=[('PUBLIC', 'Public'), ('FRIENDS', 'Friends'), ('PRIVATE', 'Private'), ('SERVERONLY', 'Local Frchiends')], default='PUBLIC', max_length=30)),
-                ('author', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='users.user')),
+                ('visibility', models.CharField(choices=[('PUBLIC', 'Public'), ('FRIENDS', 'Friends'), (
+                    'PRIVATE', 'Private'), ('SERVERONLY', 'Local Frchiends')], default='PUBLIC', max_length=30)),
+                ('author', models.ForeignKey(
+                    default=1, on_delete=django.db.models.deletion.CASCADE, to='users.user')),
             ],
         ),
     ]

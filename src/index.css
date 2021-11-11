@@ -24,3 +24,7 @@ h1 {
   max-height: 300;
   width: auth\9;
 }
+
+.errorInfo {
+  color: #d32f2f;
+}
