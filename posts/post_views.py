@@ -21,7 +21,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def public_post(request):
     #order by the id the most recent post will be shown in the first page
     posts = Post.objects.filter(visibility="PUBLIC").order_by('-id')
-    #add pagination three post in each page
+    #add pagination three posts in each page
     paginator = Paginator(posts, 3)
     page = request.GET.get('page', 1)
     try:
@@ -46,11 +46,11 @@ def post_list(request, author_id):
         # posts = Post.objects.filter(visibility="PUBLIC")
         # retrieve all posts of this author
         try:
-            authorExist = User.objects.get(pk=author_id).order_by('-id')
+            authorExist = User.objects.get(pk=author_id)
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts = Post.objects.filter(author_id=author_id)
+        posts = Post.objects.filter(author_id=author_id).order_by('-id')
         paginator = Paginator(posts, 3)
         page = request.GET.get('page', 1)
 
