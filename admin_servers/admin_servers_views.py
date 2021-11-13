@@ -1,12 +1,13 @@
 from re import T
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from users.models import User
 from users.serializers import UserSerializer
 from .serializers import NodeSerializer
-
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 import json
@@ -20,6 +21,8 @@ from .models import Node
 ('''
 
 @api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def handle_signup_request(request, id):
     pending_users = User.objects.filter(pk=id, pending=True)
     if not pending_users:
@@ -31,12 +34,16 @@ def handle_signup_request(request, id):
     return JsonResponse(pending_user_seralizer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def get_signup_requests(request):
     pending_user_objects = User.objects.filter(pending=True) # filter to an array of danjo object
     pending_users_seralizer = UserSerializer(pending_user_objects, many=True)
     return JsonResponse(pending_users_seralizer.data, status=status.HTTP_200_OK, safe=False)
 
 @api_view(['GET','PUT'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def approve_option(request):
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, "../config.json")
@@ -59,6 +66,8 @@ def approve_option(request):
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 @api_view(['GET','POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def node_list(request):
     if request.method == 'GET':
         nodes = Node.objects.all()
@@ -75,6 +84,19 @@ def node_list(request):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_node(request):
+    if request.method == 'DELETE':
+        try:
+            url = JSONParser().parse(request)["url"]
+            node = Node.objects.get(pk=url)
+        except:
+            return JsonResponse({"Error": "couldn't find the node"}, status=status.HTTP_400_BAD_REQUEST)
+        # if current post is owned by this author, then delete
+        node.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
