@@ -15,6 +15,7 @@ import Signup from "./components/signup/signup";
 import ParticlesBg from "particles-bg";
 import NavMenu from "./components/NavMenu";
 import AdminLogin from "./components/AdminLogin/AdminLogin";
+import AdminMainPage from "./components/AdminManagement/AdminMainPage";
 
 function App() {
   //const [cookies, setCookie] = useCookies([]);
@@ -77,6 +78,9 @@ function App() {
         <Route exact path="/admin/login">
           <AdminLogin />
           <ParticlesBg type="square" bg={true} />
+        </Route>
+        <Route exact path="/admin/mainpage">
+          <AdminMainPage />
         </Route>
       </Layout>
     </header>

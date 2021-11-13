@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import logo from "../login/logo.png";
 import "../login/login.css";
+import { Redirect } from "react-router-dom";
 
 const AdminLogin = () => {
   const baseUrl = process.env.REACT_APP_API_ENDPOINT;
@@ -34,6 +35,7 @@ const AdminLogin = () => {
       )
       .then((res) => {
         localStorage.setItem("adminUserName", res.data["user_name"]);
+        window.location = "/admin/mainpage";
       })
       .catch((err) => {
         if (err.response.status === 401) {
