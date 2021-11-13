@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 
 import logo from "../login/logo.png";
 import "../login/login.css";
-import { Redirect } from "react-router-dom";
 
 const AdminLogin = () => {
   const baseUrl = process.env.REACT_APP_API_ENDPOINT;

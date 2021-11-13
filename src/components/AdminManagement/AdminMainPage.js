@@ -1,72 +1,132 @@
-import { Grid, Card, Typography } from "@material-ui/core";
+/*
+    Material UI Table reference: https://mui.com/components/tables/#api
+*/
+import { useState } from "react";
+import { Typography } from "@material-ui/core";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import MuiTableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import withStyles from "@material-ui/styles/withStyles";
+import { Grid, Fab } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
+import Stack from "@mui/material/Stack";
+import "../font/style.css";
 
 const dummy = [
   {
-    url: "123",
+    url: "www.124.com/abc/",
     user_name: "333",
     password: "abc",
   },
   {
-    url: "123",
+    url: "www.125.com/abc/",
     user_name: "333",
     password: "abc",
   },
   {
-    url: "123",
+    url: "www.126.com/abc/",
     user_name: "333",
     password: "abc",
   },
   {
-    url: "123",
+    url: "www.127.com/abc/",
     user_name: "333",
     password: "abc",
   },
 ];
-const AdminMainPage = () => {
-  return (
-    <Grid container spacing={"3"}>
-      <Grid item>
-        <Card>
-          <Typography variant="h4">Node List</Typography>
-          {dummy.map((n) => {
-            <Grid
-              item
-              xs={8}
-              justifyContent="flex-start"
-              alignItems="flex-start"
-              backgroundColor="#fff"
-              borderBottom="1.2px solid #f0f2f7"
-              padding="30px"
-              boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
-              marginLeft={50}
-              marginRight={50}
-            >
-              <Grid container direction="column" spacing={1}>
-                <Grid item>
-                  <Grid container direction="row" spacing={2}>
-                    <Grid item>
-                      <Typography>abc</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
 
-                <Grid item marginLeft={7}>
-                  <Typography>{n.user_name}</Typography>
-                </Grid>
-              </Grid>
-              <Grid
-                container
-                spacing={1}
-                direction="row"
-                justifyContent="flex-end"
-                alignItems="flex-end"
-              ></Grid>
-            </Grid>;
-          })}
-        </Card>
+const AdminMainPage = () => {
+  const TableCell = withStyles({
+    root: {
+      borderBottom: "none",
+    },
+  })(MuiTableCell);
+
+  const [creatNew, setCreatNew] = useState(false);
+  if (creatNew) {
+    window.location = "/admin/newnode";
+  }
+
+  return (
+    <div>
+      <div class="text text-1">Node List</div>
+      <Grid
+        container
+        spacing={1}
+        justifyContent="center"
+        direction="column"
+        alignItems="center"
+      >
+        <Grid item></Grid>
+        <Stack
+          direction="column"
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Fab color="primary" aria-label="add">
+            <Add
+              onClick={(e) => {
+                setCreatNew(true);
+              }}
+            />
+          </Fab>
+        </Stack>
       </Grid>
-      <Grid item>aaaa</Grid>
-    </Grid>
+
+      <TableContainer>
+        <Table
+          sx={{ maxWidth: "70%", margin: "auto" }}
+          aria-label="simple table"
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography variant="h5">Node Uri</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h5">Username</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h5">Password</Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h5">Delete</Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dummy.map((node) => (
+              <TableRow
+                key={node.url}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                hover
+              >
+                <TableCell component="th" scope="row">
+                  <Typography variant="h6">{node.url}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6">{node.user_name}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="h6">{node.password}</Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <HighlightOffIcon
+                    sx={{ cursor: "pointer", color: "#b02a2a" }}
+                    fontSize="large"
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 
