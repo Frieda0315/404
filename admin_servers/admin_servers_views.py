@@ -87,9 +87,10 @@ def node_list(request):
 @api_view(['DELETE'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def delete_node(request,url):
+def delete_node(request):
     if request.method == 'DELETE':
         try:
+            url = JSONParser().parse(request)["url"]
             node = Node.objects.get(pk=url)
         except:
             return JsonResponse({"Error": "couldn't find the node"}, status=status.HTTP_400_BAD_REQUEST)
