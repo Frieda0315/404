@@ -1,7 +1,7 @@
 /*
     Material UI Table reference: https://mui.com/components/tables/#api
 */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Typography } from "@material-ui/core";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,6 +14,8 @@ import withStyles from "@material-ui/styles/withStyles";
 import { Grid, Fab } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import Stack from "@mui/material/Stack";
+import axios from "axios";
+
 import "../font/style.css";
 
 const dummy = [
@@ -40,6 +42,14 @@ const dummy = [
 ];
 
 const AdminMainPage = () => {
+  const baseUrl = process.env.REACT_APP_API_ENDPOINT;
+  const [nodeList, setNodeList] = useState([]);
+  useEffect(() => {
+    axios.get(`${baseUrl}/admin/nodes/`).then((res) => {
+      console.log(res.data);
+      setNodeList(res.data);
+    });
+  }, []);
   const TableCell = withStyles({
     root: {
       borderBottom: "none",
@@ -100,7 +110,7 @@ const AdminMainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dummy.map((node) => (
+            {nodeList.map((node) => (
               <TableRow
                 key={node.url}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

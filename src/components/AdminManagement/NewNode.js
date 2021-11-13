@@ -3,11 +3,35 @@ import Stack from "@mui/material/Stack";
 import { Button, Typography, CardContent, Card } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Grid } from "@material-ui/core";
+import axios from "axios";
 
 const NewNode = () => {
   const [uri, setUri] = useState("");
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
+  const baseUrl = process.env.REACT_APP_API_ENDPOINT;
+
+  const submitted = async () => {
+    if (uri != "" && user != "" && pass != "") {
+      const newpost = await axios
+        .post(`${baseUrl}/admin/nodes/`, {
+          url: uri,
+          user_name: user,
+          password: pass,
+          // published: date,
+          // author: author.data,
+          // visibility: visibility,
+        })
+        .then((res) => {
+          console.log(res.data);
+        });
+      window.location = "/admin/mainpage";
+    } else {
+      alert("Empty input");
+    }
+
+    //history.push({ pathname: "/" });
+  };
 
   return (
     <Grid
@@ -46,7 +70,7 @@ const NewNode = () => {
           label="User"
           variant="filled"
           value={user}
-          onChange={(e) => setUri(e.target.value)}
+          onChange={(e) => setUser(e.target.value)}
         />
       </Grid>
       <Grid item alignItems="center" sx={{ width: 470 }}>
@@ -60,16 +84,16 @@ const NewNode = () => {
           label="Pass"
           variant="filled"
           value={pass}
-          onChange={(e) => setUri(e.target.value)}
+          onChange={(e) => setPass(e.target.value)}
         />
       </Grid>
       <Grid item>
         <Button
           variant="contained"
-          color="palette.primary.main"
+          color="success"
           sx={{ marginInlineStart: "5px" }}
           onClick={(event) => {
-            alert("submit");
+            submitted(event.target);
           }}
         >
           Create
@@ -82,7 +106,7 @@ const NewNode = () => {
             marginInlineStart: "50px",
           }}
           onClick={() => {
-            alert("cancel");
+            window.location = "/admin/mainpage";
             // let path = `/`;
             // history.push(path);
           }}
