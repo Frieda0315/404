@@ -96,7 +96,7 @@ def delete_node(request):
             return JsonResponse({"Error": "couldn't find the node"}, status=status.HTTP_400_BAD_REQUEST)
         # if current post is owned by this author, then delete
         node.delete()
-        return Response({"Success": "delete "+url+" successfully"},status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
