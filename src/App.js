@@ -14,6 +14,7 @@ import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
 import ParticlesBg from "particles-bg";
 import NavMenu from "./components/NavMenu";
+import AdminLogin from "./components/AdminLogin/AdminLogin";
 
 function App() {
   //const [cookies, setCookie] = useCookies([]);
@@ -72,6 +73,9 @@ function App() {
         <Route exact path="/friends">
           <NavMenu />
           <FriendList></FriendList>
+        </Route>
+        <Route exact path="/admin/login">
+          <AdminLogin />
         </Route>
       </Layout>
     </header>

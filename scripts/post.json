@@ -1,0 +1,54 @@
+[
+    {
+        "model": "posts.post",
+        "fields": {
+            "type":"post",
+            "id":"123e4567-5b2b-12d3-a456-426614174001",
+            "title": "post1",
+            "content": "this is post1",
+            "published": "2021-11-07T19:44:03.715432Z",
+            "author": "123e4567-e89b-12d3-a456-426614174001",
+            "visibility": "PUBLIC",
+            "contentType": "text/plain"
+        }
+    },
+    {
+        "model": "posts.post",
+        "fields": {
+            "type":"post",
+            "id":"123e4567-5b2b-12d3-a456-426614174002",
+            "title": "post2",
+            "content": "# Title1\\ ## Title2",
+            "published": "2021-11-07T19:44:03.715432Z",
+            "author": "123e4567-e89b-12d3-a456-426614174001",
+            "visibility": "PUBLIC",
+            "contentType": "text/markdown"
+        }
+    },
+    {
+        "model": "posts.post",
+        "fields": {
+            "type":"post",
+            "id":"123e4567-5b2b-12d3-a456-426614174003",
+            "title": "post3",
+            "content": "# Title1",
+            "published": "2021-11-07T19:44:03.715432Z",
+            "author": "123e4567-e89b-12d3-a456-426614174002",
+            "visibility": "PUBLIC",
+            "contentType": "text/markdown"
+        }
+    },
+    {
+        "model": "posts.post",
+        "fields": {
+            "type":"post",
+            "id":"123e4567-5b2b-12d3-a456-426614174004",
+            "title": "post4",
+            "content": "this is post4",
+            "published": "2021-11-07T19:44:03.715432Z",
+            "author": "123e4567-e89b-12d3-a456-426614174002",
+            "visibility": "PUBLIC",
+            "contentType": "text/plain"
+        }
+    }
+]

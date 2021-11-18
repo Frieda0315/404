@@ -10,6 +10,10 @@ import FormLabel from "@mui/material/FormLabel";
 import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
+import MenuItem from "@mui/material/MenuItem";
+
+import Select from "@mui/material/Select";
+import Checkbox from "@mui/material/Checkbox";
 
 const heading = {
   fontSize: "30px",
@@ -32,20 +36,29 @@ const pic = {
 const EditPost = () => {
   const history = useHistory();
   const location = useLocation();
-  const [fileBase64String, setFileBase64String] = React.useState();
   const [item1, setItem] = React.useState(location.state);
-  console.log("get", location.image);
-  const [image, setImage] = React.useState(location.image);
+  const [isImage, setIsImage] = React.useState(() => {
+    if (item1.contentType != "Image") {
+      return false;
+    } else {
+      return true;
+    }
+  });
+  const [fileBase64String, setFileBase64String] = React.useState();
+
+  const [image, setImage] = React.useState(null);
+
   const [preview, setPreview] = React.useState();
-  const [value, setValue] = React.useState(() => {
+  const [textChoice, setTextChoice] = React.useState(() => {
     if (item1.contentType == "") {
       return "text/plain";
     } else {
-      return "image";
+      return "text/markdown";
     }
   });
-  const [state, setState] = React.useState(item1.state);
-  console.log("hi", state);
+
+  const [visibility, setVisibility] = React.useState(item1.state);
+
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
   const [date, setDate] = React.useState(location.date);
@@ -58,8 +71,9 @@ const EditPost = () => {
     const file = files[0];
     if (file) {
       setImage(file);
+      encodeFileBase64(image);
     } else {
-      if (value == "image") {
+      if (isImage == true) {
         setImage(location.state.image);
       } else {
         setImage(noimage);
@@ -75,7 +89,9 @@ const EditPost = () => {
       };
     }
   };
-
+  const handleCheckBoxChange = (e) => {
+    setIsImage(!isImage);
+  };
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
@@ -83,10 +99,10 @@ const EditPost = () => {
         setPreview(reader.result);
         encodeFileBase64(image);
       };
-      reader.readAsDataURL(image);
+      reader.readAsDataURL(noimage);
     } else {
-      if (value == "image") {
-        setPreview(location.state.image);
+      if (isImage == true) {
+        setPreview(noimage);
       } else {
         setPreview(noimage);
       }
@@ -100,30 +116,73 @@ const EditPost = () => {
   };
 
   const submited = async () => {
-    if (value == "image") {
-      const now = new Date();
-      const isoString = now.toISOString();
+    const authorID = localStorage.getItem("current_user_id");
+    const currentDateTime = Date().toLocaleString();
+    setDate(currentDateTime);
+    const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
 
-      setDate(isoString);
-
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      console.log(state);
-      const newpost = axios.post(
+    if (textChoice === "text/plain") {
+      if (isImage === true) {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+          {
+            type: "post",
+            id: item1.id,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            // image: fileBase64String,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      } else {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
+          {
+            type: "post",
+            id: item1.id,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      }
+    } else if (textChoice === "text/markdown") {
+      const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
         {
           type: "post",
           id: item1.id,
           title: title,
+          contentType: textChoice,
           content: common,
-          image: fileBase64String,
           published: date,
           author: author.data,
-          visibility: state,
+          visibility: visibility,
         },
         {
           auth: {
@@ -132,33 +191,19 @@ const EditPost = () => {
           },
         }
       );
-
-      history.push({ pathname: "/mypost/" });
-    }
-    if (value == "text/plain") {
-      const now = new Date();
-      const isoString = now.toISOString();
-
-      setDate(isoString);
-
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      console.log("hi", common);
-      const newpost = axios.post(
+      history.push({ pathname: "/" });
+    } else if (common === "") {
+      const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${item1.id}/`,
         {
           type: "post",
           id: item1.id,
           title: title,
-          content: common,
+          contentType: "image",
+          content: fileBase64String,
           published: date,
           author: author.data,
-          visibility: state,
-          image: "",
+          visibility: visibility,
         },
         {
           auth: {
@@ -167,8 +212,7 @@ const EditPost = () => {
           },
         }
       );
-      console.log(newpost.data);
-      history.push({ pathname: "/mypost/" });
+      history.push({ pathname: "/" });
     }
   };
 
@@ -193,33 +237,53 @@ const EditPost = () => {
         />
       </Grid>
 
-      <Grid item alignItems="flex-start">
-        <Typography variant="body1" color="text.secondary">
-          Post an Image or Plain text
-        </Typography>
+      <Grid container alignItems="flex-start" direction="row">
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 80 }}>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={textChoice}
+              label="Input Type"
+              autoWidth
+              onChange={(e) => setTextChoice(e.target.value)}
+            >
+              <MenuItem value={"text/plain"}>text/plain</MenuItem>
 
-        <FormControl component="fieldset">
-          <RadioGroup
-            row
-            aria-label="gender"
-            name="row-radio-buttons-group"
-            value={value}
-            onChange={(event) => {
-              setValue(event.target.value);
-            }}
-          >
-            <FormControlLabel value="image" control={<Radio />} label="Image" />
-
+              <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 80 }}>
             <FormControlLabel
-              value="text/plain"
-              control={<Radio />}
-              label="Text"
-            />
-          </RadioGroup>
-        </FormControl>
+              control={<Checkbox />}
+              label="Image"
+              onChange={(e) => handleCheckBoxChange(e)}
+            />{" "}
+          </FormControl>
+        </Grid>
       </Grid>
 
-      {value == "image" ? (
+      <Grid item>
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 5,
+            width: "90%",
+            height: "90%",
+            marginLeft: 5,
+          }}
+          id="addDescription"
+          label="add description"
+          variant="filled"
+          multiline
+          rows={10}
+          value={common}
+          onChange={(e) => setCommon(e.target.value)}
+        />
+      </Grid>
+      {isImage ? (
         <CardContent>
           <Grid container spacing={2} direction="column">
             <Grid item>
@@ -246,24 +310,7 @@ const EditPost = () => {
             </Card>
           </Grid>
         </CardContent>
-      ) : (
-        <TextField
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            width: "90%",
-            height: "90%",
-            marginLeft: 5,
-          }}
-          id="addDescription"
-          label="add description"
-          variant="filled"
-          multiline
-          rows={10}
-          value={common}
-          onChange={(e) => setCommon(e.target.value)}
-        />
-      )}
+      ) : null}
 
       <Grid item alignItems="flex-start">
         <FormControl component="fieldset">
@@ -278,9 +325,9 @@ const EditPost = () => {
           <RadioGroup
             aria-label="private?"
             name="radio-buttons-group"
-            value={state}
+            value={visibility}
             onChange={(event) => {
-              setState(event.target.value);
+              setVisibility(event.target.value);
             }}
           >
             <FormControlLabel

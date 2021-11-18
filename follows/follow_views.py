@@ -2,7 +2,7 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes,permission_classes
 from rest_framework.response import Response
-from .serializers import FollowSerializer, FriendSerializer
+from .serializers import FollowSerializer, FriendSerializer, FriendRequestSerializer
 from .models import Follow, Friend, FriendRequest
 from users.models import User
 from users.serializers import UserSerializer
@@ -118,3 +118,15 @@ def friend_list(request, author_id):
     return_json = {"type": "friends", "author": author_seralizer.data,
                    "friends": friend_seralizer.data}
     return JsonResponse(return_json, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def friend_request_list(request, author_id):
+    try:
+        following = User.objects.get(pk=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+    friend_requests = FriendRequest.objects.filter(object=following)
+    request_seralizer = FriendRequestSerializer(friend_requests, many=True)
+    return JsonResponse(request_seralizer.data, status=status.HTTP_200_OK, safe=False)

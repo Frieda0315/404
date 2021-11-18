@@ -5,14 +5,19 @@ import Grid from "@mui/material/Grid";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { Button, Typography, CardContent, Card } from "@mui/material";
 import { useHistory } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import "./font/style.css";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Checkbox from "@mui/material/Checkbox";
 
 const heading = {
   fontSize: "30px",
@@ -38,16 +43,16 @@ const Post = () => {
 
   const [image, setImage] = React.useState("");
   const [preview, setPreview] = React.useState();
-  const [value, setValue] = React.useState("Text");
   const [title, setTitle] = React.useState("");
   const [common, setCommon] = React.useState("");
   const [fileBase64String, setFileBase64String] = React.useState("");
   const [decode, setDecode] = React.useState();
-
+  const [isImage, setIsImage] = React.useState(false);
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
-
+  const [textChoice, setTextChoice] = React.useState("text/plain");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+
   const uploadImage = (files) => {
     //accept = 'image/*';
     const file = files[0];
@@ -98,28 +103,81 @@ const Post = () => {
     console.log(fileBase64String);
     setPreview(fileBase64String);
   };
+  const handleDropDownChange = (event) => {
+    setTextChoice(event.target.value);
+  };
+
+  const handleCheckBoxChange = (e) => {
+    setIsImage(!isImage);
+  };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
+    const currentDateTime = Date().toLocaleString();
+    const uuid = uuidv4();
+    setDate(currentDateTime);
+    const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
 
-    if (common === "") {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
+    if (textChoice === "text/plain") {
+      if (isImage === true) {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          {
+            type: "post",
+            id: uuid,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            // image: fileBase64String,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      } else {
+        const newpost = await axios.put(
+          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          {
+            type: "post",
+            id: uuid,
+            title: title,
+            contentType: textChoice,
+            content: common,
+            published: date,
+            author: author.data,
+            visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        history.push({ pathname: "/" });
+      }
+    } else if (textChoice === "text/markdown") {
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
         {
           type: "post",
           id: uuid,
           title: title,
-          content: "",
-          image: fileBase64String,
+          contentType: textChoice,
+          content: common,
+          // image: fileBase64String,
           published: date,
           author: author.data,
           visibility: visibility,
@@ -132,56 +190,15 @@ const Post = () => {
         }
       );
       history.push({ pathname: "/" });
-    } else if (image !== "" || image !== noimage) {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
+    } else if (common === "") {
       const newpost = await axios.put(
         `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
         {
           type: "post",
           id: uuid,
           title: title,
-          content: common,
-          image: "",
-          published: date,
-          author: author.data,
-          visibility: visibility,
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      console.log("Fdafdsf");
-      history.push({ pathname: "/" });
-    } else {
-      const currentDateTime = Date().toLocaleString();
-      setDate(currentDateTime);
-      const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const uuid = uuidv4();
-      const newpost = await axios.put(
-        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-        {
-          type: "post",
-          id: uuid,
-          title: title,
-          content: common,
-          image: fileBase64String,
+          contentType: "image",
+          content: fileBase64String,
           published: date,
           author: author.data,
           visibility: visibility,
@@ -195,6 +212,65 @@ const Post = () => {
       );
       history.push({ pathname: "/" });
     }
+
+    // if (common === "") {
+    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+    //     auth: {
+    //       username: "admin",
+    //       password: "admin",
+    //     },
+    //   });
+    //   const uuid = uuidv4();
+    //   const newpost = await axios.put(
+    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+    //     {
+    //       type: "post",
+    //       id: uuid,
+    //       title: title,
+
+    //       image: fileBase64String,
+    //       published: date,
+    //       author: author.data,
+    //       visibility: visibility,
+    //     },
+    //     {
+    //       auth: {
+    //         username: "admin",
+    //         password: "admin",
+    //       },
+    //     }
+    //   );
+    //   history.push({ pathname: "/" });
+    // } else if (true) {
+    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+    //     auth: {
+    //       username: "admin",
+    //       password: "admin",
+    //     },
+    //   });
+    //   const uuid = uuidv4();
+    //   const newpost = await axios.put(
+    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+    //     {
+    //       type: "post",
+    //       id: uuid,
+    //       title: title,
+    //       content: common,
+    //       image: "",
+    //       published: date,
+    //       author: author.data,
+    //       visibility: visibility,
+    //     },
+    //     {
+    //       auth: {
+    //         username: "admin",
+    //         password: "admin",
+    //       },
+    //     }
+    //   );
+    //   history.push({ pathname: "/" });
+    // } else {
+    // }
   };
 
   const history = useHistory();
@@ -216,30 +292,53 @@ const Post = () => {
         />
       </Grid>
 
-      <Grid item alignItems="flex-start">
-        <Typography variant="body1" color="text.secondary">
-          Post an Image or Plain text
-        </Typography>
+      <Grid container alignItems="flex-start" direction="row">
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 80 }}>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={textChoice}
+              label="Input Type"
+              autoWidth
+              onChange={(e) => setTextChoice(e.target.value)}
+            >
+              <MenuItem value={"text/plain"}>text/plain</MenuItem>
 
-        <FormControl component="fieldset">
-          <RadioGroup
-            row
-            aria-label="gender"
-            name="row-radio-buttons-group"
-            value={value}
-            defaultValue="Text"
-            onChange={(event) => {
-              setValue(event.target.value);
-            }}
-          >
-            <FormControlLabel value="Image" control={<Radio />} label="Image" />
-
-            <FormControlLabel value="Text" control={<Radio />} label="Text" />
-          </RadioGroup>
-        </FormControl>
+              <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl sx={{ m: 1, minWidth: 80 }}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Image"
+              onChange={(e) => handleCheckBoxChange(e)}
+            />{" "}
+          </FormControl>
+        </Grid>
       </Grid>
 
-      {value == "Image" ? (
+      <Grid item>
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 5,
+            width: "90%",
+            height: "90%",
+            marginLeft: 5,
+          }}
+          id="addDescription"
+          label="add description"
+          variant="filled"
+          multiline
+          rows={10}
+          value={common}
+          onChange={(e) => setCommon(e.target.value)}
+        />
+      </Grid>
+      {isImage ? (
         <CardContent>
           <Grid container spacing={2} direction="column">
             <Grid item>
@@ -266,24 +365,7 @@ const Post = () => {
             </Card>
           </Grid>
         </CardContent>
-      ) : (
-        <TextField
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            width: "90%",
-            height: "90%",
-            marginLeft: 5,
-          }}
-          id="addDescription"
-          label="add description"
-          variant="filled"
-          multiline
-          rows={10}
-          value={common}
-          onChange={(e) => setCommon(e.target.value)}
-        />
-      )}
+      ) : null}
 
       <Grid item alignItems="flex-start">
         <FormControl component="fieldset">
@@ -331,11 +413,7 @@ const Post = () => {
         </FormControl>
       </Grid>
 
-      <Grid
-        item
-        direction="row"
-        //bgcolor = '#e0e0e0'
-      >
+      <Grid item>
         <Button
           variant="contained"
           color="success"

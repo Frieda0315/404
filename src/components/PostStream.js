@@ -13,7 +13,7 @@ import Profile from "./Profile";
 import { v4 as uuidv4 } from "uuid";
 import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
-
+import ReactMarkdown from "react-markdown";
 import Share from "./Share";
 
 const useStyles = makeStyles(() => ({
@@ -458,6 +458,7 @@ function PostStream(props) {
             newList.push({
               id: single.id,
               published: single.published,
+              contentType: single.contentType,
               content: single.content,
               author: single.author.user_name,
               authorid: single.author.id,
@@ -524,9 +525,13 @@ function PostStream(props) {
                   <Typography variant="h5" component="div">
                     {post.title}
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
+                  {post.contentType === "text/markdown" ? (
+                    <ReactMarkdown>{post.content}</ReactMarkdown>
+                  ) : (
+                    <Typography variant="body1" color="text.secondary">
+                      {post.content}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             ) : (
