@@ -6,10 +6,12 @@ from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
 from .serializers import PostSerializer
 from .models import Post
+from follows.models import Friend
 from users.models import User
 from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 
 # Create your views here.
 
@@ -17,9 +19,27 @@ from rest_framework.permissions import IsAuthenticated
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def public_post(request):
+def public_post(request, author_id):
+    try:
+        current_user = User.objects.get(id=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     posts = Post.objects.filter(visibility="PUBLIC")
-    serializer = PostSerializer(posts, many=True)
+    friends = Friend.objects.filter(
+        Q(first_user_id=author_id) | Q(second_user_id=author_id))
+    friend_authors = []
+    for friend_object in friends:
+        if friend_object.first_user == current_user:
+            friend_authors.append(friend_object.second_user)
+        else:
+            friend_authors.append(friend_object.first_user)
+    firend_post_list = []
+    for author in friend_authors:
+        friend_posts = Post.objects.filter(
+            author_id=author.id, visibility="FRIENDS")
+        firend_post_list += friend_posts
+    firend_post_list += posts
+    serializer = PostSerializer(firend_post_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
