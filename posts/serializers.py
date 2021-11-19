@@ -21,7 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'type', 'title', 'content', 'contentType',
-                  'published', 'author', 'visibility', 'image']
+                  'published', 'author', 'visibility', 'image','source','origin']
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
@@ -34,6 +34,10 @@ class PostSerializer(serializers.ModelSerializer):
             'image', instance.image)
         instance.contentType = validated_data.get(
             'contentType', instance.contentType)
+        instance.source = validated_data.get(
+            'source', instance.source)
+        instance.origin = validated_data.get(
+            'origin', instance.origin)    
         instance.save()
         # instance is current data in DB, validated_data is new incoming data
         return instance
