@@ -10,6 +10,7 @@ from users.models import User
 from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -18,8 +19,20 @@ from rest_framework.permissions import IsAuthenticated
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def public_post(request):
-    posts = Post.objects.filter(visibility="PUBLIC")
+    #order by the id the most recent post will be shown in the first page
+    posts = Post.objects.filter(visibility="PUBLIC").order_by('-id')
+    #add pagination three posts in each page
+    paginator = Paginator(posts, 3)
+    page = request.GET.get('page', 1)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
     serializer = PostSerializer(posts, many=True)
+
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -37,8 +50,19 @@ def post_list(request, author_id):
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts = Post.objects.filter(author_id=author_id)
+        posts = Post.objects.filter(author_id=author_id).order_by('-id')
+        paginator = Paginator(posts, 3)
+        page = request.GET.get('page', 1)
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
         serializer = PostSerializer(posts, many=True)
+        
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
         # get POST JSON Object
