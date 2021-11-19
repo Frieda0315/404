@@ -21,8 +21,6 @@ const useStyles = makeStyles(() => ({
 const Inbox = () => {
   const history = useHistory();
 
-  const inboxList = [];
-
   const styleClasses = useStyles();
   const [InboxList1, setInboxList] = React.useState([]);
 
@@ -56,7 +54,6 @@ const Inbox = () => {
         const newList1 = InboxList1.filter(
           (item) => item.type !== "follower" && item.follower_id !== id
         );
-        console.log("new", newList1);
         setInboxList(newList);
       });
   };
@@ -84,7 +81,7 @@ const Inbox = () => {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handelClear = () => {
-    if (setInboxToggle == 0) {
+    if (InboxToggle == 0) {
       axios
         .delete(`${baseUrl2}/author/${userid}/inbox/`, {
           auth: {
@@ -99,7 +96,7 @@ const Inbox = () => {
         .catch((err) => {
           console.log(err);
         });
-    } else if (setInboxToggle == 1) {
+    } else if (InboxToggle == 1) {
     } else {
       const newList = InboxList1.filter((item) => item.type !== "follower");
       setInboxList(newList);
@@ -107,58 +104,54 @@ const Inbox = () => {
   };
   var newList = [];
   useEffect(() => {
-    axios
-      .get(`${baseUrl2}/author/${userid}/inbox/`, {
+    const requestOne = axios.get(`${baseUrl2}/author/${userid}/inbox/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    const requestTwo = axios.get(
+      `${baseUrl2}/author/${userid}/friendrequests/`,
+      {
         auth: {
           username: "admin",
           password: "admin",
         },
-      })
-      .then((res) => {
-        console.log(res.data);
-        res.data.items.map((single) => {
-          console.log(single.author.user_name);
-          newList.push({
-            type: "inbox",
-            title: single.title,
-            content: single.content,
-            date: single.published,
-            image: single.image,
-            user_name: single.author.user_name,
-            id: single.author.id,
-            github_name: single.author.github_name,
+      }
+    );
+    axios
+      .all([requestOne, requestTwo])
+      .then(
+        axios.spread((...responses) => {
+          const responseOne = responses[0];
+
+          responseOne.data.items.map((single) => {
+            newList.push({
+              type: "inbox",
+              title: single.title,
+              content: single.content,
+              date: single.published,
+              image: single.image,
+              user_name: single.author.user_name,
+              id: single.author.id,
+              github_name: single.author.github_name,
+            });
           });
-        });
-        setInboxList(newList);
-      })
+          const responseTwo = responses[1];
+
+          responseTwo.data.map((single) => {
+            newList.push({
+              type: "follower",
+              summary: single.summary,
+              follower_user_name: single.actor.user_name,
+              follower_id: single.actor.id,
+            });
+          });
+          setInboxList(newList);
+        })
+      )
       .catch((errors) => {
         console.log(errors);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${baseUrl2}/author/${userid}/friendrequests/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        res.data.map((single) => {
-          console.log("name", single.summary);
-          newList.push({
-            type: "follower",
-            summary: single.summary,
-            follower_user_name: single.actor.user_name,
-            follower_id: single.actor.id,
-          });
-        });
-        setInboxList(newList);
-      })
-      .catch((errors) => {
-        //console.log(errors);
       });
   }, []);
 

@@ -345,8 +345,32 @@ function PostStream(props) {
     setOpenPopup(true);
   };
   const open_share = (post) => {
-    setOpenPopup2(true);
-    setShareBuffer(post);
+    axios
+      .get(`${baseUrl2}/author/${post.authorid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((response) => {
+        const newPost = {
+          id: post.id,
+          type: "post",
+          title: post.title,
+          content: post.content,
+          contentType: post.contentType,
+          published: post.published,
+          author: response.data,
+          visibility: "FRIENDS",
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: post.origin,
+        };
+        setOpenPopup2(true);
+        setShareBuffer(newPost);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   const open_image_holder = (post) => {
     setImage(post.img);
@@ -404,7 +428,6 @@ function PostStream(props) {
               author: single.actor.login,
               github_user: "",
               title: "Github Activity: " + single.type,
-              img: "",
               avatar_url:
                 "https://avatars.githubusercontent.com/u/55036290?v=4",
               author_id: "github",
@@ -421,9 +444,10 @@ function PostStream(props) {
               authorid: single.author.id,
               github_user: single.author.github_name,
               title: single.title,
-              img: single.image,
               avatar_url: "",
               author_id: single.author.id,
+              origin: single.origin,
+              source: single.source,
             });
           });
           setPostlist(newList);
@@ -476,7 +500,7 @@ function PostStream(props) {
         </Grid>
         <Grid container>
           <Grid item xs>
-            {post.img === "" ? (
+            {false === true ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">
@@ -541,8 +565,10 @@ function PostStream(props) {
               <IconButton
                 edge="end"
                 aria-label="share"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   open_share(post);
+                  console.log(shareBuffer);
                 }}
               >
                 <ShareRounded />

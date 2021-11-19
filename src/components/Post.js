@@ -137,6 +137,8 @@ const Post = () => {
             published: date,
             author: author.data,
             visibility: visibility,
+            source: "https://i-connect.herokuapp.com/service/posts/",
+            origin: "https://i-connect.herokuapp.com/service/posts/",
           },
           {
             auth: {
@@ -158,6 +160,8 @@ const Post = () => {
             published: date,
             author: author.data,
             visibility: visibility,
+            source: "https://i-connect.herokuapp.com/service/posts/",
+            origin: "https://i-connect.herokuapp.com/service/posts/",
           },
           {
             auth: {
@@ -181,6 +185,8 @@ const Post = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: "https://i-connect.herokuapp.com/service/posts/",
         },
         {
           auth: {
@@ -202,6 +208,8 @@ const Post = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: "https://i-connect.herokuapp.com/service/posts/",
         },
         {
           auth: {

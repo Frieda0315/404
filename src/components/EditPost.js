@@ -133,6 +133,8 @@ const EditPost = () => {
             published: date,
             author: author.data,
             visibility: visibility,
+            source: "https://i-connect.herokuapp.com/service/posts/",
+            origin: "https://i-connect.herokuapp.com/service/posts/",
           },
           {
             auth: {
@@ -154,7 +156,10 @@ const EditPost = () => {
             published: date,
             author: author.data,
             visibility: visibility,
+            source: "https://i-connect.herokuapp.com/service/posts/",
+            origin: "https://i-connect.herokuapp.com/service/posts/",
           },
+
           {
             auth: {
               username: "admin",
@@ -176,6 +181,8 @@ const EditPost = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: "https://i-connect.herokuapp.com/service/posts/",
         },
         {
           auth: {
@@ -197,6 +204,8 @@ const EditPost = () => {
           published: date,
           author: author.data,
           visibility: visibility,
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: "https://i-connect.herokuapp.com/service/posts/",
         },
         {
           auth: {
