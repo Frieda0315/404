@@ -13,10 +13,12 @@ import axios from "axios";
 function Share(props) {
   const postToShare = props.post;
   postToShare["type"] = "post";
+  postToShare["source"] = "https://i-connect.herokuapp.com/service/posts/";
   const [authorList, setAuthorList] = React.useState([]);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
+    console.log(postToShare);
     axios
       .post(`${baseUrl2}/author/${user.id}/inbox/`, postToShare, {
         auth: {
@@ -46,17 +48,22 @@ function Share(props) {
      *       APIs are updated
      */
     axios
-      .get(`${baseUrl2}/authors/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
+      .get(
+        `${baseUrl2}/author/${localStorage.getItem(
+          "current_user_id"
+        )}/friends/`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
       .then((response) => {
-        // console.log(response.data);
-        setAuthorList(response.data);
+        console.log(response.data);
+        setAuthorList(response.data["friends"]);
       });
-  });
+  }, []);
   //console.log(props.post);
   const friendList = authorList.map((s) => (
     <div>

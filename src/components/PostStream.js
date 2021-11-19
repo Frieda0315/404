@@ -404,7 +404,6 @@ function PostStream(props) {
               author: single.actor.login,
               github_user: "",
               title: "Github Activity: " + single.type,
-              img: "",
               avatar_url:
                 "https://avatars.githubusercontent.com/u/55036290?v=4",
               author_id: "github",
@@ -421,9 +420,10 @@ function PostStream(props) {
               authorid: single.author.id,
               github_user: single.author.github_name,
               title: single.title,
-              img: single.image,
               avatar_url: "",
               author_id: single.author.id,
+              origin: single.origin,
+              source: single.source,
             });
           });
           setPostlist(newList);
@@ -476,7 +476,7 @@ function PostStream(props) {
         </Grid>
         <Grid container>
           <Grid item xs>
-            {post.img === "" ? (
+            {false === true ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">

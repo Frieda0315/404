@@ -15,7 +15,7 @@ from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
-
+import uuid
 
 def handleFollowRequest(json_data, receiver):
     try:
@@ -43,7 +43,14 @@ def handlePostRequest(json_data, receiver):
         post = Post.objects.get(pk=json_data["id"])
     except Exception as e:
         return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
-    print([post.__dict__])
+    post.id = uuid.uuid4()
+    new_post_serializer = PostSerializer(data=post.__dict__)
+    print(new_post_serializer)
+    if new_post_serializer.is_valid():
+        save_method(new_post_serializer)
+    else:
+        return JsonResponse(new_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     inbox_data = {"post": [post.__dict__], "receive_author": receiver.__dict__}
     inbox_data["post"][0]["author"] = post.author.__dict__
     inbox_seralizer = InboxSerializer(data=inbox_data)
@@ -75,6 +82,7 @@ def inbox_list(request, author_id):
         if json_data["type"] == "follow":
             return handleFollowRequest(json_data, receiver)
         elif json_data["type"] == "post":
+
             return handlePostRequest(json_data, receiver)
         elif json_data["type"] == "like":
             return handleLikeRequest(json_data, receiver)
