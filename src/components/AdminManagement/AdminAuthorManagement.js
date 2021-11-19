@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AdminAuthorList from "./AdminAuthorList";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { Grid, Button } from "@material-ui/core";
@@ -15,6 +16,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Switch from "@mui/material/Switch";
 import head1 from "../../static/1.JPG";
 import "../font/style.css";
+import axios from "axios";
 
 const dummy = [
   {
@@ -53,94 +55,124 @@ const dummy = [
 
 const AdminAuthorManagement = () => {
   const [tab, setTab] = useState(0);
-  const [authorList, setAuthorList] = useState([]);
+  const [currentAuthorList, setCurrentAuthorList] = useState([]);
+  const [pendingAuthorList, setPendingAuthorList] = useState([]);
+  const [pendingSwitch, setPendingSwitch] = useState(true);
+
+  const baseUrl = process.env.REACT_APP_API_ENDPOINT;
+
+  const handlePending = async () => {
+    await axios.put(`${baseUrl}/admin/approveoption/`, {
+      approve_option: !pendingSwitch,
+    });
+    setPendingSwitch(!pendingSwitch);
+  };
+
+  const getAuthors = async () => {
+    const pendingAuthors = await axios.get(`${baseUrl}/authors/pendinglist/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    setPendingAuthorList(pendingAuthors.data);
+
+    const currentAuthors = await axios.get(`${baseUrl}/authors/currentlist/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    setCurrentAuthorList(currentAuthors.data);
+  };
+
+  useEffect(async () => {
+    const pending = await axios.get(`${baseUrl}/admin/approveoption/`);
+    setPendingSwitch(pending.data.approve_option);
+
+    await getAuthors();
+  }, []);
+
+  const deleteAuthor = async (e, authorId) => {
+    await axios.delete(`${baseUrl}/author/${authorId}`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+
+    await getAuthors();
+  };
+
+  const acceptPending = async (e, authorId) => {
+    await axios.post(
+      `${baseUrl}/authors/pendinglist/`,
+      {
+        author_id: authorId,
+        action: "approve",
+      },
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+
+    await getAuthors();
+  };
+
   const handleNavChnge = (e, newValue) => {
     setTab(newValue);
   };
   return (
     <div>
       <div className="text text-1">Current Author List</div>
-      <Tabs value={tab} onChange={handleNavChnge} aria-label="nav tabs example">
-        <Tab label="current" />
-        <Tab label="pending" />
-      </Tabs>
-      <FormControl component="fieldset" variant="standard">
-        <FormLabel component="legend">Assign responsibility</FormLabel>
-        <FormGroup>
-          <FormControlLabel
-            control={<Switch name="gilad" />}
-            label="Gilad Gray"
-          />
-        </FormGroup>
-        <FormHelperText>Be careful</FormHelperText>
-      </FormControl>
-      {dummy.map((item) => (
-        <Grid
-          key={item.user_name}
-          item
-          xs={12}
-          justifyContent="flex-start"
-          alignItems="flex-start"
-          backgroundColor=""
-          padding="30px"
-          marginLeft={40}
-          marginRight={40}
-        >
-          <Grid
-            container
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-between"
+      <Grid container direction="row" justifyContent="flex-start">
+        <Grid item xs={2} paddingLeft={2.5}>
+          <Tabs
+            value={tab}
+            onChange={handleNavChnge}
+            aria-label="nav tabs example"
+            style={{ marginBottom: "50px" }}
           >
-            <Grid item>
-              <Avatar
-                alt={`head1`}
-                src={head1}
-                sx={{ width: 56, height: 56 }}
+            <Tab label="current" />
+            <Tab label="pending" />
+          </Tabs>
+          <FormControl component="fieldset" variant="standard">
+            <FormLabel>Pending Feature Switch</FormLabel>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch
+                    name="switch"
+                    checked={pendingSwitch}
+                    onChange={handlePending}
+                  />
+                }
+                label={pendingSwitch ? "ON" : "OFF"}
               />
-            </Grid>
-
-            <Grid item alignContent="space-between" marginRight={2}>
-              <Grid item marginLeft={1}>
-                <Typography>ID: {item.id}</Typography>
-              </Grid>
-              <Grid item marginLeft={1}>
-                <Typography>Username: {item.user_name}</Typography>
-              </Grid>
-              <Grid item marginLeft={1}>
-                <Typography>GitHub: {item.github_name}</Typography>
-              </Grid>
-            </Grid>
-            <Grid item>
-              {tab === 0 ? (
-                <HighlightOffIcon
-                  sx={{ cursor: "pointer", color: "#b02a2a" }}
-                  fontSize="large"
-                />
-              ) : (
-                <div>
-                  <HighlightOffIcon
-                    sx={{
-                      cursor: "pointer",
-                      color: "#b02a2a",
-                    }}
-                    fontSize="large"
-                  />
-                  <CheckIcon
-                    sx={{
-                      cursor: "pointer",
-                      color: "#039487",
-                      marginLeft: "10px",
-                    }}
-                    fontSize="large"
-                  />
-                </div>
-              )}
-            </Grid>
-          </Grid>
+            </FormGroup>
+          </FormControl>
         </Grid>
-      ))}
+        <Grid item xs={10}>
+          {tab === 0 ? (
+            <AdminAuthorList
+              authors={currentAuthorList}
+              authorType="pending"
+              acceptPending={acceptPending}
+              deleteAuthor={deleteAuthor}
+            />
+          ) : (
+            <AdminAuthorList
+              authors={pendingAuthorList}
+              authorType="current"
+              acceptPending={acceptPending}
+              deleteAuthor={deleteAuthor}
+            />
+          )}
+        </Grid>
+      </Grid>
     </div>
   );
 };
