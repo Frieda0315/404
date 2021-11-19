@@ -6,11 +6,14 @@ from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
 from .serializers import PostSerializer
 from .models import Post
+from follows.models import Friend
 from users.models import User
 from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # Create your views here.
 
@@ -18,21 +21,27 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def public_post(request):
-    #order by the id the most recent post will be shown in the first page
-    posts = Post.objects.filter(visibility="PUBLIC").order_by('-id')
-    #add pagination three posts in each page
-    paginator = Paginator(posts, 3)
-    page = request.GET.get('page', 1)
+def public_post(request, author_id):
     try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
-
-    serializer = PostSerializer(posts, many=True)
-
+        current_user = User.objects.get(id=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+    posts = Post.objects.filter(visibility="PUBLIC")
+    friends = Friend.objects.filter(
+        Q(first_user_id=author_id) | Q(second_user_id=author_id))
+    friend_authors = []
+    for friend_object in friends:
+        if friend_object.first_user == current_user:
+            friend_authors.append(friend_object.second_user)
+        else:
+            friend_authors.append(friend_object.first_user)
+    firend_post_list = []
+    for author in friend_authors:
+        friend_posts = Post.objects.filter(
+            author_id=author.id, visibility="FRIENDS")
+        firend_post_list += friend_posts
+    firend_post_list += posts
+    serializer = PostSerializer(firend_post_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -62,7 +71,7 @@ def post_list(request, author_id):
             posts = paginator.page(paginator.num_pages)
 
         serializer = PostSerializer(posts, many=True)
-        
+
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
         # get POST JSON Object
