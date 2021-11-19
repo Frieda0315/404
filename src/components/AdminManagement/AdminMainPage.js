@@ -23,10 +23,17 @@ const AdminMainPage = () => {
   const [nodeList, setNodeList] = useState([]);
   useEffect(() => {
     async function fetchNode() {
-      await axios.get(`${baseUrl}/admin/nodes/`).then((res) => {
-        console.log(res.data);
-        setNodeList(res.data);
-      });
+      await axios
+        .get(`${baseUrl}/admin/nodes/`, {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setNodeList(res.data);
+        });
     }
     fetchNode();
   }, []);
@@ -40,6 +47,18 @@ const AdminMainPage = () => {
   if (creatNew) {
     window.location = "/admin/newnode";
   }
+
+  const deleteNode = async (node) => {
+    await axios.delete(`${baseUrl}/admin/node/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+      data: node,
+    });
+
+    setNodeList(nodeList.filter((n) => n !== node));
+  };
 
   return (
     <div>
@@ -109,6 +128,7 @@ const AdminMainPage = () => {
                   <HighlightOffIcon
                     sx={{ cursor: "pointer", color: "#b02a2a" }}
                     fontSize="large"
+                    onClick={() => deleteNode(node)}
                   />
                 </TableCell>
               </TableRow>

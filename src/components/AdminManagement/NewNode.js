@@ -13,14 +13,23 @@ const NewNode = () => {
   const submitted = async () => {
     if (uri !== "" && user !== "" && pass !== "") {
       await axios
-        .post(`${baseUrl}/admin/nodes/`, {
-          url: uri,
-          user_name: user,
-          password: pass,
-          // published: date,
-          // author: author.data,
-          // visibility: visibility,
-        })
+        .post(
+          `${baseUrl}/admin/nodes/`,
+          {
+            url: uri,
+            user_name: user,
+            password: pass,
+            // published: date,
+            // author: author.data,
+            // visibility: visibility,
+          },
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        )
         .then((res) => {
           console.log(res.data);
         });
