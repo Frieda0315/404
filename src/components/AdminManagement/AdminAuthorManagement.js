@@ -20,9 +20,18 @@ const AdminAuthorManagement = () => {
   const baseUrl = process.env.REACT_APP_API_ENDPOINT;
 
   const handlePending = async () => {
-    await axios.put(`${baseUrl}/admin/approveoption/`, {
-      approve_option: !pendingSwitch,
-    });
+    await axios.put(
+      `${baseUrl}/admin/approveoption/`,
+      {
+        approve_option: !pendingSwitch,
+      },
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
     setPendingSwitch(!pendingSwitch);
   };
 
@@ -44,14 +53,16 @@ const AdminAuthorManagement = () => {
     setCurrentAuthorList(currentAuthors.data);
   };
 
-  useEffect(() => {
-    async function fetchUser() {
-      const pending = await axios.get(`${baseUrl}/admin/approveoption/`);
-      setPendingSwitch(pending.data.approve_option);
+  useEffect(async () => {
+    const pending = await axios.get(`${baseUrl}/admin/approveoption/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    setPendingSwitch(pending.data.approve_option);
 
-      await getAuthors();
-    }
-    fetchUser();
+    await getAuthors();
   }, []);
 
   const deleteAuthor = async (e, authorId) => {

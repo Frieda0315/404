@@ -1,3 +1,9 @@
+'''
+pagination:
+Reference: https://docs.djangoproject.com/en/3.2/topics/pagination/
+Author: Django doc
+'''
+from django.core import paginator
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -26,7 +32,7 @@ def public_post(request, author_id):
         current_user = User.objects.get(id=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
-    posts = Post.objects.filter(visibility="PUBLIC")
+
     friends = Friend.objects.filter(
         Q(first_user_id=author_id) | Q(second_user_id=author_id))
     friend_authors = []
@@ -35,13 +41,24 @@ def public_post(request, author_id):
             friend_authors.append(friend_object.second_user)
         else:
             friend_authors.append(friend_object.first_user)
-    firend_post_list = []
+    all_post_list = []
     for author in friend_authors:
         friend_posts = Post.objects.filter(
-            author_id=author.id, visibility="FRIENDS")
-        firend_post_list += friend_posts
-    firend_post_list += posts
-    serializer = PostSerializer(firend_post_list, many=True)
+            author_id=author.id, visibility="FRIENDS", shared = False)
+        all_post_list += friend_posts
+
+    public_post_list = Post.objects.filter(visibility="PUBLIC").order_by('-published')
+    all_post_list += public_post_list
+    paginator = Paginator(all_post_list, 3)
+    page = request.GET.get('page', 1)
+    try:
+        all_post_list = paginator.page(page)
+    except PageNotAnInteger:
+        all_post_list = paginator.page(1)
+    except EmptyPage:
+        all_post_list = paginator.page(paginator.num_pages)
+
+    serializer = PostSerializer(all_post_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -59,7 +76,7 @@ def post_list(request, author_id):
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts = Post.objects.filter(author_id=author_id).order_by('-id')
+        posts = Post.objects.filter(author_id=author_id, shared = False ).order_by('-published')
         paginator = Paginator(posts, 3)
         page = request.GET.get('page', 1)
 
