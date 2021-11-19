@@ -4,8 +4,6 @@ import {
   Navbar,
   NavbarToggler,
   Nav,
-  NavItem,
-  NavLink,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -55,6 +53,8 @@ const AdminNav = () => {
               Menu
             </DropdownToggle>
             <DropdownMenu right>
+              <DropdownItem href="/admin/mainpage">Node List</DropdownItem>
+              <DropdownItem divider />
               <DropdownItem href="/admin/newnode">New Node</DropdownItem>
               <DropdownItem divider />
               <DropdownItem href="/admin/authors">

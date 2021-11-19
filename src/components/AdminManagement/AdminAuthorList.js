@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@material-ui/core";
@@ -6,7 +5,6 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckIcon from "@mui/icons-material/Check";
 import head1 from "../../static/1.JPG";
 import "../font/style.css";
-import axios from "axios";
 
 const AdminAuthorList = ({
   authors,

@@ -18,37 +18,17 @@ import axios from "axios";
 
 import "../font/style.css";
 
-const dummy = [
-  {
-    url: "www.124.com/abc/",
-    user_name: "333",
-    password: "abc",
-  },
-  {
-    url: "www.125.com/abc/",
-    user_name: "333",
-    password: "abc",
-  },
-  {
-    url: "www.126.com/abc/",
-    user_name: "333",
-    password: "abc",
-  },
-  {
-    url: "www.127.com/abc/",
-    user_name: "333",
-    password: "abc",
-  },
-];
-
 const AdminMainPage = () => {
   const baseUrl = process.env.REACT_APP_API_ENDPOINT;
   const [nodeList, setNodeList] = useState([]);
   useEffect(() => {
-    axios.get(`${baseUrl}/admin/nodes/`).then((res) => {
-      console.log(res.data);
-      setNodeList(res.data);
-    });
+    async function fetchNode() {
+      await axios.get(`${baseUrl}/admin/nodes/`).then((res) => {
+        console.log(res.data);
+        setNodeList(res.data);
+      });
+    }
+    fetchNode();
   }, []);
   const TableCell = withStyles({
     root: {

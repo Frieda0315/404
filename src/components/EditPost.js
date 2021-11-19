@@ -7,7 +7,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import { Button, Typography, CardContent, Card } from "@mui/material";
+import { Button, CardContent, Card } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
@@ -24,13 +24,6 @@ const images = {
   marginBottom: "15px",
   height: "200px",
   width: "200px",
-};
-
-const pic = {
-  maxHeight: 400,
-  maxWidth: 300,
-  marginBottom: "30px",
-  borderRadius: "50%",
 };
 
 const EditPost = () => {
@@ -50,7 +43,7 @@ const EditPost = () => {
 
   const [preview, setPreview] = React.useState();
   const [textChoice, setTextChoice] = React.useState(() => {
-    if (item1.contentType == "") {
+    if (item1.contentType === "") {
       return "text/plain";
     } else {
       return "text/markdown";

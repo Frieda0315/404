@@ -1,6 +1,5 @@
 import { useState } from "react";
-import Stack from "@mui/material/Stack";
-import { Button, Typography, CardContent, Card } from "@mui/material";
+import { Button } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Grid } from "@material-ui/core";
 import axios from "axios";
@@ -12,8 +11,8 @@ const NewNode = () => {
   const baseUrl = process.env.REACT_APP_API_ENDPOINT;
 
   const submitted = async () => {
-    if (uri != "" && user != "" && pass != "") {
-      const newpost = await axios
+    if (uri !== "" && user !== "" && pass !== "") {
+      await axios
         .post(`${baseUrl}/admin/nodes/`, {
           url: uri,
           user_name: user,
@@ -41,7 +40,7 @@ const NewNode = () => {
       alignItems="center"
     >
       <Grid item alignItems="center">
-        <div class="text text-3">Create A New Node</div>
+        <div className="text text-3">Create A New Node</div>
       </Grid>
 
       <Grid item alignItems="center" sx={{ width: 470 }}>

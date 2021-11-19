@@ -1,57 +1,15 @@
 import { useState, useEffect } from "react";
 import AdminAuthorList from "./AdminAuthorList";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import { Grid, Button } from "@material-ui/core";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
+import { Grid } from "@material-ui/core";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
 import Switch from "@mui/material/Switch";
-import head1 from "../../static/1.JPG";
 import "../font/style.css";
 import axios from "axios";
-
-const dummy = [
-  {
-    id: "123e4567-e89b-12d3-a456-426614174001",
-    user_name: "user1",
-    github_name: "xichen1",
-    type: "author",
-    host: "https://i-connect.herokuapp.com/",
-    profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-  },
-  {
-    id: "123e4567-e89b-12d3-a456-426614174002",
-    user_name: "user2",
-    github_name: "xius666",
-    type: "author",
-    host: "https://i-connect.herokuapp.com/",
-    profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-  },
-  {
-    id: "123e4567-e89b-12d3-a456-426614174003",
-    user_name: "user3",
-    github_name: "xichen1",
-    type: "author",
-    host: "https://i-connect.herokuapp.com/",
-    profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-  },
-  {
-    id: "123e4567-e89b-12d3-a456-426614174004",
-    user_name: "user4",
-    github_name: "xius666",
-    type: "author",
-    host: "https://i-connect.herokuapp.com/",
-    profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-  },
-];
 
 const AdminAuthorManagement = () => {
   const [tab, setTab] = useState(0);
@@ -86,11 +44,14 @@ const AdminAuthorManagement = () => {
     setCurrentAuthorList(currentAuthors.data);
   };
 
-  useEffect(async () => {
-    const pending = await axios.get(`${baseUrl}/admin/approveoption/`);
-    setPendingSwitch(pending.data.approve_option);
+  useEffect(() => {
+    async function fetchUser() {
+      const pending = await axios.get(`${baseUrl}/admin/approveoption/`);
+      setPendingSwitch(pending.data.approve_option);
 
-    await getAuthors();
+      await getAuthors();
+    }
+    fetchUser();
   }, []);
 
   const deleteAuthor = async (e, authorId) => {
