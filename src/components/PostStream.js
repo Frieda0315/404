@@ -345,8 +345,32 @@ function PostStream(props) {
     setOpenPopup(true);
   };
   const open_share = (post) => {
-    setOpenPopup2(true);
-    setShareBuffer(post);
+    axios
+      .get(`${baseUrl2}/author/${post.authorid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((response) => {
+        const newPost = {
+          id: post.id,
+          type: "post",
+          title: post.title,
+          content: post.content,
+          contentType: post.contentType,
+          published: post.published,
+          author: response.data,
+          visibility: "FRIENDS",
+          source: "https://i-connect.herokuapp.com/service/posts/",
+          origin: post.origin,
+        };
+        setOpenPopup2(true);
+        setShareBuffer(newPost);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   const open_image_holder = (post) => {
     setImage(post.img);
@@ -541,8 +565,10 @@ function PostStream(props) {
               <IconButton
                 edge="end"
                 aria-label="share"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   open_share(post);
+                  console.log(shareBuffer);
                 }}
               >
                 <ShareRounded />

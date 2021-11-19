@@ -12,8 +12,7 @@ import axios from "axios";
 
 function Share(props) {
   const postToShare = props.post;
-  postToShare["type"] = "post";
-  postToShare["source"] = "https://i-connect.herokuapp.com/service/posts/";
+  console.log(postToShare);
   const [authorList, setAuthorList] = React.useState([]);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
