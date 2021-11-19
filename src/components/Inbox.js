@@ -57,7 +57,26 @@ const Inbox = () => {
         setInboxList(newList);
       });
   };
-  const declineFriendRequest = (id) => {};
+  const declineFriendRequest = (id) => {
+    axios
+      .delete(
+        `${baseUrl2}/friendrequest/actor/${id}/object/${userid}/`,
+
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
+      .then((res) => {
+        const newList1 = InboxList1.filter(
+          (item) => item.type !== "follower" && item.follower_id !== id
+        );
+        console.log("new", newList1);
+        setInboxList(newList);
+      });
+  };
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 

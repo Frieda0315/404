@@ -402,7 +402,7 @@ function PostStream(props) {
   useEffect(() => {
     var newList = [];
     const requestOne = axios.get(
-      `${baseUrl2}/posts/`,
+      `${baseUrl2}/posts/${localStorage.getItem("current_user_id")}/`,
 
       {
         auth: {
