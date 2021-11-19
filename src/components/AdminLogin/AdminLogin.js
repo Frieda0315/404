@@ -34,6 +34,7 @@ const AdminLogin = () => {
       )
       .then((res) => {
         localStorage.setItem("adminUserName", res.data["user_name"]);
+        window.location = "/admin/mainpage";
       })
       .catch((err) => {
         if (err.response.status === 401) {

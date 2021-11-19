@@ -1,17 +1,15 @@
 import Grid from "@material-ui/core/Grid";
 
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { Typography, Box } from "@material-ui/core";
 import TextField from "@mui/material/TextField";
 import { Form } from "reactstrap";
-import Divider from "@mui/material/Divider";
 
 import dummy_image from "../static/musle.png";
 import axios from "axios";
-import { Delete } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import "./font/style.css";
