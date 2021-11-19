@@ -6,22 +6,10 @@
 import React from "react";
 import "./signup.css";
 import "../font/style.css";
-import { instanceOf } from "prop-types";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
-import {
-  Button,
-  TextField,
-  Grid,
-  Paper,
-  Typography,
-  Link,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
-import { withCookies, Cookies } from "react-cookie";
+import { Button, TextField, Grid, Typography } from "@material-ui/core";
 import { v4 as uuidv4 } from "uuid";
 
 class Signup extends React.Component {
@@ -50,9 +38,9 @@ class Signup extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     if (
-      this.state.username != "" &&
-      this.state.password != "" &&
-      this.state.github_name != ""
+      this.state.username !== "" &&
+      this.state.password !== "" &&
+      this.state.github_name !== ""
     ) {
       const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
       axios
