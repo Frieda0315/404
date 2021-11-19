@@ -12,6 +12,8 @@ from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # Create your views here.
 
@@ -57,8 +59,19 @@ def post_list(request, author_id):
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts = Post.objects.filter(author_id=author_id)
+        posts = Post.objects.filter(author_id=author_id).order_by('-id')
+        paginator = Paginator(posts, 3)
+        page = request.GET.get('page', 1)
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
         serializer = PostSerializer(posts, many=True)
+
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
         # get POST JSON Object
