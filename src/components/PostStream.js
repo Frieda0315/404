@@ -64,241 +64,8 @@ const useStyles = makeStyles(() => ({
     paddingTop: "56.25%", // 16:9
   },
 }));
-var tempPostList = [
-  {
-    title: "Hello world",
-    content: "Hello world Content",
-    author: "author1",
-    date: "xxxx-xx-xx xx:xx",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 1",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-    id: "1",
-  },
-  {
-    title: "I am just trying to make a stream",
-    content: "I am just trying to make a stream ",
-    author: "author2",
-    date: "xxxx-xx-xx xx:xx",
-    id: "2",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 2",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-  {
-    title: "I mean, a really simple one",
-    content: "I mean, a really simple one",
-    author: "author3",
-    date: "xxxx-xx-xx xx:xx",
-    id: "3",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 3",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-  {
-    title: "so I decided to create some dummy strings",
-    content: "so I decided to create some dummy strings Content",
-    author: "author4",
-    date: "xxxx-xx-xx xx:xx",
-    id: "4",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 4",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-  {
-    title: "and this is one of them",
-    content: "and this is one of them Content",
-    author: "author5",
-    date: "xxxx-xx-xx xx:xx",
-    id: "5",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 5",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-  {
-    title: "this is two of them",
-    content: "this is two of them Content",
-    author: "author6",
-    date: "xxxx-xx-xx xx:xx",
-    id: "6",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 6",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-  {
-    title: "",
-    content: "this is two of them Content",
-    author: "author6",
-    date: "xxxx-xx-xx xx:xx",
-    id: "7",
-    commentsSrc: {
-      type: "comments",
-      page: 1,
-      size: 5,
-      post: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-      id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-      comments: [
-        {
-          type: "comment",
-          author: {
-            type: "author",
-            id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-            host: "http://127.0.0.1:5454/",
-            displayName: "Greg Johnson",
-            github: "http://github.com/gjohnson",
-            profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          },
-          comment: "Sick Olde English 7",
-          contentType: "text/markdown",
-          published: "2015-03-09T13:07:04+00:00",
-          id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-        },
-      ],
-    },
-  },
-];
+
 const baseUrl = "https://api.github.com/users";
-
-// dummy val
-const tempPostOnClick = (ev) => {
-  console.log("clicked a post");
-};
-
-const dummyImages = [dummy_image, dummy_image1, null];
-/**/
 
 function PostStream(props) {
   const handleRemove = (e) => {
@@ -354,16 +121,42 @@ function PostStream(props) {
     setImage(post.img);
     setOpenPopup3(true);
   };
-  const handle_vote = (post) => {
+  const handle_like = (post) => {
     const vote_uuid = uuidv4();
+    const likeData1 = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      summary: "Lara Croft Likes your post",
+      type: "Like",
+      author: {
+        type: "author",
+        id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        host: "http://127.0.0.1:5454/",
+        displayName: "Lara Croft",
+        url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+        github: "http://github.com/laracroft",
+        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+      },
+      object:
+        "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+    };
     const likeData = {
       type: "like",
       summary: localStorage.user_name + " likes your post. ",
       id: vote_uuid,
       author: {
-        id: localStorage.current_user_id,
-        user_name: localStorage.user_name,
-        github_name: localStorage.github_user,
+        type: "author",
+        id: "123e4567-e89b-12d3-a456-426614174002",
+        host: "https://i-connect.herokuapp.com/",
+        user_name: "user2",
+        github_name: "xius666",
+        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+        password: "123",
+        pending: false,
+      },
+      object: {
+        id: "123e4567-e89b-12d3-a456-426614174002",
+        user_name: "user2",
+        github_name: "xius666",
         type: "author",
       },
       post: {
@@ -373,10 +166,14 @@ function PostStream(props) {
         content: post.content,
         published: post.published,
         author: {
-          id: post.authorid,
           type: "author",
-          user_name: post.author,
-          github_name: post.github_user,
+          id: "123e4567-e89b-12d3-a456-426614174002",
+          host: "https://i-connect.herokuapp.com/",
+          user_name: "user2",
+          github_name: "xius666",
+          profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
+          password: "123",
+          pending: false,
         },
         visibility: "PUBLIC",
         image: "",
@@ -384,7 +181,12 @@ function PostStream(props) {
       comment: null,
     };
     axios
-      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData)
+      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((response) => {
         console.log(response);
       })
@@ -392,7 +194,12 @@ function PostStream(props) {
         console.log(error);
       });
     axios
-      .get(`${baseUrl2}/authors/${post.authorid}/posts/${post.id}/likes/`)
+      .get(`${baseUrl2}/authors/${post.authorid}/posts/${post.id}/likes/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((response) => {
         const likes = response.data.likes;
         const likesNum = likes.length;
@@ -455,19 +262,30 @@ function PostStream(props) {
           });
           const responseOne = responses[0];
           responseOne.data.map((single) => {
-            newList.push({
-              id: single.id,
-              published: single.published,
-              contentType: single.contentType,
-              content: single.content,
-              author: single.author.user_name,
-              authorid: single.author.id,
-              github_user: single.author.github_name,
-              title: single.title,
-              img: single.image,
-              avatar_url: "",
-              author_id: single.author.id,
-            });
+            axios
+              .get(
+                `${baseUrl2}/authors/${single.author.id}/posts/${single.id}/likes/`,
+                {
+                  auth: { username: "admin", password: "admin" },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+                newList.push({
+                  id: single.id,
+                  published: single.published,
+                  contentType: single.contentType,
+                  content: single.content,
+                  author: single.author.user_name,
+                  authorid: single.author.id,
+                  github_user: single.author.github_name,
+                  title: single.title,
+                  img: single.image,
+                  avatar_url: "",
+                  author_id: single.author.id,
+                  like_num: response.data.length,
+                });
+              });
           });
           setPostlist(newList);
         })
@@ -571,14 +389,14 @@ function PostStream(props) {
                 edge="end"
                 aria-label="thumbup"
                 onClick={() => {
-                  handle_vote(post);
+                  handle_like(post);
                 }}
               >
                 <ThumbUp />
               </IconButton>
             </Grid>
             <Grid item>
-              <Typography>{vote}</Typography>
+              <Typography>{post.like_num}</Typography>
             </Grid>{" "}
             <Grid item>
               <IconButton
