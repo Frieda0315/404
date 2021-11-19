@@ -25,6 +25,10 @@ urlpatterns = [
 
 
     path('service/authors/', user_views.author_list, name='author_list'),
+    path('service/authors/pendinglist/',
+         user_views.pending_author_list, name='pending_author_list'),
+    path('service/authors/currentlist/',
+         user_views.current_author_list, name='current_author_list'),
     path('service/author/<uuid:id>/',
          user_views.author_detail, name='author_detail'),
 

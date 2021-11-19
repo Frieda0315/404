@@ -14,7 +14,12 @@ import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
 import ParticlesBg from "particles-bg";
 import NavMenu from "./components/NavMenu";
+
 import AdminLogin from "./components/AdminLogin/AdminLogin";
+import AdminMainPage from "./components/AdminManagement/AdminMainPage";
+import AdminNav from "./components/AdminManagement/AdminNav";
+import NewNode from "./components/AdminManagement/NewNode";
+import AdminAuthorManagement from "./components/AdminManagement/AdminAuthorManagement";
 
 function App() {
   //const [cookies, setCookie] = useCookies([]);
@@ -58,6 +63,7 @@ function App() {
           <NavMenu />
           <Post></Post>
         </Route>
+
         <Route exact path="/mypost">
           <NavMenu />
           <MyPostList></MyPostList>
@@ -76,6 +82,19 @@ function App() {
         </Route>
         <Route exact path="/admin/login">
           <AdminLogin />
+          <ParticlesBg type="square" bg={true} />
+        </Route>
+        <Route exact path="/admin/mainpage">
+          <AdminNav />
+          <AdminMainPage />
+        </Route>
+        <Route exact path="/admin/newnode">
+          <AdminNav />
+          <NewNode />
+        </Route>
+        <Route exace path="/admin/authors">
+          <AdminNav />
+          <AdminAuthorManagement />
         </Route>
       </Layout>
     </header>
