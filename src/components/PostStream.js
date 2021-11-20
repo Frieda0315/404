@@ -5,8 +5,7 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
-import dummy_image from "../static/musle.png";
-import dummy_image1 from "../static/arnold.png";
+
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
@@ -68,25 +67,6 @@ const useStyles = makeStyles(() => ({
 const baseUrl = "https://api.github.com/users";
 
 function PostStream(props) {
-  const handleRemove = (e) => {
-    const id = e.id;
-    const newList = postlist.filter((item) => item.id !== id);
-    setPostlist(newList);
-  };
-  const changePage = (ev, value) => {
-    setPage(value);
-  };
-
-  const viewComments = (post) => {
-    setComments(post);
-    // console.log(props);
-    // props.history.push({
-    //   pathname: "/posts/" + post.id + "/comments",
-    //   state: {
-    //     commentsSrc: post.commentsSrc,
-    //   },
-    // });
-  };
   const styleClasses = useStyles();
   const userid = localStorage.getItem("current_user_id");
   const [page, setPage] = React.useState(1);
@@ -128,7 +108,7 @@ function PostStream(props) {
         password: "admin",
       },
     });
-    const likeData1 = {
+    const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
       summary: post.author + "Likes your post",
@@ -139,18 +119,47 @@ function PostStream(props) {
 
     // post likes
     await axios
-      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData1, {
+      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData, {
         auth: {
           username: "admin",
           password: "admin",
         },
       })
       .then((response) => {
-        console.log(response);
+        // update the like number accordingly
+        if (response.status === 201) {
+          let newPostList = [];
+          postlist.map((item) => {
+            if (item.id === post.id) {
+              item.like_num += 1;
+            }
+            newPostList.push(item);
+          });
+          setPostlist(newPostList);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+  const handleRemove = (e) => {
+    const id = e.id;
+    const newList = postlist.filter((item) => item.id !== id);
+    setPostlist(newList);
+  };
+  const changePage = (ev, value) => {
+    setPage(value);
+  };
+
+  const viewComments = (post) => {
+    setComments(post);
+    // console.log(props);
+    // props.history.push({
+    //   pathname: "/posts/" + post.id + "/comments",
+    //   state: {
+    //     commentsSrc: post.commentsSrc,
+    //   },
+    // });
   };
   const getAvator = (github_user) => {
     if (github_user !== "") {
@@ -203,6 +212,7 @@ function PostStream(props) {
             });
           });
           let like_promises = [];
+
           const responseOne = responses[0];
           responseOne.data.map((single) => {
             let postItem = {
@@ -217,8 +227,8 @@ function PostStream(props) {
               img: single.image,
               avatar_url: "",
               author_id: single.author.id,
-              //like_num: response.data.length,
             };
+
             // get the like numbers for each post
             like_promises.push(
               axios
