@@ -10,8 +10,8 @@ from posts.models import Post
 
 
 class InboxSerializer(serializers.ModelSerializer):
-    post = PostSerializer(many=True)
-    like = LikeSerializer(many=True)
+    post = PostSerializer(many=True, required=False)
+    like = LikeSerializer(many=True, required=False)
     receive_author = UserSerializer()
 
     def create(self, validated_data):
@@ -26,6 +26,7 @@ class InboxSerializer(serializers.ModelSerializer):
             post = Post.objects.get(pk=post_data[0]["id"])
             instance.post.add(post)
         elif validated_data.get('like', None) != None:
+            #print(validated_data)
             like_data = validated_data.pop("like")
             like = Like.objects.get(pk=like_data[0]["id"])
             instance.like.add(like)
@@ -42,7 +43,7 @@ class InboxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Inbox
         fields = ['like', 'post', 'receive_author']
-        extra_kwargs = {
-            'like': {'allow_blank': True}, 
-            'post': {'allow_blank': True}, 
-        }
+        # extra_kwargs = {
+        #     'like': {'required': False}, 
+        #     'post': {'required': False}, 
+        # }
