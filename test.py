@@ -7,17 +7,24 @@ from posts.models import Post
 
 
 class PostModelTests(TestCase):
-    def init_author(self, id=uuid.uuid4(), user_name="test_user", github_name="test_git", password='1234', type="author"):
+    def init_author(self, id="testID", uuid=uuid.uuid4(), host="testhost", displayName="test_user", url="123@test", github="test_git", profileImage="image", password='1234', type="author", pending=True):
         return User(
             id=id,
-            user_name=user_name,
+            host=host,
+            displayName=displayName,
+            url=url,
+            profileImage=profileImage,
+
+            uuid=uuid,
             password=password,
-            github_name=github_name,
-            type=type
+            github=github,
+            type=type,
+            pending=pending
         )
 
-    def init_post(self, author=None, title="testingPost", content="testingContent", visibility='PUBLIC'):
-        a = author if author != None else self.init_author()
+    def init_post(self, author=None, title="testingPost", content="testingContent", contentType="post", visibility='PUBLIC'):
+        if author == None:
+            a = self.init_author()
         return Post(
             author=a,
             title=title,
@@ -34,9 +41,9 @@ class PostModelTests(TestCase):
         self.assertEqual(p.content, "testingContent")
         self.assertEqual(p.visibility, 'PUBLIC')
 
-        self.assertEqual(p.author.user_name, "test_user")
+        self.assertEqual(p.author.displayName, "test_user")
         self.assertEqual(p.author.type, "author")
-        self.assertEqual(p.author.github_name, "test_git")
+        self.assertEqual(p.author.github, "test_git")
 
 
 # Create your tests here.
