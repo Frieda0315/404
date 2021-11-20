@@ -7,7 +7,13 @@ import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
 import dummy_image from "../static/musle.png";
 import dummy_image1 from "../static/arnold.png";
-import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import {
+  Delete,
+  ShareRounded,
+  ThumbUp,
+  Comment,
+  Public,
+} from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import ImageHolder from "./ImageHolder";
@@ -444,6 +450,7 @@ function PostStream(props) {
               authorid: single.author.id,
               github_user: single.author.github_name,
               title: single.title,
+              visibility: single.visibility,
               avatar_url: "",
               author_id: single.author.id,
               origin: single.origin,
@@ -496,6 +503,13 @@ function PostStream(props) {
             <Typography>
               {post != null ? post.published : "null date"}
             </Typography>
+            {post.visibility === "PUBLIC" ? (
+              <Typography>Public</Typography>
+            ) : post.visibility === "FRIENDS" ? (
+              <Typography>Friend</Typography>
+            ) : (
+              <Typography>Private</Typography>
+            )}
           </Grid>
         </Grid>
         <Grid container>
