@@ -1,6 +1,6 @@
 import json
 from django.http.response import JsonResponse
-from rest_framework.decorators import api_view,authentication_classes,permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from rest_framework.response import Response
@@ -18,9 +18,11 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 import uuid
 
+
 def handleFollowRequest(json_data, receiver):
     try:
-        actor = User.objects.get(pk=json_data["actor"]["id"])
+        uuid_data = user_id_parser(json_data["actor"]["id"])
+        actor = User.objects.get(uuid=uuid_data)
     except User.DoesNotExist:
         return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
     existing_request = FriendRequest.objects.filter(
@@ -62,7 +64,8 @@ def handlePostRequest(json_data, receiver):
     except Exception as e:
         return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
 
-    inbox_data = {"post": [new_post.__dict__], "receive_author": receiver.__dict__}
+    inbox_data = {"post": [new_post.__dict__],
+                  "receive_author": receiver.__dict__}
     inbox_data["post"][0]["author"] = new_post.author.__dict__
     inbox_seralizer = InboxSerializer(data=inbox_data)
     if inbox_seralizer.is_valid():
@@ -84,7 +87,7 @@ def handleLikeRequest(json_data, receiver):
 @permission_classes([IsAuthenticated])
 def inbox_list(request, author_id):
     try:
-        receiver = User.objects.get(pk=author_id)
+        receiver = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
     # Post a shared post or a like or a friend request

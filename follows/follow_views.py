@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 @permission_classes([IsAuthenticated])
 def follower_list(request, author_id):
     try:
-        following = User.objects.get(pk=author_id)
+        following = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "no such author"}, status=status.HTTP_404_NOT_FOUND)
     followers = Follow.objects.filter(following=following)
@@ -36,8 +36,8 @@ def follower_detail(request, author_id, foreign_author_id):
     if(author_id == foreign_author_id):
         return JsonResponse({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        following = User.objects.get(pk=author_id)
-        follower = User.objects.get(pk=foreign_author_id)
+        following = User.objects.get(uuid=author_id)
+        follower = User.objects.get(uuid=foreign_author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "cannot find the author or the follower"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -102,7 +102,7 @@ def follower_detail(request, author_id, foreign_author_id):
 @permission_classes([IsAuthenticated])
 def friend_list(request, author_id):
     try:
-        author = User.objects.get(pk=author_id)
+        author = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"})
     friend1_pairs = Friend.objects.filter(second_user=author)
@@ -125,7 +125,7 @@ def friend_list(request, author_id):
 @permission_classes([IsAuthenticated])
 def friend_request_list(request, author_id):
     try:
-        following = User.objects.get(pk=author_id)
+        following = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     friend_requests = FriendRequest.objects.filter(object=following)
