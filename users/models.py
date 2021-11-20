@@ -6,7 +6,8 @@ import uuid
 class User(models.Model):
     type = models.CharField(max_length=120, default="author")
     # host name + uuid
-    id = models.CharField(primary_key=True, max_length=180, unique=True)
+    id = models.CharField(primary_key=True, unique=True,
+                          max_length=180, editable=False)
     host = models.CharField(
         max_length=160, default="https://i-connect.herokuapp.com/")
     displayName = models.CharField(max_length=120)
@@ -15,8 +16,7 @@ class User(models.Model):
     profileImage = models.CharField(max_length=300)
 
     # unique id
-    uuid = models.UUIDField(
-        unique=True, default="625bc8b7-0ce0-420a-a4b4-ce1e70046e6a")
+    uuid = models.CharField(blank=True, null=True, max_length=120)
     password = models.CharField(max_length=120, default="PASS")
     pending = models.BooleanField(default=True)
 

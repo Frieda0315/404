@@ -74,6 +74,7 @@ def signup(request):
         return JsonResponse({"error": "displayName/id already exists"}, status=status.HTTP_400_BAD_REQUEST)
     password = user_json_data.pop("password")
     new_user_serializer = UserSerializer(data=user_json_data)
+    # print(new_user_serializer)
     if new_user_serializer.is_valid():
         try:
             with open(file_path, 'r') as config_file:

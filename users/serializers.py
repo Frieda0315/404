@@ -3,8 +3,10 @@ from .models import AdminUser, User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.CharField()
 
     def create(self, validated_data):
+        # print(validated_data.pop("id"))
         return User.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
