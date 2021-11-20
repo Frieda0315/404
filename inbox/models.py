@@ -13,6 +13,9 @@ class Inbox(models.Model):
     post = models.ManyToManyField(
         Post, blank=True)
 
+    like = models.ManyToManyField(
+        Like, blank=True)
+
     receive_author = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True
     )

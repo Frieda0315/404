@@ -87,9 +87,8 @@ function PostStream(props) {
     //   },
     // });
   };
-  const [vote, setVote] = React.useState(0);
-
   const styleClasses = useStyles();
+  const userid = localStorage.getItem("current_user_id");
   const [page, setPage] = React.useState(1);
   //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
@@ -121,67 +120,26 @@ function PostStream(props) {
     setImage(post.img);
     setOpenPopup3(true);
   };
-  const handle_like = (post) => {
-    const vote_uuid = uuidv4();
+  const handle_like = async (post) => {
+    const like_uuid = uuidv4();
+    const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
     const likeData1 = {
-      "@context": "https://www.w3.org/ns/activitystreams",
-      summary: "Lara Croft Likes your post",
-      type: "Like",
-      author: {
-        type: "author",
-        id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-        host: "http://127.0.0.1:5454/",
-        displayName: "Lara Croft",
-        url: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-        github: "http://github.com/laracroft",
-        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-      },
-      object:
-        "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-    };
-    const likeData = {
+      //"@context": "https://www.w3.org/ns/activitystreams",
+      id: like_uuid,
+      summary: post.author + "Likes your post",
       type: "like",
-      summary: localStorage.user_name + " likes your post. ",
-      id: vote_uuid,
-      author: {
-        type: "author",
-        id: "123e4567-e89b-12d3-a456-426614174002",
-        host: "https://i-connect.herokuapp.com/",
-        user_name: "user2",
-        github_name: "xius666",
-        profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-        password: "123",
-        pending: false,
-      },
-      object: {
-        id: "123e4567-e89b-12d3-a456-426614174002",
-        user_name: "user2",
-        github_name: "xius666",
-        type: "author",
-      },
-      post: {
-        id: post.id,
-        type: "post",
-        title: post.title,
-        content: post.content,
-        published: post.published,
-        author: {
-          type: "author",
-          id: "123e4567-e89b-12d3-a456-426614174002",
-          host: "https://i-connect.herokuapp.com/",
-          user_name: "user2",
-          github_name: "xius666",
-          profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-          password: "123",
-          pending: false,
-        },
-        visibility: "PUBLIC",
-        image: "",
-      },
-      comment: null,
+      author: liker.data,
+      object: baseUrl2 + "/author/" + post.author_id + "/posts/" + post.id,
     };
-    axios
-      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData, {
+
+    // post likes
+    await axios
+      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData1, {
         auth: {
           username: "admin",
           password: "admin",
@@ -189,22 +147,6 @@ function PostStream(props) {
       })
       .then((response) => {
         console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
-      .get(`${baseUrl2}/authors/${post.authorid}/posts/${post.id}/likes/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((response) => {
-        const likes = response.data.likes;
-        const likesNum = likes.length;
-        console.log(likes);
-        setVote(likesNum);
       })
       .catch((error) => {
         console.log(error);
@@ -260,34 +202,41 @@ function PostStream(props) {
               author_id: "github",
             });
           });
+          let like_promises = [];
           const responseOne = responses[0];
           responseOne.data.map((single) => {
-            axios
-              .get(
-                `${baseUrl2}/authors/${single.author.id}/posts/${single.id}/likes/`,
-                {
-                  auth: { username: "admin", password: "admin" },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-                newList.push({
-                  id: single.id,
-                  published: single.published,
-                  contentType: single.contentType,
-                  content: single.content,
-                  author: single.author.user_name,
-                  authorid: single.author.id,
-                  github_user: single.author.github_name,
-                  title: single.title,
-                  img: single.image,
-                  avatar_url: "",
-                  author_id: single.author.id,
-                  like_num: response.data.length,
-                });
-              });
+            let postItem = {
+              id: single.id,
+              published: single.published,
+              contentType: single.contentType,
+              content: single.content,
+              author: single.author.user_name,
+              authorid: single.author.id,
+              github_user: single.author.github_name,
+              title: single.title,
+              img: single.image,
+              avatar_url: "",
+              author_id: single.author.id,
+              //like_num: response.data.length,
+            };
+            // get the like numbers for each post
+            like_promises.push(
+              axios
+                .get(
+                  `${baseUrl2}/authors/${single.author.id}/posts/${single.id}/likes/`,
+                  {
+                    auth: { username: "admin", password: "admin" },
+                  }
+                )
+                .then((response) => {
+                  postItem.like_num = response.data.length;
+                })
+            );
+            newList.push(postItem);
           });
-          setPostlist(newList);
+          Promise.all(like_promises).then(() => {
+            setPostlist(newList);
+          });
         })
       )
       .catch((errors) => {
