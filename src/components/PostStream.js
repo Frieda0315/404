@@ -111,7 +111,7 @@ function PostStream(props) {
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
-      summary: post.author + "Likes your post",
+      summary: post.author + " Likes your post",
       type: "like",
       author: liker.data,
       object: baseUrl2 + "/author/" + post.author_id + "/posts/" + post.id,

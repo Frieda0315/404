@@ -58,24 +58,37 @@ def handlePostRequest(json_data, receiver):
 
 def handleLikeRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
-
-    if likeExist(json_data):
-        return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
-    #Like.objects.create(id=like_id, summary=summary, object=like_object, author=liker)
-    # try:
-    #     like = Like.objects.get(pk=like_id)
-    # except Exception as e:
-    #     return JsonResponse({"error": "like failed"}, status=status.HTTP_400_BAD_REQUEST)
-    like_seralizer = LikeSerializer(data=json_data)
-    if like_seralizer.is_valid():
-        return save_method(like_seralizer)
-    else:
-        return JsonResponse(like_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-def likeExist(json_data):
+    like_id = json_data["id"]
+    summary = json_data["summary"]
     like_object = json_data["object"]
     liker_id = json_data["author"]["id"]
     liker = User.objects.get(pk=liker_id)
+    if likeExist(liker, like_object):
+        return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
+    else:
+        Like.objects.create(pk=like_id, author=liker, object=like_object, summary=summary)
+    print(like_id)
+    try:
+        like = Like.objects.get(pk=like_id)
+    except Exception as e:
+        return JsonResponse({"error": "like failed"}, status=status.HTTP_404_NOT_FOUND)
+    inbox_data = {"like": [like.__dict__], "receive_author": receiver.__dict__}
+    inbox_data["like"][0]["author"] = like.author.__dict__
+    inbox_seralizer = InboxSerializer(data=inbox_data)
+    if inbox_seralizer.is_valid():
+        return save_method(inbox_seralizer)
+    else:
+        return JsonResponse(inbox_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+    # if likeExist(liker, like_object):
+    #     return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
+    # like_seralizer = LikeSerializer(data=json_data)
+    # if like_seralizer.is_valid():
+    #     return save_method(like_seralizer)
+    # else:
+    #     return JsonResponse(like_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def likeExist(liker, like_object):
     try:
         Like.objects.get(author=liker, object=like_object)
     except Like.DoesNotExist:
