@@ -46,7 +46,11 @@ export default function Profile({
   const [url, seturl] = useState();
   const [isEdit, setIsEdit] = useState(false);
   const edit = () => setIsEdit(true);
-  const cancel = () => setIsEdit(false);
+  const cancel = () => {
+    setDisplayName(localStorage.getItem("user_name"));
+    setGithub(localStorage.getItem("github_user"));
+    setIsEdit(false);
+  };
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [isfollowed, setIsFollowed] = useState();
@@ -82,33 +86,49 @@ export default function Profile({
   const [displayName, setDisplayName] = useState(
     localStorage.getItem("user_name")
   );
+  const [profileImage, setProfileImage] = useState("");
+  const [originalAuthor, setOriginalAuthor] = useState({ profileImage: "abc" });
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github;
   const baseUrl = "https://api.github.com/users";
 
   useEffect(() => {
-    setGithub(localStorage.getItem("github_user"));
-    setUserName(localStorage.getItem("user_name"));
-    if (is_follow) {
-      setUserName(user);
-      set_github_user(post_github_user);
-    }
     axios
-      .get(`${baseUrl}/${github_user}`, {
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}/`, {
         auth: {
           username: "admin",
           password: "admin",
         },
       })
       .then((res) => {
-        console.log(res.data["avatar_url"]);
-        seturl(res.data["avatar_url"]);
-      })
-      .catch((errors) => {
-        console.log(errors);
+        setOriginalAuthor(res.data);
+        console.log(originalAuthor);
       });
-  }, [github_user]);
+  }, []);
+
+  // useEffect(() => {
+  //   setGithub(localStorage.getItem("github_user"));
+  //   setUserName(localStorage.getItem("user_name"));
+  //   if (is_follow) {
+  //     setUserName(user);
+  //     set_github_user(post_github_user);
+  //   }
+  //   axios
+  //     .get(`${baseUrl}/${github_user}`, {
+  //       auth: {
+  //         username: "admin",
+  //         password: "admin",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data["avatar_url"]);
+  //       seturl(res.data["avatar_url"]);
+  //     })
+  //     .catch((errors) => {
+  //       console.log(errors);
+  //     });
+  // }, [github_user]);
 
   const handleIfFollow = () => {
     axios
@@ -137,7 +157,7 @@ export default function Profile({
         },
       });
       const authorinfor = res1.data;
-      const message = authorinfor.user_name + " want follow " + username;
+      const message = authorinfor.displayName + " want follow " + displayName;
       console.log(userid);
 
       try {
@@ -154,7 +174,7 @@ export default function Profile({
             },
             object: {
               id: userid_folllow,
-              user_name: username,
+              user_name: displayName,
               github_name: post_github_user,
               type: "author",
             },
@@ -175,17 +195,19 @@ export default function Profile({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(originalAuthor);
     setIsEdit(false);
-
-    console.log(displayName);
     axios
       .post(
         `${baseUrl2}/author/${userid}/`,
         {
-          id: userid,
-          github: github,
-          displayName: displayName,
           type: "author",
+          id: originalAuthor.id,
+          host: originalAuthor.host,
+          displayName: displayName,
+          url: originalAuthor.url,
+          github: github,
+          profileImage: profileImage,
         },
         {
           auth: {
@@ -197,12 +219,11 @@ export default function Profile({
       .then(
         (response) => {
           console.log(response);
-          set_github_user(github);
-          setUserName(textinput2);
+          setOriginalAuthor(response.data);
           localStorage.removeItem("github_user");
           localStorage.removeItem("user_name");
           localStorage.setItem("github_user", github);
-          localStorage.setItem("user_name", textinput2);
+          localStorage.setItem("user_name", displayName);
         },
         (error) => {
           alert("error ");
@@ -236,7 +257,7 @@ export default function Profile({
                 <CardMedia
                   className={styleClasses.pic}
                   component="img"
-                  image={url}
+                  image={originalAuthor.profileImage}
                   alt="no img"
                 />
 
@@ -244,19 +265,20 @@ export default function Profile({
                   <CardContent>
                     <Grid
                       className={styleClasses.Divider}
-                      spacing={2}
+                      spacing={4}
                       container
                       direction="row"
                     >
-                      <Grid item>
+                      <Grid item xs={12}>
                         <Typography variant="body1" color="text.secondary">
                           Username:
                         </Typography>
 
                         <Input
-                          defaultValue={username}
+                          fullWidth
+                          defaultValue={displayName}
                           onChange={(e) => {
-                            setTextinput2(e.target.value);
+                            setDisplayName(e.target.value);
                           }}
                         />
                         <Typography
@@ -267,8 +289,25 @@ export default function Profile({
                           Github Username:
                         </Typography>
                         <Input
-                          defaultValue={github_user}
-                          onChange={(e) => setGithub(e.target.value)}
+                          fullWidth
+                          defaultValue={github}
+                          onChange={(e) => {
+                            setGithub(e.target.value);
+                          }}
+                        />
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          mt-10
+                        >
+                          profile Image:
+                        </Typography>
+                        <Input
+                          fullWidth
+                          defaultValue={originalAuthor.profileImage}
+                          onChange={(e) => {
+                            setProfileImage(e.target.value);
+                          }}
                         />
                       </Grid>
                       <Grid item>
@@ -299,13 +338,13 @@ export default function Profile({
                       Username:
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
-                      {username}
+                      {displayName}
                     </Typography>
                     <Typography variant="body1" color="text.secondary" mt-10>
                       Github Username:
                     </Typography>
                     <Typography variant="body1" color="text.secondary" mt-10>
-                      <Link href={github_link}> {github_user}</Link>
+                      <Link href={github_link}> {github}</Link>
                     </Typography>
                     {is_follow ? (
                       <CardActions className={styleClasses.editbutton}>
