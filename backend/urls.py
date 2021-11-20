@@ -21,10 +21,15 @@ urlpatterns = [
     path('service/authors/<uuid:author_id>/posts/<uuid:id>/',
          post_views.post_detail, name='post_detail'),
 
-    path('service/posts/', post_views.public_post, name='public_post'),
+    path('service/posts/<uuid:author_id>/',
+         post_views.public_post, name='public_post'),
 
 
     path('service/authors/', user_views.author_list, name='author_list'),
+    path('service/authors/pendinglist/',
+         user_views.pending_author_list, name='pending_author_list'),
+    path('service/authors/currentlist/',
+         user_views.current_author_list, name='current_author_list'),
     path('service/author/<uuid:id>/',
          user_views.author_detail, name='author_detail'),
 
@@ -58,6 +63,9 @@ urlpatterns = [
 
     path('service/author/<uuid:author_id>/friendrequests/',
          follow_views.friend_request_list, name='friend_request_list'),
+
+    path('service/friendrequest/actor/<uuid:actor_id>/object/<uuid:object_id>/',
+         follow_views.friend_request_item, name='friend_request_item'),
 
     # inbox
     # r'^about$'

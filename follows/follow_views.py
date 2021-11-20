@@ -1,6 +1,6 @@
 from django.http.response import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view, authentication_classes,permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from .serializers import FollowSerializer, FriendSerializer, FriendRequestSerializer
 from .models import Follow, Friend, FriendRequest
@@ -119,6 +119,7 @@ def friend_list(request, author_id):
                    "friends": friend_seralizer.data}
     return JsonResponse(return_json, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
@@ -130,3 +131,16 @@ def friend_request_list(request, author_id):
     friend_requests = FriendRequest.objects.filter(object=following)
     request_seralizer = FriendRequestSerializer(friend_requests, many=True)
     return JsonResponse(request_seralizer.data, status=status.HTTP_200_OK, safe=False)
+
+
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def friend_request_item(request, actor_id, object_id):
+    friend_requests = FriendRequest.objects.filter(
+        object_id=object_id, actor_id=actor_id)
+    print("friend request", friend_requests)
+    if not friend_requests:
+        return JsonResponse({"error": "friend request not found"}, status=status.HTTP_404_NOT_FOUND)
+    friend_requests[0].delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

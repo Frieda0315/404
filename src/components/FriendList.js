@@ -24,7 +24,6 @@ const FriendList = () => {
       .then((res) => {
         const newList = friendList.filter((item) => item.id !== id);
         setFriends(newList);
-        console.log(newList);
       });
   };
   const [check, setCheck] = React.useState(false);

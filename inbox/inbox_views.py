@@ -1,4 +1,8 @@
+
 from django.db.models.base import Model
+
+import json
+
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.parsers import JSONParser
@@ -18,7 +22,7 @@ from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
-
+import uuid
 
 def handleFollowRequest(json_data, receiver):
     try:
@@ -46,9 +50,26 @@ def handlePostRequest(json_data, receiver):
         post = Post.objects.get(pk=json_data["id"])
     except Exception as e:
         return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
-    print([post.__dict__])
-    inbox_data = {"post": [post.__dict__], "receive_author": receiver.__dict__}
-    inbox_data["post"][0]["author"] = post.author.__dict__
+
+    new_id = uuid.uuid4()
+    json_data["id"] = new_id
+    print(json_data)
+    new_post_serializer = PostSerializer(data=json_data)
+    if new_post_serializer.is_valid():
+        new_post = new_post_serializer.save()
+        new_post.shared = True
+        new_post.save()
+    else:
+        print(new_post_serializer.errors)
+        return JsonResponse(new_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        new_post = Post.objects.get(pk=new_id)
+    except Exception as e:
+        return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
+
+    inbox_data = {"post": [new_post.__dict__], "receive_author": receiver.__dict__}
+    inbox_data["post"][0]["author"] = new_post.author.__dict__
     inbox_seralizer = InboxSerializer(data=inbox_data)
     if inbox_seralizer.is_valid():
         return save_method(inbox_seralizer)
@@ -113,6 +134,7 @@ def inbox_list(request, author_id):
         if json_data["type"] == "follow":
             return handleFollowRequest(json_data, receiver)
         elif json_data["type"] == "post":
+
             return handlePostRequest(json_data, receiver)
         elif json_data["type"] == "like":
             return handleLikeRequest(json_data, receiver)
@@ -132,6 +154,7 @@ def inbox_list(request, author_id):
             inbox = Inbox.objects.get(receive_author=receiver)
         except Inbox.DoesNotExist:
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
+        inbox.post.all().delete()
         inbox.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
