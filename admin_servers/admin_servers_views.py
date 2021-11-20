@@ -20,28 +20,33 @@ from .models import Node
 3. approve/reject
 ('''
 
+
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def handle_signup_request(request, id):
-    pending_users = User.objects.filter(pk=id, pending=True)
+    pending_users = User.objects.filter(uuid=id, pending=True)
     if not pending_users:
-        return JsonResponse({"error":"no such author"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"error": "no such author"}, status=status.HTTP_400_BAD_REQUEST)
     pending_users[0].pending = False
-    pending_users[0].save()                                   #save Django object
-    pending_user_seralizer = UserSerializer(pending_users[0]) #change from Django object to serializer
-    
+    pending_users[0].save()  # save Django object
+    # change from Django object to serializer
+    pending_user_seralizer = UserSerializer(pending_users[0])
+
     return JsonResponse(pending_user_seralizer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def get_signup_requests(request):
-    pending_user_objects = User.objects.filter(pending=True) # filter to an array of danjo object
+    pending_user_objects = User.objects.filter(
+        pending=True)  # filter to an array of danjo object
     pending_users_seralizer = UserSerializer(pending_user_objects, many=True)
     return JsonResponse(pending_users_seralizer.data, status=status.HTTP_200_OK, safe=False)
 
-@api_view(['GET','PUT'])
+
+@api_view(['GET', 'PUT'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def approve_option(request):
@@ -51,39 +56,43 @@ def approve_option(request):
         try:
             with open(file_path, 'r') as config_file:
                 config_data = json.load(config_file)
-                return JsonResponse({"approve_option":config_data["approve_option"]}, status=status.HTTP_200_OK, safe=False)
+                return JsonResponse({"approve_option": config_data["approve_option"]}, status=status.HTTP_200_OK, safe=False)
         except:
-            return JsonResponse({"approve_option":"file not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, safe=False)
+            return JsonResponse({"approve_option": "file not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, safe=False)
     elif request.method == 'PUT':
         print(request)
         print(type(request))
         new_option = JSONParser().parse(request)["approve_option"]
-        config = {"approve_option" : new_option}
+        config = {"approve_option": new_option}
         try:
             with open(file_path, 'w') as config_file:
-                json.dump(config,config_file)
+                json.dump(config, config_file)
                 return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-@api_view(['GET','POST'])
+
+
+@api_view(['GET', 'POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def node_list(request):
     if request.method == 'GET':
         nodes = Node.objects.all()
-        serialzier = NodeSerializer(nodes,many=True)
+        serialzier = NodeSerializer(nodes, many=True)
         return JsonResponse(serialzier.data, status=status.HTTP_200_OK, safe=False)
     elif request.method == 'POST':
         new_node = JSONParser().parse(request)
         existing_nodes = Node.objects.filter(pk=new_node["url"])
         if existing_nodes:
-            return Response({"error":"node url already exists!!"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "node url already exists!!"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = NodeSerializer(data=new_node)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['DELETE'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
@@ -97,8 +106,3 @@ def delete_node(request):
         # if current post is owned by this author, then delete
         node.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
- 
- 

@@ -47,13 +47,17 @@ function NavMenu(is_logged_in) {
     setIsOut(true);
   }
   useEffect(() => {
-    const baseUrl = "https://api.github.com/users";
+    const baseUrl = process.env.REACT_APP_API_ENDPOINT;
 
     axios
-      .get(`${baseUrl}/${localStorage.getItem("github_user")}`)
+      .get(`${baseUrl}/author/${localStorage.getItem("current_user_id")}`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
       .then((res) => {
-        console.log(res.data["avatar_url"]);
-        setUrl(res.data["avatar_url"]);
+        setUrl(res.data["profileImage"]);
       })
       .catch((errors) => {
         console.log(errors);

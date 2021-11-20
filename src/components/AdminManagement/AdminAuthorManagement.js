@@ -80,7 +80,7 @@ const AdminAuthorManagement = () => {
     await axios.post(
       `${baseUrl}/authors/pendinglist/`,
       {
-        author_id: authorId,
+        id: authorId,
         action: "approve",
       },
       {
