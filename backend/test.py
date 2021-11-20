@@ -142,13 +142,18 @@ class ModelTests(TestCase):
         self.assertEqual(authorInstance.type, "author")
 
     def test_post(self):
+        # type="post", author=None, title="testingPost", content="testingContent", contentType="post", published=datetime.now(), visibility='PUBLIC', source="source@test.com", origin="origin@test.com", shared="shared@test.com"
         p = self.init_post()
         self.assertTrue(isinstance(p, Post))
         self.assertTrue(isinstance(p.author, User))
 
         self.assertEqual(p.title, "testingPost")
         self.assertEqual(p.content, "testingContent")
+        self.assertEqual(p.contentType, "post")
         self.assertEqual(p.visibility, 'PUBLIC')
+        self.assertEqual(p.source, "source@test.com")
+        self.assertEqual(p.origin, "origin@test.com")
+        self.assertEqual(p.shared, "shared@test.com")
 
         self.assertEqual(p.author.displayName, "test_user")
         self.assertEqual(p.author.type, "author")
