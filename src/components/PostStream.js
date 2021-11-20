@@ -270,7 +270,6 @@ function PostStream(props) {
           });
           Promise.all(like_promises).then(() => {
             setPostlist(newList);
-            });
           });
         })
       )
