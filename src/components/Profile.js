@@ -65,10 +65,9 @@ export default function Profile({
       });
   }
 
-  const [github_user, set_github_user] = useState(
-    localStorage.getItem("github_user")
-  );
-  const [username, setUserName] = useState(localStorage.getItem("user_name"));
+  // const [github_user, set_github_user] = useState(
+
+  // );
 
   const [ifFollowed, setIfFollowed] = useState(() => {
     if (userid === userid_folllow) {
@@ -79,15 +78,17 @@ export default function Profile({
       return false;
     }
   });
-  const [textinput1, setTextinput1] = useState(github_user);
-  const [textinput2, setTextinput2] = useState(username);
+  const [github, setGithub] = useState(localStorage.getItem("github_user"));
+  const [displayName, setDisplayName] = useState(
+    localStorage.getItem("user_name")
+  );
 
   const styleClasses = useStyles();
-  const github_link = "https://github.com/" + github_user;
+  const github_link = "https://github.com/" + github;
   const baseUrl = "https://api.github.com/users";
 
   useEffect(() => {
-    set_github_user(localStorage.getItem("github_user"));
+    setGithub(localStorage.getItem("github_user"));
     setUserName(localStorage.getItem("user_name"));
     if (is_follow) {
       setUserName(user);
@@ -176,25 +177,14 @@ export default function Profile({
     e.preventDefault();
     setIsEdit(false);
 
-    //console.log(username);
-
-    //in the case of textinput is not set， set the textinput to current github_user
-    /*if (textinput1 === "") {
-      setTextinput1(github_user);
-    }
-    if (textinput2 === "") {
-      console.log(username);
-
-      setTextinput2(username);
-    }*/
-    console.log(textinput2);
+    console.log(displayName);
     axios
       .post(
         `${baseUrl2}/author/${userid}/`,
         {
           id: userid,
-          github_name: textinput1,
-          user_name: textinput2,
+          github: github,
+          displayName: displayName,
           type: "author",
         },
         {
@@ -207,11 +197,11 @@ export default function Profile({
       .then(
         (response) => {
           console.log(response);
-          set_github_user(textinput1);
+          set_github_user(github);
           setUserName(textinput2);
           localStorage.removeItem("github_user");
           localStorage.removeItem("user_name");
-          localStorage.setItem("github_user", textinput1);
+          localStorage.setItem("github_user", github);
           localStorage.setItem("user_name", textinput2);
         },
         (error) => {
@@ -278,7 +268,7 @@ export default function Profile({
                         </Typography>
                         <Input
                           defaultValue={github_user}
-                          onChange={(e) => setTextinput1(e.target.value)}
+                          onChange={(e) => setGithub(e.target.value)}
                         />
                       </Grid>
                       <Grid item>
