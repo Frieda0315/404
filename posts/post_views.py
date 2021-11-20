@@ -147,6 +147,7 @@ def post_detail(request, author_id, id):  # this id here is postID
         serializer = PostSerializer(data=json_data)
         print(serializer)
         if serializer.is_valid():
+            # give POST object an attribute of author
             return save_method(serializer)
         print(serializer.errors)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

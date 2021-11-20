@@ -13,8 +13,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author_data = validated_data.pop('author')
+        print(author_data)
         author = User.objects.get(**author_data)
+        print(author)
         validated_data["author"] = author
+        
         return Post.objects.create(**validated_data)
 
     # class Meta:

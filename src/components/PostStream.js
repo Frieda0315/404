@@ -346,7 +346,7 @@ function PostStream(props) {
   };
   const open_share = (post) => {
     axios
-      .get(`${baseUrl2}/author/${post.authorid}/`, {
+      .get(`${baseUrl2}/author/${post.author_id}/`, {
         auth: {
           username: "admin",
           password: "admin",
@@ -430,7 +430,7 @@ function PostStream(props) {
               title: "Github Activity: " + single.type,
               avatar_url:
                 "https://avatars.githubusercontent.com/u/55036290?v=4",
-              author_id: "github",
+              is_github_activity: true,
             });
           });
           const responseOne = responses[0];
@@ -440,12 +440,12 @@ function PostStream(props) {
               published: single.published,
               contentType: single.contentType,
               content: single.content,
-              author: single.author.user_name,
-              authorid: single.author.id,
-              github_user: single.author.github_name,
-              title: single.title,
-              avatar_url: "",
+              author: single.author.displayName,
               author_id: single.author.id,
+              github: single.author.github,
+              title: single.title,
+              avatar_url: single.author.profileImage,
+              is_github_activity: false,
               origin: single.origin,
               source: single.source,
             });
@@ -486,7 +486,9 @@ function PostStream(props) {
           <Grid item>
             <Avatar
               src={post.avatar_url}
-              onClick={() => open(post.author, post.github_user, post.authorid)}
+              onClick={() =>
+                open(post.author, post.github_user, post.author_id)
+              }
             ></Avatar>
           </Grid>
           <Grid item>
@@ -539,7 +541,7 @@ function PostStream(props) {
           </Grid>
         </Grid>
 
-        {post.author_id !== "github" ? (
+        {!post.is_github_activity ? (
           <Grid
             container
             spacing={1}
