@@ -21,7 +21,7 @@ def post_like_list(request, author_id, post_id):
     post_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/'
     post_search_string = "/author/" + str(author_id) + "/posts/" + str(post_id)
     try:
-        User.objects.get(pk=author_id)
+        User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -44,7 +44,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
         str(author_id) + "/posts/" + str(post_id) + \
         "/comments/" + str(comment_id)
     try:
-        User.objects.get(pk=author_id)
+        User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -68,7 +68,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
 @permission_classes([IsAuthenticated])
 def author_like_list(request, author_id):
     try:
-        like_author = User.objects.get(pk=author_id)
+        like_author = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": 'Author not found'}, status=status.HTTP_404_NOT_FOUND)
     likes = Like.objects.filter(author=like_author)
