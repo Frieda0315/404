@@ -136,7 +136,6 @@ def post_detail(request, author_id, id):  # this id here is postID
     elif request.method == 'PUT':
         # create a new post with this id
         json_data = JSONParser().parse(request)
-        print(json_data)
         try:
             authorObject = User.objects.get(uuid=author_id)
         except:
@@ -149,7 +148,6 @@ def post_detail(request, author_id, id):  # this id here is postID
         serializer = PostSerializer(data=json_data)
         if serializer.is_valid():
             # give POST object an attribute of author
-            serializer.validated_data["author"] = authorObject
             return save_method(serializer)
         print(serializer.errors)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
