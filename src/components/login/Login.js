@@ -30,12 +30,14 @@ class Login extends React.Component {
     this.state = {
       //username: this.props.cookies.get("username") || "",
       //password: this.props.cookies.get("password") || "",
-      username: "",
+      displayName: "",
       password: "",
       selected: "no",
-      current_user_id: "",
-      github_name: "",
-      user_name: "",
+      id: "",
+      github: "",
+      host: "",
+      url: "",
+      profileImage: "",
       error: "",
     };
     this.handleChange = this.handleChange.bind(this);
@@ -63,7 +65,7 @@ class Login extends React.Component {
         .post(
           `${baseUrl2}/users/login/`,
           {
-            user_name: this.state.username,
+            displayName: this.state.username,
             password: this.state.password,
           },
           {
@@ -85,10 +87,11 @@ class Login extends React.Component {
               });
             }*/
             console.log(response.data);
+            const parsedID = response.data.id.split("/").at(-1);
             this.setState({
-              current_user_id: response.data.id,
-              github_name: response.data.github_name,
-              user_name: response.data.user_name,
+              id: parsedID,
+              github: response.data.github,
+              displayName: response.data.displayName,
             });
           },
           (error) => {
@@ -107,10 +110,10 @@ class Login extends React.Component {
 
   render() {
     const { selected } = this.state;
-    if (this.state.current_user_id !== "") {
-      localStorage.setItem("current_user_id", this.state.current_user_id);
-      localStorage.setItem("github_user", this.state.github_name);
-      localStorage.setItem("user_name", this.state.user_name);
+    if (this.state.id !== "") {
+      localStorage.setItem("current_user_id", this.state.id);
+      localStorage.setItem("github_user", this.state.github);
+      localStorage.setItem("user_name", this.state.displayName);
       return <Redirect to="/"></Redirect>;
     }
     return (

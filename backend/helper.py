@@ -9,3 +9,10 @@ def save_method(serializer):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
+
+def user_id_parser(request_data):
+    uuid_data = request_data["id"].split("/")[-1]
+    if uuid_data == "":
+        uuid_data = request_data["id"].split("/")[-2]
+    return uuid_data
