@@ -73,15 +73,16 @@ const FriendList = () => {
   const newList = [];
   followerList.map((infor) => {
     let ismyfriend = false;
-    friendType(infor.id);
+    const user2Uuid = infor.id.split("/").at(-1);
+    friendType(user2Uuid);
     if (check) {
       ismyfriend = true;
       //console.log(isFriend);
     }
     newList.push({
-      id: infor.id,
-      github: infor.github_name,
-      follower: infor.user_name,
+      id: user2Uuid,
+      github: infor.github,
+      follower: infor.displayName,
       ftype: ismyfriend,
     });
   });

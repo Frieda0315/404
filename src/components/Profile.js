@@ -107,29 +107,6 @@ export default function Profile({
       });
   }, []);
 
-  // useEffect(() => {
-  //   setGithub(localStorage.getItem("github_user"));
-  //   setUserName(localStorage.getItem("user_name"));
-  //   if (is_follow) {
-  //     setUserName(user);
-  //     set_github_user(post_github_user);
-  //   }
-  //   axios
-  //     .get(`${baseUrl}/${github_user}`, {
-  //       auth: {
-  //         username: "admin",
-  //         password: "admin",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data["avatar_url"]);
-  //       seturl(res.data["avatar_url"]);
-  //     })
-  //     .catch((errors) => {
-  //       console.log(errors);
-  //     });
-  // }, [github_user]);
-
   const handleIfFollow = () => {
     axios
       .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`, {
