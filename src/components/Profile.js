@@ -87,7 +87,7 @@ export default function Profile({
     localStorage.getItem("user_name")
   );
   const [profileImage, setProfileImage] = useState("");
-  const [originalAuthor, setOriginalAuthor] = useState({ profileImage: "abc" });
+  const [originalAuthor, setOriginalAuthor] = useState("");
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github;
@@ -103,6 +103,7 @@ export default function Profile({
       })
       .then((res) => {
         setOriginalAuthor(res.data);
+
         console.log(originalAuthor);
       });
   }, []);
@@ -158,26 +159,15 @@ export default function Profile({
       });
       const authorinfor = res1.data;
       const message = authorinfor.displayName + " want follow " + displayName;
-      console.log(userid);
 
       try {
-        await axios.post(
-          `${baseUrl2}/author/${userid_folllow}/inbox/`,
+        await axios.put(
+          `${baseUrl2}/author/${userid_folllow}/followers/`,
           {
             type: "follow",
             summary: message,
-            actor: {
-              id: userid,
-              user_name: authorinfor.user_name,
-              github_name: authorinfor.github_name,
-              type: "author",
-            },
-            object: {
-              id: userid_folllow,
-              user_name: displayName,
-              github_name: post_github_user,
-              type: "author",
-            },
+            actor: originalAuthor,
+            object: authorinfor,
           },
           {
             auth: {
@@ -202,7 +192,7 @@ export default function Profile({
         `${baseUrl2}/author/${userid}/`,
         {
           type: "author",
-          id: originalAuthor.id,
+          uuid: originalAuthor.id,
           host: originalAuthor.host,
           displayName: displayName,
           url: originalAuthor.url,

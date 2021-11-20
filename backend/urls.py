@@ -20,7 +20,7 @@ urlpatterns = [
          post_views.post_list, name='post_list'),
     path('service/authors/<uuid:author_id>/posts/<uuid:id>/',
          post_views.post_detail, name='post_detail'),
-
+    # posts this author can see
     path('service/posts/<uuid:author_id>/',
          post_views.public_post, name='public_post'),
 

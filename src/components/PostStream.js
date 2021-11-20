@@ -305,11 +305,6 @@ const dummyImages = [dummy_image, dummy_image1, null];
 /**/
 
 function PostStream(props) {
-  const handleRemove = (e) => {
-    const id = e.id;
-    const newList = postlist.filter((item) => item.id !== id);
-    setPostlist(newList);
-  };
   const changePage = (ev, value) => {
     setPage(value);
   };
@@ -514,7 +509,7 @@ function PostStream(props) {
         </Grid>
         <Grid container>
           <Grid item xs>
-            {false === true ? (
+            {true ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">
@@ -595,15 +590,6 @@ function PostStream(props) {
                 onClick={() => viewComments(post)}
               >
                 <Comment />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="Delete"
-                onClick={() => handleRemove(post)}
-              >
-                <Delete />
               </IconButton>
             </Grid>
           </Grid>
