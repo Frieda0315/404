@@ -21,7 +21,7 @@ import uuid
 
 def handleFollowRequest(json_data, receiver):
     try:
-        uuid_data = user_id_parser(json_data["actor"]["id"])
+        uuid_data = user_id_parser(json_data["actor"])
         actor = User.objects.get(uuid=uuid_data)
     except User.DoesNotExist:
         return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)

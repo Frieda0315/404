@@ -10,6 +10,7 @@ import dummy_image1 from "../static/arnold.png";
 import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+import FollowProfile from "./FollowProfile";
 import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
 import ReactMarkdown from "react-markdown";
@@ -338,7 +339,6 @@ function PostStream(props) {
   const [url, setUrl] = React.useState([]);
 
   const open = (author, git, authorid) => {
-    //onsole.log(authorid);
     setUser(author);
     setGit_user(git);
     setAuthorid(authorid);
@@ -443,6 +443,7 @@ function PostStream(props) {
               author: single.author.displayName,
               author_id: single.author.id,
               github: single.author.github,
+              author_url: single.author.url,
               title: single.title,
               avatar_url: single.author.profileImage,
               is_github_activity: false,
@@ -486,9 +487,9 @@ function PostStream(props) {
           <Grid item>
             <Avatar
               src={post.avatar_url}
-              onClick={() =>
-                open(post.author, post.github_user, post.author_id)
-              }
+              onClick={() => {
+                open(post.author, post.github_user, post.author_url);
+              }}
             ></Avatar>
           </Grid>
           <Grid item>
@@ -605,12 +606,7 @@ function PostStream(props) {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <Profile
-          user={user}
-          post_github_user={github_user}
-          userid_folllow={authorids}
-          is_follow={true}
-        ></Profile>
+        <FollowProfile follow_user_url={authorids} />
       </Popup>
       <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
         <ImageHolder image={image}></ImageHolder>
