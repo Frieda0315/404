@@ -26,3 +26,6 @@ class Post(models.Model):
                        ("SERVERONLY", "Local Frchiends")]
     visibility = models.CharField(
         max_length=30, choices=visibilityTypes, default="PUBLIC")
+    source = models.CharField(max_length=100)
+    origin = models.CharField(max_length=100)
+    shared = models.BooleanField(default=False)

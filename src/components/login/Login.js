@@ -55,7 +55,7 @@ class Login extends React.Component {
   handleCookie = () => {};
   handleSubmit(event) {
     event.preventDefault();
-    if (this.state.username != "" && this.state.password != "") {
+    if (this.state.username !== "" && this.state.password !== "") {
       const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
       console.log(this.state.username);
       console.log(this.state.password);
@@ -107,7 +107,7 @@ class Login extends React.Component {
 
   render() {
     const { selected } = this.state;
-    if (this.state.current_user_id != "") {
+    if (this.state.current_user_id !== "") {
       localStorage.setItem("current_user_id", this.state.current_user_id);
       localStorage.setItem("github_user", this.state.github_name);
       localStorage.setItem("user_name", this.state.user_name);

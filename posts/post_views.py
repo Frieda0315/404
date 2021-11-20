@@ -1,3 +1,9 @@
+'''
+pagination:
+Reference: https://docs.djangoproject.com/en/3.2/topics/pagination/
+Author: Django doc
+'''
+from django.core import paginator
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -6,10 +12,14 @@ from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
 from .serializers import PostSerializer
 from .models import Post
+from follows.models import Friend
 from users.models import User
 from backend.helper import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # Create your views here.
 
@@ -17,9 +27,38 @@ from rest_framework.permissions import IsAuthenticated
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def public_post(request):
-    posts = Post.objects.filter(visibility="PUBLIC")
-    serializer = PostSerializer(posts, many=True)
+def public_post(request, author_id):
+    try:
+        current_user = User.objects.get(id=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    friends = Friend.objects.filter(
+        Q(first_user_id=author_id) | Q(second_user_id=author_id))
+    friend_authors = []
+    for friend_object in friends:
+        if friend_object.first_user == current_user:
+            friend_authors.append(friend_object.second_user)
+        else:
+            friend_authors.append(friend_object.first_user)
+    all_post_list = []
+    for author in friend_authors:
+        friend_posts = Post.objects.filter(
+            author_id=author.id, visibility="FRIENDS", shared = False)
+        all_post_list += friend_posts
+
+    public_post_list = Post.objects.filter(visibility="PUBLIC").order_by('-published')
+    all_post_list += public_post_list
+    paginator = Paginator(all_post_list, 3)
+    page = request.GET.get('page', 1)
+    try:
+        all_post_list = paginator.page(page)
+    except PageNotAnInteger:
+        all_post_list = paginator.page(1)
+    except EmptyPage:
+        all_post_list = paginator.page(paginator.num_pages)
+
+    serializer = PostSerializer(all_post_list, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
@@ -37,8 +76,19 @@ def post_list(request, author_id):
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts = Post.objects.filter(author_id=author_id)
+        posts = Post.objects.filter(author_id=author_id, shared = False ).order_by('-published')
+        paginator = Paginator(posts, 3)
+        page = request.GET.get('page', 1)
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
         serializer = PostSerializer(posts, many=True)
+
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
         # get POST JSON Object

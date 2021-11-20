@@ -89,9 +89,9 @@ def node_list(request):
 @permission_classes([IsAuthenticated])
 def delete_node(request):
     if request.method == 'DELETE':
+        url = JSONParser().parse(request)["url"]
         try:
-            url = JSONParser().parse(request)["url"]
-            node = Node.objects.get(pk=url)
+            node = Node.objects.get(url=url)
         except:
             return JsonResponse({"Error": "couldn't find the node"}, status=status.HTTP_400_BAD_REQUEST)
         # if current post is owned by this author, then delete

@@ -2,7 +2,6 @@ import * as React from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
 
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -10,16 +9,15 @@ import Avatar from "@mui/material/Avatar";
 import ava from "./assets/avator.png";
 import { CardActionArea } from "@material-ui/core";
 import axios from "axios";
-import { responsiveFontSizes } from "@mui/material";
-import Popup from "./Popup";
 
 function Share(props) {
   const postToShare = props.post;
-  postToShare["type"] = "post";
+  console.log(postToShare);
   const [authorList, setAuthorList] = React.useState([]);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
+    console.log(postToShare);
     axios
       .post(`${baseUrl2}/author/${user.id}/inbox/`, postToShare, {
         auth: {
@@ -49,17 +47,22 @@ function Share(props) {
      *       APIs are updated
      */
     axios
-      .get(`${baseUrl2}/authors/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
+      .get(
+        `${baseUrl2}/author/${localStorage.getItem(
+          "current_user_id"
+        )}/friends/`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
       .then((response) => {
-        // console.log(response.data);
-        setAuthorList(response.data);
+        console.log(response.data);
+        setAuthorList(response.data["friends"]);
       });
-  });
+  }, []);
   //console.log(props.post);
   const friendList = authorList.map((s) => (
     <div>

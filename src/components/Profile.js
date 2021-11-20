@@ -14,7 +14,6 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import { TryRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   editbutton: {
@@ -57,7 +56,7 @@ export default function Profile({
       .get(`${baseUrl2}/author/${userid}/followers/${userid_folllow}/`)
       .then((res) => {
         console.log(res.data);
-        if (res.data.result == "No follow relationship found") {
+        if (res.data.result === "No follow relationship found") {
           setIsFollowed(false);
           console.log(isfollowed);
         } else {
@@ -72,7 +71,7 @@ export default function Profile({
   const [username, setUserName] = useState(localStorage.getItem("user_name"));
 
   const [ifFollowed, setIfFollowed] = useState(() => {
-    if (userid == userid_folllow) {
+    if (userid === userid_folllow) {
       return true;
     } else if (isfollowed) {
       return false;
@@ -128,7 +127,7 @@ export default function Profile({
   };
 
   const handleFollow = async () => {
-    if (userid == userid_folllow) {
+    if (userid === userid_folllow) {
     } else {
       const res1 = await axios.get(`${baseUrl2}/author/${userid}/`, {
         auth: {
@@ -141,7 +140,7 @@ export default function Profile({
       console.log(userid);
 
       try {
-        const res = await axios.post(
+        await axios.post(
           `${baseUrl2}/author/${userid_folllow}/inbox/`,
           {
             type: "follow",
