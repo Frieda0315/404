@@ -52,7 +52,7 @@ class Signup extends React.Component {
             id: "https://i-connect.herokuapp.com/service/author/" + newUuid,
             displayName: this.state.displayName,
             password: this.state.password,
-            github: this.state.github,
+            github: "https://github.com/" + this.state.github,
             type: "author",
             host: "https://i-connect.herokuapp.com",
             url: "https://i-connect.herokuapp.com/service/author/" + newUuid,

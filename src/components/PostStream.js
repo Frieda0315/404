@@ -125,6 +125,7 @@ function PostStream(props) {
     setOpenPopup3(true);
   };
   const handle_like = async (post) => {
+    const authorId = post.author_id.split("/").at(-1);
     const like_uuid = uuidv4();
     const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
       auth: {
@@ -135,15 +136,15 @@ function PostStream(props) {
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
-      summary: post.author + " Likes your post",
+      summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
-      object: baseUrl2 + "/author/" + post.author_id + "/posts/" + post.id,
+      object: baseUrl2 + "/author/" + authorId + "/posts/" + post.id,
     };
 
     // post likes
     await axios
-      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData, {
+      .post(`${baseUrl2}/author/${userid}/inbox/`, likeData, {
         auth: {
           username: "admin",
           password: "admin",
@@ -255,10 +256,11 @@ function PostStream(props) {
             };
 
             // get the like numbers for each post
+            const authorId = single.author.id.split("/").at(-1);
             like_promises.push(
               axios
                 .get(
-                  `${baseUrl2}/authors/${single.author.id}/posts/${single.id}/likes/`,
+                  `${baseUrl2}/authors/${authorId}/posts/${single.id}/likes/`,
                   {
                     auth: { username: "admin", password: "admin" },
                   }
@@ -308,6 +310,7 @@ function PostStream(props) {
             <Avatar
               src={post.avatar_url}
               onClick={() => {
+                console.log(post);
                 open(post.author, post.github_user, post.author_url);
               }}
             ></Avatar>

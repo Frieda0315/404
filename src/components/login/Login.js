@@ -88,9 +88,10 @@ class Login extends React.Component {
             }*/
             console.log(response.data);
             const parsedID = response.data.id.split("/").at(-1);
+            const githubUserName = response.data.github.split("/").at(-1);
             this.setState({
               id: parsedID,
-              github: response.data.github,
+              github: githubUserName,
               displayName: response.data.displayName,
             });
           },

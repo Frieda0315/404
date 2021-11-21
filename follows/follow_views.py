@@ -56,18 +56,8 @@ def follower_detail(request, author_id, foreign_author_id):
             return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
         if not friend_request:
             return JsonResponse({"error": "haven't requested yet"}, status=status.HTTP_400_BAD_REQUEST)
-        following_dict = {
-            "user_name": UserSerializer(following).data["user_name"],
-            "github_name": UserSerializer(following).data["github_name"],
-            "type": UserSerializer(following).data["type"],
-            "id": UserSerializer(following).data["id"]
-        }
-        follower_dict = {
-            "user_name": UserSerializer(follower).data["user_name"],
-            "github_name": UserSerializer(follower).data["github_name"],
-            "type": UserSerializer(follower).data["type"],
-            "id": UserSerializer(follower).data["id"]
-        }
+        following_dict = following.__dict__
+        follower_dict = follower.__dict__
         follow_data = {"following": following_dict, "follower": follower_dict}
         follow_seralizer = FollowSerializer(data=follow_data)
         if follow_seralizer.is_valid():

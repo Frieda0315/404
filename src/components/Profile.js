@@ -103,6 +103,7 @@ export default function Profile({
       })
       .then((res) => {
         setOriginalAuthor(res.data);
+        setProfileImage(res.data.profileImage);
         console.log(originalAuthor);
       });
   }, []);
@@ -183,7 +184,7 @@ export default function Profile({
           host: originalAuthor.host,
           displayName: displayName,
           url: originalAuthor.url,
-          github: github,
+          github: "https://github.com/" + github,
           profileImage: profileImage,
         },
         {
