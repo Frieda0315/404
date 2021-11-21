@@ -291,6 +291,7 @@ function PostStream(props) {
   }, []);
 
   if (Object.keys(comments).length !== 0) {
+    console.log(comments);
     return (
       <Redirect
         to={

@@ -8,7 +8,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     author = UserSerializer()
     published = serializers.DateTimeField()
-    id = serializers.UUIDField()
+    id = serializers.CharField()
 
     def create(self, validated_data):
         author_data = validated_data.pop('author')

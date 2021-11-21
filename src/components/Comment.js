@@ -46,6 +46,7 @@ function Comments(props) {
   const [openPopup, setOpenPopup] = React.useState(false);
   const [comments, setComments] = React.useState([]);
   useEffect(() => {
+    //console.log(window.location);
     axios
       .get(`${baseUrl2}${path}/`, {
         auth: {
@@ -89,7 +90,13 @@ function Comments(props) {
           author: currentUser,
           comment: newComment,
           published: isoString,
-          id: uuidv4(),
+          id:
+            "https://i-connect.herokuapp.com/service/author/" +
+            localStorage.getItem("current_user_id") +
+            "/posts/" +
+            window.location.pathname.split("/").at(-2) +
+            "/comments/" +
+            uuidv4(),
           type: "comment",
           contentType: "text",
         },

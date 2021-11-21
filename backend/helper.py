@@ -16,3 +16,10 @@ def user_id_parser(request_data):
     if uuid_data == "":
         uuid_data = request_data["id"].split("/")[-2]
     return uuid_data
+
+
+def comment_id_parser(request_data):
+    uuid_data = request_data["id"].split("/")[-1]
+    if uuid_data == "":
+        uuid_data = request_data["id"].split("/")[-2]
+    return uuid_data
