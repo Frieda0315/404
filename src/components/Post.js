@@ -51,6 +51,7 @@ const Post = () => {
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
   const [textChoice, setTextChoice] = React.useState("text/plain");
+  const [showImagebox, setshowImagebox] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const uploadImage = (files) => {
@@ -122,9 +123,57 @@ const Post = () => {
         password: "admin",
       },
     });
-
-    if (textChoice === "text/plain") {
-      if (isImage === true) {
+    if (title !== "" && common !== "") {
+      if (textChoice === "text/plain") {
+        if (isImage === true) {
+          const newpost = await axios.put(
+            `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+            {
+              type: "post",
+              id: uuid,
+              title: title,
+              contentType: textChoice,
+              content: common,
+              // image: fileBase64String,
+              published: date,
+              author: author.data,
+              visibility: visibility,
+              source: "https://i-connect.herokuapp.com/service/posts/",
+              origin: "https://i-connect.herokuapp.com/service/posts/",
+            },
+            {
+              auth: {
+                username: "admin",
+                password: "admin",
+              },
+            }
+          );
+          history.push({ pathname: "/" });
+        } else {
+          const newpost = await axios.put(
+            `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+            {
+              type: "post",
+              id: uuid,
+              title: title,
+              contentType: textChoice,
+              content: common,
+              published: date,
+              author: author.data,
+              visibility: visibility,
+              source: "https://i-connect.herokuapp.com/service/posts/",
+              origin: "https://i-connect.herokuapp.com/service/posts/",
+            },
+            {
+              auth: {
+                username: "admin",
+                password: "admin",
+              },
+            }
+          );
+          history.push({ pathname: "/" });
+        }
+      } else if (textChoice === "text/markdown") {
         const newpost = await axios.put(
           `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
           {
@@ -148,15 +197,15 @@ const Post = () => {
           }
         );
         history.push({ pathname: "/" });
-      } else {
+      } else if (common === "") {
         const newpost = await axios.put(
           `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
           {
             type: "post",
             id: uuid,
             title: title,
-            contentType: textChoice,
-            content: common,
+            contentType: "image",
+            content: fileBase64String,
             published: date,
             author: author.data,
             visibility: visibility,
@@ -172,113 +221,9 @@ const Post = () => {
         );
         history.push({ pathname: "/" });
       }
-    } else if (textChoice === "text/markdown") {
-      const newpost = await axios.put(
-        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-        {
-          type: "post",
-          id: uuid,
-          title: title,
-          contentType: textChoice,
-          content: common,
-          // image: fileBase64String,
-          published: date,
-          author: author.data,
-          visibility: visibility,
-          source: "https://i-connect.herokuapp.com/service/posts/",
-          origin: "https://i-connect.herokuapp.com/service/posts/",
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      history.push({ pathname: "/" });
-    } else if (common === "") {
-      const newpost = await axios.put(
-        `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-        {
-          type: "post",
-          id: uuid,
-          title: title,
-          contentType: "image",
-          content: fileBase64String,
-          published: date,
-          author: author.data,
-          visibility: visibility,
-          source: "https://i-connect.herokuapp.com/service/posts/",
-          origin: "https://i-connect.herokuapp.com/service/posts/",
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      history.push({ pathname: "/" });
+    } else {
+      alert("Empty field is not allowed ^^");
     }
-
-    // if (common === "") {
-    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-    //     auth: {
-    //       username: "admin",
-    //       password: "admin",
-    //     },
-    //   });
-    //   const uuid = uuidv4();
-    //   const newpost = await axios.put(
-    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-    //     {
-    //       type: "post",
-    //       id: uuid,
-    //       title: title,
-
-    //       image: fileBase64String,
-    //       published: date,
-    //       author: author.data,
-    //       visibility: visibility,
-    //     },
-    //     {
-    //       auth: {
-    //         username: "admin",
-    //         password: "admin",
-    //       },
-    //     }
-    //   );
-    //   history.push({ pathname: "/" });
-    // } else if (true) {
-    //   const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
-    //     auth: {
-    //       username: "admin",
-    //       password: "admin",
-    //     },
-    //   });
-    //   const uuid = uuidv4();
-    //   const newpost = await axios.put(
-    //     `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
-    //     {
-    //       type: "post",
-    //       id: uuid,
-    //       title: title,
-    //       content: common,
-    //       image: "",
-    //       published: date,
-    //       author: author.data,
-    //       visibility: visibility,
-    //     },
-    //     {
-    //       auth: {
-    //         username: "admin",
-    //         password: "admin",
-    //       },
-    //     }
-    //   );
-    //   history.push({ pathname: "/" });
-    // } else {
-    // }
   };
 
   const history = useHistory();
@@ -309,7 +254,14 @@ const Post = () => {
               value={textChoice}
               label="Input Type"
               autoWidth
-              onChange={(e) => setTextChoice(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value === "text/markdown") {
+                  setshowImagebox(true);
+                } else {
+                  setshowImagebox(false);
+                }
+                setTextChoice(e.target.value);
+              }}
             >
               <MenuItem value={"text/plain"}>text/plain</MenuItem>
 
@@ -317,15 +269,17 @@ const Post = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item>
-          <FormControl sx={{ m: 1, minWidth: 80 }}>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Image"
-              onChange={(e) => handleCheckBoxChange(e)}
-            />{" "}
-          </FormControl>
-        </Grid>
+        {showImagebox ? (
+          <Grid item>
+            <FormControl sx={{ m: 1, minWidth: 80 }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Image"
+                onChange={(e) => handleCheckBoxChange(e)}
+              />{" "}
+            </FormControl>
+          </Grid>
+        ) : null}
       </Grid>
 
       <Grid item>
