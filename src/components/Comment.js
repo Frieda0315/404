@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 
-import { Avatar } from "@material-ui/core";
+import { Avatar, IconButton } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
@@ -15,6 +15,7 @@ import Profile from "./Profile";
 import "./font/style.css";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import { v4 as uuidv4 } from "uuid";
+import { ThumbUp } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   stream: {
@@ -37,6 +38,7 @@ function Comments(props) {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const path = window.location.pathname;
   const [user, setUser] = React.useState();
+  const userid = localStorage.getItem("current_user_id");
   const [github_user, setGit_user] = React.useState();
   const [newComment, setNewComment] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState(null);
@@ -57,6 +59,29 @@ function Comments(props) {
       .then((response) => {
         console.log(response.data.comments);
         setComments(response.data.comments);
+
+        let commentPromises = [];
+        const commentsWithLike = comments.map((commentItem) => {
+          commentPromises.push(
+            axios
+              .get(
+                `${baseUrl2}/authors/${localStorage.getItem(
+                  "current_user_id"
+                )}/posts/${path.split("/").at(-1)}/comments/${commentItem.id
+                  .split("/")
+                  .at(-1)}/likes/`,
+                {
+                  auth: { username: "admin", password: "admin" },
+                }
+              )
+              .then((response) => {
+                commentItem.like_num = response.data.length;
+              })
+          );
+        });
+        Promise.all(commentPromises).then(() => {
+          setComments(commentsWithLike);
+        });
       });
     axios
       .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
@@ -69,6 +94,56 @@ function Comments(props) {
         setCurrentUser(res.data);
       });
   }, []);
+
+  const handle_like = async (comment) => {
+    const authorId = comment.author.id.split("/").at(-1);
+    const like_uuid = uuidv4();
+    const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    const likeData = {
+      //"@context": "https://www.w3.org/ns/activitystreams",
+      id: like_uuid,
+      summary: localStorage.getItem("user_name") + " Likes your post",
+      type: "like",
+      author: liker.data,
+      object:
+        baseUrl2 +
+        window.location.pathname +
+        "/" +
+        comment.id.split("/").at(-1),
+    };
+
+    // post likes
+
+    const response = await axios.post(
+      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}/inbox/`,
+      likeData,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+
+    // update the like number accordingly
+    if (response.status === 201) {
+      let newCommentList = [];
+      comments.map((item) => {
+        console.log(item);
+        if (item.id === comment.id) {
+          item.like_num += 1;
+        }
+        newCommentList.push(item);
+      });
+      setComments(newCommentList);
+    }
+  };
+
   const handleRemove = (e) => {
     const id = e.id;
     const newList = comments.filter((item) => item.id !== id);
@@ -109,8 +184,6 @@ function Comments(props) {
       )
       .then(
         (response) => {
-          console.log(response);
-          console.log(comments);
           const newComments = comments.concat([response.data]);
 
           setComments(newComments);
@@ -149,6 +222,26 @@ function Comments(props) {
         <Typography variant="h5" color="text.primary">
           {comment.comment}
         </Typography>
+      </Grid>
+
+      <Grid
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="flex-end"
+        alignItems="flex-end"
+      >
+        <Grid item>
+          <IconButton
+            edge="end"
+            aria-label="thumbup"
+            onClick={() => {
+              handle_like(comment);
+            }}
+          >
+            <ThumbUp />
+          </IconButton>
+        </Grid>
       </Grid>
 
       <Grid

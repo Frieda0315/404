@@ -112,7 +112,6 @@ def handleLikeRequest(json_data, receiver):
     #     return save_method(inbox_seralizer)
     # else:
     #     return JsonResponse(inbox_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
 
 
 def likeExist(liker, like_object):
@@ -121,6 +120,7 @@ def likeExist(liker, like_object):
     except Like.DoesNotExist:
         return False
     return True
+
 
 @api_view(['POST', 'GET', 'DELETE'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])

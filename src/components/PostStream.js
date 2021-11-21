@@ -83,10 +83,11 @@ function PostStream(props) {
     //   },
     // });
   };
+
+  const userid = localStorage.getItem("current_user_id");
   const [vote, setVote] = React.useState(0);
 
   const styleClasses = useStyles();
-  const userid = localStorage.getItem("current_user_id");
   const [page, setPage] = React.useState(1);
   //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);

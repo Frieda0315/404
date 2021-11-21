@@ -27,7 +27,6 @@ def comment_list(request, author_id, post_id):
         return JsonResponse(comment_json, safe=False)
     elif request.method == 'POST':
         json_data = JSONParser().parse(request)
-        print(json_data)
         uuid_data = comment_id_parser(json_data)
         serializer = CommentSerializer(data=json_data)
         if serializer.is_valid():
