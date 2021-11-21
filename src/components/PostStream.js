@@ -112,7 +112,7 @@ function PostStream(props) {
   };
   const open_share = (post) => {
     axios
-      .get(`${baseUrl2}/author/${post.author_id}/`, {
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}/`, {
         auth: {
           username: "admin",
           password: "admin",
