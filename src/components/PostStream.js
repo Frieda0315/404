@@ -325,7 +325,7 @@ function PostStream(props) {
   const [page, setPage] = React.useState(1);
   const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [authorids, setAuthorid] = React.useState();
+  const [authorids, setAuthorid] = React.useState("");
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
@@ -339,7 +339,7 @@ function PostStream(props) {
   const [url, setUrl] = React.useState([]);
 
   const open = (author, git, authorid) => {
-    //onsole.log(authorid);
+    console.log(authorid);
     setUser(author);
     setGit_user(git);
     setAuthorid(authorid);
@@ -436,6 +436,7 @@ function PostStream(props) {
           });
           const responseOne = responses[0];
           responseOne.data.map((single) => {
+            console.log("ajhsdgfjhkagsf", single.author.id);
             newList.push({
               id: single.id,
               published: single.published,
@@ -445,6 +446,7 @@ function PostStream(props) {
               author_id: single.author.id,
               github: single.author.github,
               title: single.title,
+              visibility: single.visibility,
               avatar_url: single.author.profileImage,
               is_github_activity: false,
               origin: single.origin,

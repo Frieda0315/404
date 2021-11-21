@@ -103,8 +103,10 @@ export default function Profile({
       })
       .then((res) => {
         setOriginalAuthor(res.data);
-
-        console.log(originalAuthor);
+        console.log(originalAuthor.id);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   }, []);
 
@@ -151,23 +153,29 @@ export default function Profile({
   const handleFollow = async () => {
     if (userid === userid_folllow) {
     } else {
-      const res1 = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const authorinfor = res1.data;
-      const message = authorinfor.displayName + " want follow " + displayName;
-
+      const res1 = await axios.get(
+        `${baseUrl2}/author/${userid_folllow.split("/").at(-1)}/`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      );
+      const wantedFollowAuthor = res1.data;
+      const message =
+        originalAuthor.displayName +
+        " want follow " +
+        wantedFollowAuthor.displayName;
+      console.log(message);
       try {
-        await axios.put(
-          `${baseUrl2}/author/${userid_folllow}/followers/`,
+        await axios.post(
+          `${baseUrl2}/author/${userid_folllow.split("/").at(-1)}/inbox/`,
           {
             type: "follow",
             summary: message,
             actor: originalAuthor,
-            object: authorinfor,
+            object: wantedFollowAuthor,
           },
           {
             auth: {
