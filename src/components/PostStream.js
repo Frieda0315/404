@@ -295,7 +295,7 @@ function PostStream(props) {
       <Redirect
         to={
           "/authors/" +
-          comments.author_id +
+          comments.author_id.split("/").at(-1) +
           "/posts/" +
           comments.id +
           "/comments"

@@ -127,8 +127,13 @@ def friend_request_list(request, author_id):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def friend_request_item(request, actor_id, object_id):
+    try:
+        actor = User.objects.get(uuid=actor_id)
+        object = User.objects.get(uuid=object_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     friend_requests = FriendRequest.objects.filter(
-        object_id=object_id, actor_id=actor_id)
+        actor=actor, object=object)
     print("friend request", friend_requests)
     if not friend_requests:
         return JsonResponse({"error": "friend request not found"}, status=status.HTTP_404_NOT_FOUND)

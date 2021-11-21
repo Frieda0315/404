@@ -39,6 +39,7 @@ function Comments(props) {
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
   const [newComment, setNewComment] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState(null);
 
   // const commentsList = tempCommentList;
 
@@ -55,6 +56,16 @@ function Comments(props) {
       .then((response) => {
         console.log(response.data.comments);
         setComments(response.data.comments);
+      });
+    axios
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        setCurrentUser(res.data);
       });
   }, []);
   const handleRemove = (e) => {
@@ -75,12 +86,7 @@ function Comments(props) {
       .post(
         `${baseUrl2}${path}/`,
         {
-          author: {
-            id: localStorage.getItem("current_user_id"),
-            github_name: localStorage.getItem("github_user"),
-            user_name: localStorage.getItem("user_name"),
-            type: "author",
-          },
+          author: currentUser,
           comment: newComment,
           published: isoString,
           id: uuidv4(),
