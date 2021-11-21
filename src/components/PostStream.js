@@ -5,8 +5,13 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
-
-import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import {
+  Delete,
+  ShareRounded,
+  ThumbUp,
+  Comment,
+  Public,
+} from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import FollowProfile from "./FollowProfile";
@@ -68,12 +73,24 @@ const useStyles = makeStyles(() => ({
 const baseUrl = "https://api.github.com/users";
 
 function PostStream(props) {
+  const viewComments = (post) => {
+    setComments(post);
+    // console.log(props);
+    // props.history.push({
+    //   pathname: "/posts/" + post.id + "/comments",
+    //   state: {
+    //     commentsSrc: post.commentsSrc,
+    //   },
+    // });
+  };
+  const [vote, setVote] = React.useState(0);
+
   const styleClasses = useStyles();
   const userid = localStorage.getItem("current_user_id");
   const [page, setPage] = React.useState(1);
   //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [authorids, setAuthorid] = React.useState();
+  const [authorids, setAuthorid] = React.useState("");
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
@@ -87,6 +104,7 @@ function PostStream(props) {
   const [url, setUrl] = React.useState([]);
 
   const open = (author, git, authorid) => {
+    console.log(authorid);
     setUser(author);
     setGit_user(git);
     setAuthorid(authorid);
@@ -176,16 +194,6 @@ function PostStream(props) {
     setPage(value);
   };
 
-  const viewComments = (post) => {
-    setComments(post);
-    // console.log(props);
-    // props.history.push({
-    //   pathname: "/posts/" + post.id + "/comments",
-    //   state: {
-    //     commentsSrc: post.commentsSrc,
-    //   },
-    // });
-  };
   const getAvator = (github_user) => {
     if (github_user !== "") {
       axios
@@ -249,6 +257,7 @@ function PostStream(props) {
               github: single.author.github,
               author_url: single.author.url,
               title: single.title,
+              visibility: single.visibility,
               avatar_url: single.author.profileImage,
               is_github_activity: false,
               origin: single.origin,
@@ -322,11 +331,18 @@ function PostStream(props) {
             <Typography>
               {post != null ? post.published : "null date"}
             </Typography>
+            {post.visibility === "PUBLIC" ? (
+              <Typography>Public</Typography>
+            ) : post.visibility === "FRIENDS" ? (
+              <Typography>Friend</Typography>
+            ) : (
+              <Typography>Private</Typography>
+            )}
           </Grid>
         </Grid>
         <Grid container>
           <Grid item xs>
-            {false === true ? (
+            {true ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">
@@ -407,15 +423,6 @@ function PostStream(props) {
                 onClick={() => viewComments(post)}
               >
                 <Comment />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="Delete"
-                onClick={() => handleRemove(post)}
-              >
-                <Delete />
               </IconButton>
             </Grid>
           </Grid>

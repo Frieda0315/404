@@ -13,7 +13,7 @@ class Post(models.Model):
     content = models.TextField()
     contentType = models.CharField(max_length=120)
     published = models.DateTimeField(auto_now=True, null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     # image type
     # TODO: image field
     image = models.ImageField(null=True, blank=True, upload_to='images/')

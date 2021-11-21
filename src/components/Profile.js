@@ -87,7 +87,7 @@ export default function Profile({
     localStorage.getItem("user_name")
   );
   const [profileImage, setProfileImage] = useState("");
-  const [originalAuthor, setOriginalAuthor] = useState({ profileImage: "abc" });
+  const [originalAuthor, setOriginalAuthor] = useState("");
 
   const styleClasses = useStyles();
   const github_link = "https://github.com/" + github;
@@ -104,7 +104,9 @@ export default function Profile({
       .then((res) => {
         setOriginalAuthor(res.data);
         setProfileImage(res.data.profileImage);
-        console.log(originalAuthor);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   }, []);
 
@@ -128,34 +130,29 @@ export default function Profile({
   const handleFollow = async () => {
     if (userid === userid_folllow) {
     } else {
-      const res1 = await axios.get(`${baseUrl2}/author/${userid}/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      });
-      const authorinfor = res1.data;
-      const message = authorinfor.displayName + " want follow " + displayName;
-      console.log(userid);
-
+      const res1 = await axios.get(
+        `${baseUrl2}/author/${userid_folllow.split("/").at(-1)}/`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      );
+      const wantedFollowAuthor = res1.data;
+      const message =
+        originalAuthor.displayName +
+        " want follow " +
+        wantedFollowAuthor.displayName;
+      console.log(message);
       try {
         await axios.post(
-          `${baseUrl2}/author/${userid_folllow}/inbox/`,
+          `${baseUrl2}/author/${userid_folllow.split("/").at(-1)}/inbox/`,
           {
             type: "follow",
             summary: message,
-            actor: {
-              id: userid,
-              user_name: authorinfor.user_name,
-              github_name: authorinfor.github_name,
-              type: "author",
-            },
-            object: {
-              id: userid_folllow,
-              user_name: displayName,
-              github_name: post_github_user,
-              type: "author",
-            },
+            actor: originalAuthor,
+            object: wantedFollowAuthor,
           },
           {
             auth: {
@@ -180,7 +177,7 @@ export default function Profile({
         `${baseUrl2}/author/${userid}/`,
         {
           type: "author",
-          id: originalAuthor.id,
+          uuid: originalAuthor.id,
           host: originalAuthor.host,
           displayName: displayName,
           url: originalAuthor.url,
