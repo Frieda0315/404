@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 @permission_classes([IsAuthenticated])
 def follower_list(request, author_id):
     try:
-        following = User.objects.get(pk=author_id)
+        following = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "no such author"}, status=status.HTTP_404_NOT_FOUND)
     followers = Follow.objects.filter(following=following)
@@ -36,8 +36,8 @@ def follower_detail(request, author_id, foreign_author_id):
     if(author_id == foreign_author_id):
         return JsonResponse({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        following = User.objects.get(pk=author_id)
-        follower = User.objects.get(pk=foreign_author_id)
+        following = User.objects.get(uuid=author_id)
+        follower = User.objects.get(uuid=foreign_author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "cannot find the author or the follower"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -56,18 +56,8 @@ def follower_detail(request, author_id, foreign_author_id):
             return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
         if not friend_request:
             return JsonResponse({"error": "haven't requested yet"}, status=status.HTTP_400_BAD_REQUEST)
-        following_dict = {
-            "user_name": UserSerializer(following).data["user_name"],
-            "github_name": UserSerializer(following).data["github_name"],
-            "type": UserSerializer(following).data["type"],
-            "id": UserSerializer(following).data["id"]
-        }
-        follower_dict = {
-            "user_name": UserSerializer(follower).data["user_name"],
-            "github_name": UserSerializer(follower).data["github_name"],
-            "type": UserSerializer(follower).data["type"],
-            "id": UserSerializer(follower).data["id"]
-        }
+        following_dict = following.__dict__
+        follower_dict = follower.__dict__
         follow_data = {"following": following_dict, "follower": follower_dict}
         follow_seralizer = FollowSerializer(data=follow_data)
         if follow_seralizer.is_valid():
@@ -102,7 +92,7 @@ def follower_detail(request, author_id, foreign_author_id):
 @permission_classes([IsAuthenticated])
 def friend_list(request, author_id):
     try:
-        author = User.objects.get(pk=author_id)
+        author = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"})
     friend1_pairs = Friend.objects.filter(second_user=author)
@@ -125,7 +115,7 @@ def friend_list(request, author_id):
 @permission_classes([IsAuthenticated])
 def friend_request_list(request, author_id):
     try:
-        following = User.objects.get(pk=author_id)
+        following = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     friend_requests = FriendRequest.objects.filter(object=following)
@@ -137,8 +127,13 @@ def friend_request_list(request, author_id):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def friend_request_item(request, actor_id, object_id):
+    try:
+        actor = User.objects.get(uuid=actor_id)
+        object = User.objects.get(uuid=object_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
     friend_requests = FriendRequest.objects.filter(
-        object_id=object_id, actor_id=actor_id)
+        actor=actor, object=object)
     print("friend request", friend_requests)
     if not friend_requests:
         return JsonResponse({"error": "friend request not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -5,10 +5,16 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { CardMedia, CardActionArea, Typography } from "@material-ui/core";
 import axios from "axios";
-
-import { Delete, ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
+import {
+  Delete,
+  ShareRounded,
+  ThumbUp,
+  Comment,
+  Public,
+} from "@material-ui/icons";
 import Popup from "./Popup";
 import Profile from "./Profile";
+import FollowProfile from "./FollowProfile";
 import { v4 as uuidv4 } from "uuid";
 import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
@@ -67,12 +73,24 @@ const useStyles = makeStyles(() => ({
 const baseUrl = "https://api.github.com/users";
 
 function PostStream(props) {
+  const viewComments = (post) => {
+    setComments(post);
+    // console.log(props);
+    // props.history.push({
+    //   pathname: "/posts/" + post.id + "/comments",
+    //   state: {
+    //     commentsSrc: post.commentsSrc,
+    //   },
+    // });
+  };
+  const [vote, setVote] = React.useState(0);
+
   const styleClasses = useStyles();
   const userid = localStorage.getItem("current_user_id");
   const [page, setPage] = React.useState(1);
   //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [authorids, setAuthorid] = React.useState();
+  const [authorids, setAuthorid] = React.useState("");
   const [comments, setComments] = React.useState({});
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
@@ -86,7 +104,7 @@ function PostStream(props) {
   const [url, setUrl] = React.useState([]);
 
   const open = (author, git, authorid) => {
-    //onsole.log(authorid);
+    console.log(authorid);
     setUser(author);
     setGit_user(git);
     setAuthorid(authorid);
@@ -94,7 +112,7 @@ function PostStream(props) {
   };
   const open_share = (post) => {
     axios
-      .get(`${baseUrl2}/author/${post.authorid}/`, {
+      .get(`${baseUrl2}/author/${post.author_id}/`, {
         auth: {
           username: "admin",
           password: "admin",
@@ -125,6 +143,7 @@ function PostStream(props) {
     setOpenPopup3(true);
   };
   const handle_like = async (post) => {
+    const authorId = post.author_id.split("/").at(-1);
     const like_uuid = uuidv4();
     const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
       auth: {
@@ -135,15 +154,15 @@ function PostStream(props) {
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
-      summary: post.author + " Likes your post",
+      summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
-      object: baseUrl2 + "/author/" + post.author_id + "/posts/" + post.id,
+      object: baseUrl2 + "/author/" + authorId + "/posts/" + post.id,
     };
 
     // post likes
     await axios
-      .post(`${baseUrl2}/author/${post.authorid}/inbox/`, likeData, {
+      .post(`${baseUrl2}/author/${userid}/inbox/`, likeData, {
         auth: {
           username: "admin",
           password: "admin",
@@ -175,16 +194,6 @@ function PostStream(props) {
     setPage(value);
   };
 
-  const viewComments = (post) => {
-    setComments(post);
-    // console.log(props);
-    // props.history.push({
-    //   pathname: "/posts/" + post.id + "/comments",
-    //   state: {
-    //     commentsSrc: post.commentsSrc,
-    //   },
-    // });
-  };
   const getAvator = (github_user) => {
     if (github_user !== "") {
       axios
@@ -231,7 +240,7 @@ function PostStream(props) {
               title: "Github Activity: " + single.type,
               avatar_url:
                 "https://avatars.githubusercontent.com/u/55036290?v=4",
-              author_id: "github",
+              is_github_activity: true,
             });
           });
           let like_promises = [];
@@ -243,21 +252,24 @@ function PostStream(props) {
               published: single.published,
               contentType: single.contentType,
               content: single.content,
-              author: single.author.user_name,
-              authorid: single.author.id,
-              github_user: single.author.github_name,
-              title: single.title,
-              avatar_url: "",
+              author: single.author.displayName,
               author_id: single.author.id,
+              github: single.author.github,
+              author_url: single.author.url,
+              title: single.title,
+              visibility: single.visibility,
+              avatar_url: single.author.profileImage,
+              is_github_activity: false,
               origin: single.origin,
               source: single.source,
             };
 
             // get the like numbers for each post
+            const authorId = single.author.id.split("/").at(-1);
             like_promises.push(
               axios
                 .get(
-                  `${baseUrl2}/authors/${single.author.id}/posts/${single.id}/likes/`,
+                  `${baseUrl2}/authors/${authorId}/posts/${single.id}/likes/`,
                   {
                     auth: { username: "admin", password: "admin" },
                   }
@@ -283,7 +295,7 @@ function PostStream(props) {
       <Redirect
         to={
           "/authors/" +
-          comments.author_id +
+          comments.author_id.split("/").at(-1) +
           "/posts/" +
           comments.id +
           "/comments"
@@ -306,7 +318,10 @@ function PostStream(props) {
           <Grid item>
             <Avatar
               src={post.avatar_url}
-              onClick={() => open(post.author, post.github_user, post.authorid)}
+              onClick={() => {
+                console.log(post);
+                open(post.author, post.github_user, post.author_url);
+              }}
             ></Avatar>
           </Grid>
           <Grid item>
@@ -316,11 +331,18 @@ function PostStream(props) {
             <Typography>
               {post != null ? post.published : "null date"}
             </Typography>
+            {post.visibility === "PUBLIC" ? (
+              <Typography>Public</Typography>
+            ) : post.visibility === "FRIENDS" ? (
+              <Typography>Friend</Typography>
+            ) : (
+              <Typography>Private</Typography>
+            )}
           </Grid>
         </Grid>
         <Grid container>
           <Grid item xs>
-            {false === true ? (
+            {true ? (
               <Grid container>
                 <Grid item xs>
                   <Typography variant="h5" component="div">
@@ -359,7 +381,7 @@ function PostStream(props) {
           </Grid>
         </Grid>
 
-        {post.author_id !== "github" ? (
+        {!post.is_github_activity ? (
           <Grid
             container
             spacing={1}
@@ -403,15 +425,6 @@ function PostStream(props) {
                 <Comment />
               </IconButton>
             </Grid>
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="Delete"
-                onClick={() => handleRemove(post)}
-              >
-                <Delete />
-              </IconButton>
-            </Grid>
           </Grid>
         ) : null}
       </Grid>
@@ -423,12 +436,7 @@ function PostStream(props) {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <Profile
-          user={user}
-          post_github_user={github_user}
-          userid_folllow={authorids}
-          is_follow={true}
-        ></Profile>
+        <FollowProfile follow_user_url={authorids} />
       </Popup>
       <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
         <ImageHolder image={image}></ImageHolder>

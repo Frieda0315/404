@@ -16,9 +16,10 @@ class Signup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      github_name: "",
+      displayName: "",
       password: "",
+      id: "",
+      github: "",
       finished: 0,
     };
     this.handleChange = this.handleChange.bind(this);
@@ -27,7 +28,7 @@ class Signup extends React.Component {
 
   handleChange(event) {
     this.setState({
-      username: event.state.username,
+      displayName: event.state.displayName,
       password: event.state.password,
     });
   }
@@ -38,19 +39,30 @@ class Signup extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     if (
-      this.state.username !== "" &&
+      this.state.displayName !== "" &&
       this.state.password !== "" &&
-      this.state.github_name !== ""
+      this.state.github !== ""
     ) {
       const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
+      const newUuid = uuidv4();
       axios
-        .post(`${baseUrl2}/users/signup/`, {
-          id: uuidv4(),
-          user_name: this.state.username,
-          password: this.state.password,
-          github_name: this.state.github_name,
-          type: "author",
-        })
+        .post(
+          `${baseUrl2}/users/signup/`,
+          {
+            id: "https://i-connect.herokuapp.com/service/author/" + newUuid,
+            displayName: this.state.displayName,
+            password: this.state.password,
+            github: "https://github.com/" + this.state.github,
+            type: "author",
+            host: "https://i-connect.herokuapp.com",
+            url: "https://i-connect.herokuapp.com/service/author/" + newUuid,
+            profileImage:
+              "https://avatars.githubusercontent.com/" + this.state.github,
+          },
+          {
+            auth: { username: "admin", password: "admin" },
+          }
+        )
         .then(
           (response) => {
             console.log(response);
@@ -113,9 +125,9 @@ class Signup extends React.Component {
                         <TextField
                           placeholder="UserName"
                           fullWidth
-                          name="username"
+                          name="displayName"
                           variant="outlined"
-                          value={this.state.username}
+                          value={this.state.displayName}
                           onChange={(event) =>
                             this.setState({
                               [event.target.name]: event.target.value,
@@ -129,9 +141,9 @@ class Signup extends React.Component {
                         <TextField
                           placeholder="Github Username"
                           fullWidth
-                          name="github_name"
+                          name="github"
                           variant="outlined"
-                          value={this.state.github_name}
+                          value={this.state.github}
                           onChange={(event) =>
                             this.setState({
                               [event.target.name]: event.target.value,

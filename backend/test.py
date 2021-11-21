@@ -22,22 +22,33 @@ from follows.follow_views import *
 
 
 class ModelTests(TestCase):
-    def init_author(self, id=uuid.uuid4(), user_name="test_user", github_name="test_git", password='1234', type="author"):
+    def init_author(self, id="testID", uuid=uuid.uuid4(), host="testhost", displayName="test_user", url="123@test", github="test_git", profileImage="image", password='1234', type="author", pending=True):
         return User(
             id=id,
-            user_name=user_name,
+            host=host,
+            displayName=displayName,
+            url=url,
+            profileImage=profileImage,
+
+            uuid=uuid,
             password=password,
-            github_name=github_name,
-            type=type
+            github=github,
+            type=type,
+            pending=pending
         )
 
-    def init_post(self, author=None, title="testingPost", content="testingContent", visibility='PUBLIC'):
+    def init_post(self, type="post", author=None, title="testingPost", content="testingContent", contentType="post", published=datetime.now(), visibility='PUBLIC', source="source@test.com", origin="origin@test.com", shared="shared@test.com"):
         if author == None:
             a = self.init_author()
         return Post(
             author=a,
             title=title,
             content=content,
+            contentType=contentType,
+            published=published,
+            source=source,
+            origin=origin,
+            shared=shared,
             visibility=visibility,
         )
 
@@ -118,21 +129,35 @@ class ModelTests(TestCase):
         )
 
     def test_author(self):
+        # id="testID", uuid=uuid.uuid4(), host="testhost", displayName="test_user", url="123@test", github="test_git", profileImage="image", password='1234', type="author", pending=True
         authorInstance = self.init_author()
         self.assertTrue(isinstance(authorInstance, User))
+        self.assertEqual(authorInstance.id, "testID")
+        self.assertEqual(authorInstance.host, "testhost")
+        self.assertEqual(authorInstance.displayName, "test_user")
+        self.assertEqual(authorInstance.url, "123@test")
+        self.assertEqual(authorInstance.github, "test_git")
+        self.assertEqual(authorInstance.profileImage, "image")
+        self.assertEqual(authorInstance.pending, True)
+        self.assertEqual(authorInstance.type, "author")
 
     def test_post(self):
+        # type="post", author=None, title="testingPost", content="testingContent", contentType="post", published=datetime.now(), visibility='PUBLIC', source="source@test.com", origin="origin@test.com", shared="shared@test.com"
         p = self.init_post()
         self.assertTrue(isinstance(p, Post))
         self.assertTrue(isinstance(p.author, User))
 
         self.assertEqual(p.title, "testingPost")
         self.assertEqual(p.content, "testingContent")
+        self.assertEqual(p.contentType, "post")
         self.assertEqual(p.visibility, 'PUBLIC')
+        self.assertEqual(p.source, "source@test.com")
+        self.assertEqual(p.origin, "origin@test.com")
+        self.assertEqual(p.shared, "shared@test.com")
 
-        self.assertEqual(p.author.user_name, "test_user")
+        self.assertEqual(p.author.displayName, "test_user")
         self.assertEqual(p.author.type, "author")
-        self.assertEqual(p.author.github_name, "test_git")
+        self.assertEqual(p.author.github, "test_git")
 
     def test_comment(self):
         comment = self.init_comment()
@@ -194,7 +219,8 @@ class URLTests(TestCase):
         self.assertEqual(resolve(url).func, post_detail)
 
     def test_posts(self):
-        url = reverse("public_post")
+        url = reverse("public_post", args=[
+                      "123e4567-e89b-12d3-a456-426614174000"])
         self.assertEqual(resolve(url).func, public_post)
 
     def test_author_list(self):

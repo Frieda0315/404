@@ -77,7 +77,7 @@ function MyPostList() {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/authors/${userid}/posts/`, {
+      .get(`${baseUrl2}/posts/${userid}/`, {
         auth: {
           username: "admin",
           password: "admin",
@@ -85,19 +85,21 @@ function MyPostList() {
       })
       .then((res) => {
         res.data.map((single) => {
+          console.log(single.profileImage);
           newList.push({
             contentType: single.contentType,
             id: single.id,
             date: single.published,
             content: single.content,
-            author: single.author.user_name,
-            github_user: single.author.github_name,
+            author: single.author.displayName,
+            github_user: single.author.github,
             title: single.title,
             state: single.visibility,
-            author_id: single.author.id,
-            image: single.image,
+            profileImage: single.author.profileImage,
+            author_id: single.author.uuid,
           });
         });
+
         setPostList(newList);
       })
       .catch((errors) => {
@@ -126,7 +128,6 @@ function MyPostList() {
     const id = e.id;
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
-    console.log(id);
     axios
       .delete(`${baseUrl2}/authors/${userid}/posts/${id}/`, {
         auth: {
@@ -148,7 +149,6 @@ function MyPostList() {
 
   const handleEdit = (e) => {
     const id = e.id;
-    console.log(id);
     const item = PostList1.find((item) => item.id == id);
     history.push({ pathname: "/mypost/edit", state: item });
   };
@@ -164,18 +164,25 @@ function MyPostList() {
       >
         <Grid item>
           <Avatar
-            src={dummy_image}
-            onClick={() => open(post.author, post.github_user)}
+            src={post.profileImage}
+            onClick={() => open(post.author, post.github)}
           ></Avatar>
         </Grid>
         <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
           <Typography>{post != null ? post.date : "null date"}</Typography>
+          {post.state === "PUBLIC" ? (
+            <Typography>Public</Typography>
+          ) : post.state === "FRIENDS" ? (
+            <Typography>Friend</Typography>
+          ) : (
+            <Typography>Private</Typography>
+          )}
         </Grid>
       </Grid>
       <Grid container>
         <Grid item xs>
-          {post.image === "" ? (
+          {post.contentType === "plain/text" ? (
             <Grid container>
               <Grid item xs>
                 <Typography variant="h5" component="div">

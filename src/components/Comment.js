@@ -16,57 +16,6 @@ import "./font/style.css";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 import { v4 as uuidv4 } from "uuid";
 
-const tempCommentList = [
-  {
-    type: "comment",
-    author: {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      host: "http://127.0.0.1:5454/",
-      displayName: "Greg Johnson",
-      github: "http://github.com/gjohnson",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-    comment: "Sick Olde English 1fdsafafasfffffdaoihohohoi",
-    contentType: "text/markdown",
-    published: "2015-03-09T13:07:04+00:00",
-    id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c1",
-  },
-  {
-    type: "comment",
-    author: {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      host: "http://127.0.0.1:5454/",
-      displayName: "Greg Johnson",
-      github: "http://github.com/gjohnson",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-    comment: "Sick Olde English 2",
-    contentType: "text/markdown",
-    published: "2015-03-09T13:07:04+00:00",
-    id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c2",
-  },
-  {
-    type: "comment",
-    author: {
-      type: "author",
-      id: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      url: "http://127.0.0.1:5454/author/1d698d25ff008f7538453c120f581471",
-      host: "http://127.0.0.1:5454/",
-      displayName: "Greg Johnson",
-      github: "http://github.com/gjohnson",
-      profileImage: "https://i.imgur.com/k7XVwpB.jpeg",
-    },
-    comment: "Sick Olde English 3",
-    contentType: "text/markdown",
-    published: "2015-03-09T13:07:04+00:00",
-    id: "http://127.0.0.1:5454/author/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c3",
-  },
-];
-
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -90,6 +39,7 @@ function Comments(props) {
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
   const [newComment, setNewComment] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState(null);
 
   // const commentsList = tempCommentList;
 
@@ -106,6 +56,16 @@ function Comments(props) {
       .then((response) => {
         console.log(response.data.comments);
         setComments(response.data.comments);
+      });
+    axios
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        setCurrentUser(res.data);
       });
   }, []);
   const handleRemove = (e) => {
@@ -126,12 +86,7 @@ function Comments(props) {
       .post(
         `${baseUrl2}${path}/`,
         {
-          author: {
-            id: localStorage.getItem("current_user_id"),
-            github_name: localStorage.getItem("github_user"),
-            user_name: localStorage.getItem("user_name"),
-            type: "author",
-          },
+          author: currentUser,
           comment: newComment,
           published: isoString,
           id: uuidv4(),

@@ -10,6 +10,7 @@ import json
 import os
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from backend.helper import *
 
 # Create your views here.
 
@@ -31,24 +32,24 @@ def author_detail(request, id):
     Retrieve, update or delete a user profile info.
     """
     try:
-        user = User.objects.get(pk=id)
+        user = User.objects.get(uuid=id)
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = UserSerializer(user)
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         user_json_data = JSONParser().parse(request)
         existing_users = User.objects.filter(
-            user_name=user_json_data["user_name"])
-        if(user.user_name != user_json_data["user_name"] and existing_users):
-            return JsonResponse({"error": "user_name already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            displayName=user_json_data["displayName"])
+        if(user.displayName != user_json_data["displayName"] and existing_users):
+            return JsonResponse({"error": "displayName already exists"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(user, data=user_json_data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
@@ -66,21 +67,23 @@ def signup(request):
     file_path = os.path.join(current_dir, "../config.json")
 
     user_json_data = JSONParser().parse(request)
+    uuid_data = user_id_parser(user_json_data)
     current_user = User.objects.filter(
-        Q(user_name=user_json_data["user_name"]) | Q(pk=user_json_data["id"]))
+        Q(displayName=user_json_data["displayName"]) | Q(uuid=uuid_data))
     if(current_user):
-        return JsonResponse({"error": "author already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"error": "displayName/id already exists"}, status=status.HTTP_400_BAD_REQUEST)
     password = user_json_data.pop("password")
     new_user_serializer = UserSerializer(data=user_json_data)
+    # print(new_user_serializer)
     if new_user_serializer.is_valid():
         try:
             with open(file_path, 'r') as config_file:
                 config_data = json.load(config_file)
         except:
             return JsonResponse({"approve_option": "file not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, safe=False)
-
         new_user_object = new_user_serializer.save()
         new_user_object.password = password
+        new_user_object.uuid = uuid_data
         if not config_data["approve_option"]:
             new_user_object.pending = False
         new_user_object.save()
@@ -94,19 +97,32 @@ def signup(request):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def login(request):
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, "../config.json")
+    try:
+        with open(file_path, 'r') as config_file:
+            config_data = json.load(config_file)
+    except:
+        return JsonResponse({"approve_option": "file not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR, safe=False)
+
     login_json_data = JSONParser().parse(request)
-    user_name = login_json_data["user_name"]
+    display_name = login_json_data["displayName"]
     password = login_json_data["password"]
-    print(user_name)
-    print(password)
-    if((not user_name) or (not password)):
+    if((not display_name) or (not password)):
         return JsonResponse({"error": "incorrect form data"}, status=status.HTTP_400_BAD_REQUEST)
-    existing_user = User.objects.filter(user_name=user_name, password=password)
-    print(existing_user)
-    if(existing_user):
+
+    # if pending feature off
+    if not config_data["approve_option"]:
+        existing_user = User.objects.filter(
+            displayName=display_name, password=password)
+    else:
+        existing_user = User.objects.filter(
+            displayName=display_name, password=password, pending=False)
+
+    if existing_user:
         existing_user_serializer = UserSerializer(existing_user[0])
         return JsonResponse(existing_user_serializer.data, status=status.HTTP_200_OK)
-    return JsonResponse({"error": "invalid credential"}, status=status.HTTP_401_UNAUTHORIZED)
+    return JsonResponse({"error": "invalid credential or status in pending"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 '''
@@ -120,7 +136,7 @@ admin's signup
 def admin_signup(request):
     user_json_data = JSONParser().parse(request)
     current_admin_user = AdminUser.objects.filter(
-        Q(user_name=user_json_data["user_name"]) | Q(pk=user_json_data["id"]))
+        Q(user_name=user_json_data["user_name"]) | Q(uuid=user_json_data["id"]))
     if(current_admin_user):
         return JsonResponse({"error": "admin user already exists"}, status=status.HTTP_400_BAD_REQUEST)
     password = user_json_data.pop("password")
@@ -169,9 +185,10 @@ def pending_author_list(request):
     elif request.method == 'POST':
         pending_author_data = JSONParser().parse(request)
         print(pending_author_data)
+        uuid_data = user_id_parser(pending_author_data)
         try:
             author = User.objects.get(
-                id=pending_author_data["author_id"], pending=True)
+                uuid=uuid_data, pending=True)
         except User.DoesNotExist:
             return JsonResponse({"error": "pending author not found"}, status=status.HTTP_404_NOT_FOUND)
         if pending_author_data["action"] == "approve":

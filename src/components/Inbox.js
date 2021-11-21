@@ -124,27 +124,30 @@ const Inbox = () => {
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
-
-          responseOne.data.items.map((single) => {
-            newList.push({
-              type: "inbox",
-              title: single.title,
-              content: single.content,
-              date: single.published,
-              image: single.image,
-              user_name: single.author.user_name,
-              id: single.author.id,
-              github_name: single.author.github_name,
+          if (responseOne.data.items) {
+            responseOne.data.items.map((single) => {
+              newList.push({
+                type: "inbox",
+                title: single.title,
+                content: single.content,
+                date: single.published,
+                image: single.image,
+                user_name: single.author.displayName,
+                id: single.author.id.split("/").at(-1),
+                github_name: single.author.github.split("/").at(-1),
+              });
             });
-          });
+          }
+
           const responseTwo = responses[1];
 
           responseTwo.data.map((single) => {
+            console.log(single);
             newList.push({
               type: "follower",
               summary: single.summary,
               follower_user_name: single.actor.user_name,
-              follower_id: single.actor.id,
+              follower_id: single.actor.id.split("/").at(-1),
             });
           });
           setInboxList(newList);
