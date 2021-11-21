@@ -61,13 +61,14 @@ function Comments(props) {
         setComments(response.data.comments);
 
         let commentPromises = [];
-        const commentsWithLike = comments.map((commentItem) => {
+        let newComments = [];
+        response.data.comments.map((commentItem) => {
           commentPromises.push(
             axios
               .get(
                 `${baseUrl2}/authors/${localStorage.getItem(
                   "current_user_id"
-                )}/posts/${path.split("/").at(-1)}/comments/${commentItem.id
+                )}/posts/${path.split("/").at(-2)}/comments/${commentItem.id
                   .split("/")
                   .at(-1)}/likes/`,
                 {
@@ -76,11 +77,14 @@ function Comments(props) {
               )
               .then((response) => {
                 commentItem.like_num = response.data.length;
+                console.log(commentItem.like_num);
+                console.log(response.data.length);
               })
           );
+          newComments.push(commentItem);
         });
         Promise.all(commentPromises).then(() => {
-          setComments(commentsWithLike);
+          setComments(newComments);
         });
       });
     axios
@@ -241,6 +245,9 @@ function Comments(props) {
           >
             <ThumbUp />
           </IconButton>
+        </Grid>
+        <Grid item>
+          <Typography>{comment.like_num}</Typography>
         </Grid>
       </Grid>
 
