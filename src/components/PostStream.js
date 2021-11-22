@@ -267,14 +267,12 @@ function PostStream(props) {
 
             // get the like numbers for each post
             const authorId = single.author.id.split("/").at(-1);
+            const postId = single.id.split("/").at(-1);
             like_promises.push(
               axios
-                .get(
-                  `${baseUrl2}/authors/${authorId}/posts/${single.id}/likes/`,
-                  {
-                    auth: { username: "admin", password: "admin" },
-                  }
-                )
+                .get(`${baseUrl2}/authors/${authorId}/posts/${postId}/likes/`, {
+                  auth: { username: "admin", password: "admin" },
+                })
                 .then((response) => {
                   postItem.like_num = response.data.length;
                 })
@@ -283,6 +281,7 @@ function PostStream(props) {
           });
           Promise.all(like_promises).then(() => {
             setPostlist(newList);
+            console.log(newList);
           });
         })
       )
@@ -299,7 +298,7 @@ function PostStream(props) {
           "/authors/" +
           comments.author_id.split("/").at(-1) +
           "/posts/" +
-          comments.id +
+          comments.id.split("/").at(-1) +
           "/comments"
         }
       ></Redirect>
@@ -351,7 +350,9 @@ function PostStream(props) {
                     {post.title}
                   </Typography>
                   {post.contentType === "text/markdown" ? (
-                    <ReactMarkdown>{post.content}</ReactMarkdown>
+                    <div style={{ maxWidth: "100vh", display: "inline-block" }}>
+                      <ReactMarkdown>{post.content}</ReactMarkdown>
+                    </div>
                   ) : (
                     <Typography variant="body1" color="text.secondary">
                       {post.content}

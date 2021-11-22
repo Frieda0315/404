@@ -4,21 +4,27 @@ Reference: https://docs.djangoproject.com/en/3.2/topics/pagination/
 Author: Django doc
 '''
 from django.core import paginator
-from django.http.response import JsonResponse
+from django.http.response import FileResponse, JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.utils import json
+
+from comments.models import Comments
 from .serializers import PostSerializer
 from .models import Post
 from follows.models import Friend
 from users.models import User
 from backend.helper import *
+from backend.settings import MEDIA_ROOT
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.files.base import ContentFile
+import base64
+import os
 
 
 # Create your views here.
@@ -28,6 +34,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def public_post(request, author_id):
+    '''
+    Get all posts this author can see
+    '''
     try:
         current_user = User.objects.get(uuid=author_id)
     except User.DoesNotExist:
@@ -48,7 +57,7 @@ def public_post(request, author_id):
         all_post_list += friend_posts
 
     public_post_list = Post.objects.filter(
-        visibility="PUBLIC").order_by('-published')
+        visibility="PUBLIC", unlisted=False).order_by('-published')
     all_post_list += public_post_list
     paginator = Paginator(all_post_list, 3)
     page = request.GET.get('page', 1)
@@ -69,16 +78,14 @@ def public_post(request, author_id):
 def post_list(request, author_id):
 
     if request.method == 'GET':
-        # retrieve all public posts
-        # posts = Post.objects.filter(visibility="PUBLIC")
-        # retrieve all posts of this author
+        # GET get recent posts of author (paginated)
         try:
-            authorExist = User.objects.get(uuid=author_id)
+            author_exist = User.objects.get(uuid=author_id)
         except:
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
         posts = Post.objects.filter(
-            author_id=author_id, shared=False).order_by('-published')
+            author=author_exist, shared=False).order_by('-published')
         paginator = Paginator(posts, 3)
         page = request.GET.get('page', 1)
 
@@ -101,20 +108,24 @@ def post_list(request, author_id):
             # if there is no such object to be found, it will raise an exception
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if(Post.objects.filter(pk=json_data["id"])):
+        if(Post.objects.filter(id=json_data["id"])):
             return JsonResponse({"Error": "Post with this ID already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        uuid_data = post_id_parser(json_data)
 
         serializer = PostSerializer(data=json_data)
         if serializer.is_valid():
             # give POST object an attribute of author
-            serializer.validated_data["author"] = authorObject
-            return save_method(serializer)
+            new_post = serializer.save()
+            new_post.uuid = uuid_data
+            if json_data["contentType"] == "image/png;base64" or json_data["contentType"] == "image/jpeg;base64":
+                image_file = imageUploader(json_data, uuid_data)
+                new_post.image = image_file
+            new_post.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def post_detail(request, author_id, id):  # this id here is postID
     """
     Retrieve, create, update or delete a code snippet.
@@ -122,12 +133,16 @@ def post_detail(request, author_id, id):  # this id here is postID
 
     if request.method == 'GET':
         try:
-            post = Post.objects.get(pk=id)
-            authorExists = User.objects.get(uuid=author_id)
+            post = Post.objects.get(uuid=id)
+            author_exists = User.objects.get(uuid=author_id)
         except:
             return JsonResponse({"Error": "No such arthor or Post"}, status=status.HTTP_404_NOT_FOUND)
 
-        if(post.author.id == author_id and post.visibility == 'PUBLIC'):
+        if(post.author == author_exists and post.visibility == 'PUBLIC'):
+            if post.contentType == "image/png;base64":
+                return FileResponse(open(os.path.join(MEDIA_ROOT, "images/" + str(id) + ".png"), 'rb'))
+            elif post.contentType == "image/jpeg;base64":
+                return FileResponse(open(MEDIA_ROOT, "images/" + str(id) + ".jpeg"), 'rb')
             serializer = PostSerializer(post)
             return JsonResponse(serializer.data)
         else:
@@ -142,7 +157,7 @@ def post_detail(request, author_id, id):  # this id here is postID
             # if there is no such object to be found, it will raise an exception
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if(Post.objects.filter(pk=id)):
+        if(Post.objects.filter(uuid=id)):
             return JsonResponse({"Error": "Post with this ID already exists"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = PostSerializer(data=json_data)
         print(serializer)
@@ -154,12 +169,19 @@ def post_detail(request, author_id, id):  # this id here is postID
 
     elif request.method == 'DELETE':
         try:
-            post = Post.objects.get(pk=id)
+            post = Post.objects.get(uuid=id)
+            author_exists = User.objects.get(uuid=author_id)
         except:
             return JsonResponse({"Error": "No such post"}, status=status.HTTP_400_BAD_REQUEST)
         # if current post is owned by this author, then delete
-        if(post.author.id == author_id):
+        if(post.author == author_exists):
             post.delete()
+            if post.contentType == "image/png;base64":
+                os.remove(os.path.join(
+                    MEDIA_ROOT, "images/" + str(id) + ".png"))
+            elif post.contentType == "image/jpeg;base64":
+                os.remove(os.path.join(
+                    MEDIA_ROOT, "images/" + str(id) + ".jpeg"))
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             # you cannot delete other arthor's post
@@ -169,8 +191,8 @@ def post_detail(request, author_id, id):  # this id here is postID
         # edit this post
         json_data = JSONParser().parse(request)
         try:
-            post = Post.objects.get(pk=id)
-            authorObject = User.objects.get(uuid=author_id)
+            post = Post.objects.get(uuid=id)
+            author_exists = User.objects.get(uuid=author_id)
         except:
             # if there is no such object to be found, it will raise an exception
             return JsonResponse({"Error": "No such arthor or post"}, status=status.HTTP_400_BAD_REQUEST)
@@ -178,9 +200,12 @@ def post_detail(request, author_id, id):  # this id here is postID
         serializer = PostSerializer(post, data=json_data)
 
         if serializer.is_valid():
-            if(post.author.id == author_id):
-                serializer.save()
-                print(serializer.data)
+            if(post.author == author_exists):
+                new_post = serializer.save()
+                if json_data["contentType"] == "image/png;base64" or json_data["contentType"] == "image/jpeg;base64":
+                    image_file = imageUploader(json_data, id)
+                    new_post.image = image_file
+                    new_post.save()
                 return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return JsonResponse({"Error": "bad permission"}, status=status.HTTP_403_FORBIDDEN)
@@ -189,7 +214,19 @@ def post_detail(request, author_id, id):  # this id here is postID
 
 # helper function under
 
-
+def imageUploader(json_data, id):
+    if os.path.isfile(os.path.join(MEDIA_ROOT, "images/" + str(id) + ".png")):
+        os.remove(os.path.join(
+            MEDIA_ROOT, "images/" + str(id) + ".png"))
+    image_data = base64.b64decode(json_data["content"])
+    image_name = json_data["id"].split("/")[-1]
+    if json_data["contentType"] == "image/png;base64":
+        image_extension = ".png"
+    else:
+        image_extension = ".jpeg"
+    image_file = ContentFile(
+        image_data, image_name+image_extension)
+    return image_file
 # def imageHelper(request):
 #     file_content = ContentFile(request.FILES['img'].read())
 #     img = Post(name = request.FILES['img'].name, img = request.FILES['img'])
