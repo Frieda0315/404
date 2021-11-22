@@ -2,8 +2,8 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.parsers import JSONParser
-from .serializers import CommentSerializer
-from .models import Comment
+from .serializers import CommentSerializer, CommentsSerializer
+from .models import Comment, Comments
 from posts.models import Post
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -16,24 +16,35 @@ from backend.helper import *
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def comment_list(request, author_id, post_id):
+    query_string = "author/"+str(author_id)+"/posts/"+str(post_id)
     if request.method == 'GET':
-        comments = Comment.objects.filter(post_id=post_id)
-        serializer = CommentSerializer(comments, many=True)
-        comment_json = {'type': 'comments',
-                        'id': 'https://i-connect.herokuapp.com/service/author/'+str(author_id)+"/posts/"+str(post_id)+"/comments", 'comments': serializer.data,
-                        'post': 'https://i-connect.herokuapp.com/service/author/'+str(author_id)+"/posts/"+str(post_id)
-                        }
-
-        return JsonResponse(comment_json, safe=False)
+        comments = Comments.objects.filter(post__contains=query_string)
+        if not comments:
+            return JsonResponse({"error": "comment not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = CommentsSerializer(comments[0])
+        return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
         json_data = JSONParser().parse(request)
+        try:
+            post = Post.objects.get(uuid=post_id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
+        comment_lists = Comments.objects.filter(
+            post__contains=query_string)
+        if not comment_lists:
+            return JsonResponse({"error": "comment not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        comment_list = comment_lists[0]
         uuid_data = comment_id_parser(json_data)
         serializer = CommentSerializer(data=json_data)
         if serializer.is_valid():
-            post = Post.objects.get(id=post_id)
             new_comment = serializer.save()
-            new_comment.post = post
             new_comment.uuid = uuid_data
             new_comment.save()
+            # Reference: https://docs.djangoproject.com/en/3.2/topics/db/examples/many_to_many/#many-to-many-relationships
+            comment_list.comments.add(new_comment)
+            comment_list.save()
+            post.count += 1
+            post.save()
+
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

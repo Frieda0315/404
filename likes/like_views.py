@@ -26,7 +26,7 @@ def post_like_list(request, author_id, post_id):
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        Post.objects.get(pk=post_id)
+        Post.objects.get(uuid=post_id)
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -49,7 +49,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
         return JsonResponse({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        Post.objects.get(pk=post_id)
+        Post.objects.get(uuid=post_id)
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 

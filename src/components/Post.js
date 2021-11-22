@@ -83,7 +83,17 @@ const Post = () => {
     if (file) {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        setFileBase64String(reader.result);
+        const imagePrefix = reader.result.split("base64,")[0].split(":")[1];
+        if (imagePrefix === "image/jpeg;") {
+          setTextChoice("image/jpeg;base64");
+          setFileBase64String(reader.result.split("base64,")[1]);
+        } else if (imagePrefix === "image/png;") {
+          setTextChoice("image/png;base64");
+          setFileBase64String(reader.result.split("base64,")[1]);
+        } else {
+          console.log(imagePrefix);
+          // alert("unsupported image");
+        }
       };
     }
   };
@@ -220,6 +230,10 @@ const Post = () => {
           }
         );
         history.push({ pathname: "/" });
+        // for pure image
+      } else {
+        console.log(fileBase64String);
+        console.log(textChoice);
       }
     } else {
       alert("Empty field is not allowed ^^");
@@ -308,6 +322,7 @@ const Post = () => {
                 type="file"
                 accept="image/*"
                 onChange={(event) => {
+                  console.log("abc");
                   uploadImage(event.target.files);
                 }}
               />
