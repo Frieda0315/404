@@ -271,7 +271,7 @@ function PostStream(props) {
             const postId = single.id.split("/").at(-1);
             like_promises.push(
               axios
-                .get(`${baseUrl2}/authors/${authorId}/posts/${postId}/likes/`, {
+                .get(`${baseUrl2}/author/${authorId}/posts/${postId}/likes/`, {
                   auth: { username: "admin", password: "admin" },
                 })
                 .then((response) => {
@@ -296,7 +296,7 @@ function PostStream(props) {
     return (
       <Redirect
         to={
-          "/authors/" +
+          "/author/" +
           comments.author_id.split("/").at(-1) +
           "/posts/" +
           comments.id.split("/").at(-1) +
