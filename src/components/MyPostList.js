@@ -114,7 +114,7 @@ function MyPostList() {
     return (
       <Redirect
         to={
-          "/authors/" +
+          "/author/" +
           comments.author_id +
           "/posts/" +
           comments.id +
@@ -129,7 +129,7 @@ function MyPostList() {
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
     axios
-      .delete(`${baseUrl2}/authors/${userid}/posts/${id}/`, {
+      .delete(`${baseUrl2}/author/${userid}/posts/${id}/`, {
         auth: {
           username: "admin",
           password: "admin",

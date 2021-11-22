@@ -16,9 +16,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     # TODO: update urls for post and authors
     # TODO: update all urls using posts, in order to support with/without slash in the end
-    path('service/authors/<uuid:author_id>/posts/',
+    path('service/author/<uuid:author_id>/posts/',
          post_views.post_list, name='post_list'),
-    path('service/authors/<uuid:author_id>/posts/<uuid:id>/',
+    path('service/author/<uuid:author_id>/posts/<uuid:id>/',
          post_views.post_detail, name='post_detail'),
     # posts this author can see
     path('service/posts/<uuid:author_id>/',
@@ -41,13 +41,13 @@ urlpatterns = [
     re_path('^service/admin/login/?$',
             user_views.admin_login, name='admin_login'),
 
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/',
+    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
     # likes
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/likes/',
+    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/likes/',
          like_views.post_like_list, name='post_like_list'),
-    path('service/authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/',
+    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/',
          like_views.comment_like_list, name='comment_like_list'),
     path('service/author/<uuid:author_id>/liked/',
          like_views.author_like_list, name='author_like_list'),

@@ -50,7 +50,7 @@ function App() {
           <MainPage></MainPage>
         </Route>
 
-        <Route exact path="/authors/*/posts/*/comments">
+        <Route exact path="/author/*/posts/*/comments">
           <NavMenu />
           <Comments></Comments>
         </Route>
