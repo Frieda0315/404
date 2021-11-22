@@ -28,3 +28,7 @@ h1 {
 .errorInfo {
   color: #d32f2f;
 }
+
+.markdown-container img {
+  max-width: 100%;
+}

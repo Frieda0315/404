@@ -20,6 +20,7 @@ import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
 import ReactMarkdown from "react-markdown";
 import Share from "./Share";
+import "../index.css";
 
 const useStyles = makeStyles(() => ({
   stream: {
@@ -351,7 +352,9 @@ function PostStream(props) {
                   </Typography>
                   {post.contentType === "text/markdown" ? (
                     <div style={{ maxWidth: "100vh", display: "inline-block" }}>
-                      <ReactMarkdown>{post.content}</ReactMarkdown>
+                      <ReactMarkdown className="markdown-container">
+                        {post.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
                     <Typography variant="body1" color="text.secondary">
