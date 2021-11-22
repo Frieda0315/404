@@ -137,7 +137,7 @@ const Post = () => {
       if (textChoice === "text/plain") {
         if (isImage === true) {
           const newpost = await axios.put(
-            `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+            `${baseUrl2}/author/${userid}/posts/${uuid}/`,
             {
               type: "post",
               id: uuid,
@@ -161,7 +161,7 @@ const Post = () => {
           history.push({ pathname: "/" });
         } else {
           const newpost = await axios.put(
-            `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+            `${baseUrl2}/author/${userid}/posts/${uuid}/`,
             {
               type: "post",
               id: uuid,
@@ -185,7 +185,7 @@ const Post = () => {
         }
       } else if (textChoice === "text/markdown") {
         const newpost = await axios.put(
-          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          `${baseUrl2}/author/${userid}/posts/${uuid}/`,
           {
             type: "post",
             id: uuid,
@@ -209,7 +209,7 @@ const Post = () => {
         history.push({ pathname: "/" });
       } else if (common === "") {
         const newpost = await axios.put(
-          `${baseUrl2}/authors/${userid}/posts/${uuid}/`,
+          `${baseUrl2}/author/${userid}/posts/${uuid}/`,
           {
             type: "post",
             id: uuid,

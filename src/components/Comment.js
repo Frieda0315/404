@@ -66,7 +66,7 @@ function Comments(props) {
           commentPromises.push(
             axios
               .get(
-                `${baseUrl2}/authors/${localStorage.getItem(
+                `${baseUrl2}/author/${localStorage.getItem(
                   "current_user_id"
                 )}/posts/${path.split("/").at(-2)}/comments/${commentItem.id
                   .split("/")
