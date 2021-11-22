@@ -40,7 +40,7 @@ def post_like_list(request, author_id, post_id):
 @permission_classes([IsAuthenticated])
 def comment_like_list(request, author_id, post_id, comment_id):
     comment_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/comments\/[-a-zA-Z0-9@:%._\+~#=]{2,256}'
-    comment_search_string = "/author/" + \
+    comment_search_string = "/authors/" + \
         str(author_id) + "/posts/" + str(post_id) + \
         "/comments/" + str(comment_id)
     try:
@@ -54,7 +54,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
         return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        Comment.objects.get(pk=post_id)
+        Comment.objects.get(uuid=comment_id)
     except Comment.DoesNotExist:
         return JsonResponse({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
