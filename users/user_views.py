@@ -21,7 +21,8 @@ from backend.helper import *
 def author_list(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
-    return JsonResponse(serializer.data, safe=False)
+    response = {"type": "authors", "items": serializer.data}
+    return JsonResponse(response, safe=False)
 
 
 @api_view(['GET', 'POST', 'DELETE'])

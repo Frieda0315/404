@@ -171,13 +171,12 @@ export default function Profile({
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(originalAuthor);
-    setIsEdit(false);
     axios
       .post(
         `${baseUrl2}/author/${userid}/`,
         {
           type: "author",
-          uuid: originalAuthor.id,
+          id: originalAuthor.id,
           host: originalAuthor.host,
           displayName: displayName,
           url: originalAuthor.url,
@@ -199,9 +198,10 @@ export default function Profile({
           localStorage.removeItem("user_name");
           localStorage.setItem("github_user", github);
           localStorage.setItem("user_name", displayName);
+          setIsEdit(false);
         },
         (error) => {
-          alert("error ");
+          alert("username already exists!");
           console.log(error);
         }
       );

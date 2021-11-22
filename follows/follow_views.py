@@ -26,7 +26,8 @@ def follower_list(request, author_id):
     for follow in follow_serializer.data:
         follower_list.append(follow["follower"])
     # follower_serializer.data
-    return JsonResponse(follower_list, status=status.HTTP_200_OK, safe=False)
+    follower_json = {"type": "followers", "items": follower_list}
+    return JsonResponse(follower_json, status=status.HTTP_200_OK, safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
