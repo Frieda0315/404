@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 
 const FollowProfile = ({ follow_user_url }) => {
+  console.log(follow_user_url.split("/").at(-1));
+  console.log(localStorage.getItem("current_user_id"));
   const useStyles = makeStyles(() => ({
     editbutton: {
       marginLeft: "-10px",
@@ -40,6 +42,7 @@ const FollowProfile = ({ follow_user_url }) => {
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [followUser, setFollowUser] = useState({ profileImage: "abc" });
+  const [isfollowed, setIsfollowed] = useState("");
   const styleClasses = useStyles();
   const handleFollow = async () => {
     const followerId = followUser.id.split("/").at(-1);
@@ -106,7 +109,47 @@ const FollowProfile = ({ follow_user_url }) => {
       .then((res) => {
         setFollowUser(res.data);
       });
+    axios
+      .get(
+        `${baseUrl2}/author/${localStorage.getItem(
+          "current_user_id"
+        )}/followers/${follow_user_url.split("/").at(-1)}`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
+      .then((res) => {
+        if (
+          follow_user_url.split("/").at(-1) ===
+          localStorage.getItem("current_user_id")
+        ) {
+          console.log("sadfhk");
+          setIsfollowed(true);
+        } else if (res.data.result) {
+          setIsfollowed(true);
+        } else {
+          console.log("sadfhk");
+          setIsfollowed(false);
+        }
+        console.log("sjahfk", res.data);
+      })
+      .catch((e) => {
+        if (
+          follow_user_url.split("/").at(-1) ===
+          localStorage.getItem("current_user_id")
+        ) {
+          setIsfollowed(true);
+        } else {
+          console.log("sadfhk");
+          setIsfollowed(false);
+        }
+        console.log(e);
+      });
   }, []);
+
   return (
     <Grid
       container
@@ -152,7 +195,7 @@ const FollowProfile = ({ follow_user_url }) => {
                     className={styleClasses.button1}
                     variant="contained"
                     size="small"
-                    // disabled={ifFollowed}
+                    disabled={isfollowed}
                     onClick={handleFollow}
                   >
                     Follow

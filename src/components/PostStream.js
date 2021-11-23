@@ -100,6 +100,7 @@ function PostStream(props) {
   const [image, setImage] = React.useState();
 
   const [postlist, setPostlist] = React.useState([]);
+
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [shareBuffer, setShareBuffer] = React.useState({});
   const baseUrl = "https://api.github.com/users";
@@ -233,7 +234,6 @@ function PostStream(props) {
           const responseTwo = responses[1];
 
           responseTwo.data.map((single) => {
-            console.log(single);
             newList.push({
               id: single.id,
               published: single.created_at,
@@ -250,6 +250,7 @@ function PostStream(props) {
 
           const responseOne = responses[0];
           responseOne.data.map((single) => {
+            console.log(single);
             let postItem = {
               id: single.id,
               published: single.published,
@@ -322,9 +323,7 @@ function PostStream(props) {
             <Avatar
               src={post.avatar_url}
               onClick={() => {
-                if (post.is_github_activity === false) {
-                  open(post.author, post.github_user, post.author_url);
-                }
+                open(post.author, post.github_user, post.author_url);
               }}
             ></Avatar>
           </Grid>
