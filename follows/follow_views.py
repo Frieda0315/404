@@ -82,10 +82,8 @@ def follower_detail(request, author_id, foreign_author_id):
             return JsonResponse(follow_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif(request.method == "GET"):
         if(not follow):
-            return JsonResponse({"result": "No follow relationship found"}, status=status.HTTP_200_OK)
-        return JsonResponse({"result": "Follow relationship found"}, status=status.HTTP_200_OK)
-
-    return JsonResponse({"error": "follower already added"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"result": False}, status=status.HTTP_200_OK)
+        return JsonResponse({"result": True}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
