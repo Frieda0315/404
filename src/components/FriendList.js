@@ -11,24 +11,24 @@ import "./font/style.css";
 const FriendList = () => {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-  const [friendList, setFriends] = React.useState([]);
+  const [followerList, setFollowerList] = React.useState([]);
 
   const handleRemove = (id) => {
-    axios
-      .delete(`${baseUrl2}/author/${userid}/followers/${id}/`, {
+    const newList = followerList.filter((item) => item.id !== id);
+    setFollowerList(newList);
+    axios.delete(
+      `${baseUrl2}/author/${userid}/followers/${id.split("/").at(-1)}/`,
+      {
         auth: {
           username: "admin",
           password: "admin",
         },
-      })
-      .then((res) => {
-        const newList = friendList.filter((item) => item.id !== id);
-        setFriends(newList);
-      });
+      }
+    );
   };
-  const [check, setCheck] = React.useState(false);
-  const [followerList, setFollowerList] = React.useState([]);
+  //const [check, setCheck] = React.useState(false);
 
+  var checkList = [];
   const friendType = (id) => {
     //let check = false;
     const a = axios.get(`${baseUrl2}/author/${userid}/followers/${id}/`, {
@@ -43,19 +43,21 @@ const FriendList = () => {
         password: "admin",
       },
     });
-    axios.all([a, b]).then(
+    return axios.all([a, b]).then(
       axios.spread((...res) => {
-        if (
-          res[0].data.result === "Follow relationship found" &&
-          res[1].data.result === "Follow relationship found"
-        ) {
-          setCheck(true);
-          console.log(check);
-          return true;
+        console.log(res[0].data.result);
+        var p = {};
+
+        if (res[0].data.result === true && res[1].data.result === true) {
+          p[id] = true;
+          checkList.push(p);
+        } else {
+          p[id] = false;
+
+          checkList.push(p);
         }
       })
     );
-    return false;
   };
 
   useEffect(() => {
@@ -67,28 +69,39 @@ const FriendList = () => {
         },
       })
       .then((res) => {
-        setFollowerList(res.data);
+        setFollowerList(res.data.items);
+        console.log(res.data.items);
+
+        // let promises = [];
+        // followerList.map((infor) => {
+        //   const user2Uuid = infor.id.split("/").at(-1);
+        //   promises.push(friendType(user2Uuid));
+        // });
+
+        // Promise.all(promises).then(() => {
+        //   console.log(checkList);
+        //   followerList.map((infor) => {
+        //     const user2Uuid = infor.id.split("/").at(-1);
+        //     for (let i = 0; i < checkList.length; i++) {
+        //       if (user2Uuid === Object.keys(checkList[i])[0]) {
+        //         newList.push({
+        //           id: user2Uuid,
+        //           github: infor.github,
+        //           follower: infor.displayName,
+        //           ftype: checkList[i][user2Uuid],
+        //           profileImage: infor.profileImage,
+        //         });
+        //       }
+        //     }
+        //   });
+        //   setNewList2(newList);
+        //   //return newList;
+        //   console.log(newList);
+        // });
       });
   }, []);
-  const newList = [];
-  followerList.map((infor) => {
-    let ismyfriend = false;
-    const user2Uuid = infor.id.split("/").at(-1);
-    friendType(user2Uuid);
-    if (check) {
-      ismyfriend = true;
-      //console.log(isFriend);
-    }
-    newList.push({
-      id: user2Uuid,
-      github: infor.github,
-      follower: infor.displayName,
-      ftype: ismyfriend,
-    });
-  });
-  //console.log("this is check", isFriend);
 
-  const listItems = newList.map((item) => (
+  const listItems = followerList.map((item) => (
     <Grid
       item
       xs={8}
@@ -105,25 +118,13 @@ const FriendList = () => {
         <Grid item>
           <Grid container direction="row" spacing={2}>
             <Grid item>
-              <Avatar alt={`head1`} src={head1} />
+              <Avatar alt="head" src={item.profileImage} />
             </Grid>
             <Grid item>
-              <Typography>{item.follower}</Typography>
+              <Typography>{item.displayName}</Typography>
+              <Typography>{item.github}</Typography>
             </Grid>
-            {item.ftype ? (
-              <Grid item marginLeft={30}>
-                <Typography>friend</Typography>
-              </Grid>
-            ) : (
-              <Grid item marginLeft={30}>
-                <Typography>follower</Typography>
-              </Grid>
-            )}
           </Grid>
-        </Grid>
-
-        <Grid item marginLeft={7}>
-          <Typography>{item.github}</Typography>
         </Grid>
       </Grid>
       <Grid
@@ -139,7 +140,7 @@ const FriendList = () => {
             size="small"
             onClick={() => handleRemove(item.id)}
           >
-            UnFollow
+            Remove
           </Button>
           {/* <IconButton
             edge="end"
