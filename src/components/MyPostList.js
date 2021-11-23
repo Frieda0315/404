@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const PostItemInList = ({ post, open_image_holder }) => {
-  if (post.contentType === "text/plaintext") {
+  if (post.contentType === "text/plain") {
     return (
       <Grid container>
         <Grid item xs>

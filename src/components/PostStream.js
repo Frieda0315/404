@@ -153,13 +153,19 @@ function PostStream(props) {
         password: "admin",
       },
     });
+    const id_url = post.id;
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
-      object: baseUrl2 + "/author/" + authorId + "/posts/" + post.id,
+      object:
+        baseUrl2 +
+        "/author/" +
+        authorId +
+        "/posts/" +
+        id_url.substring(id_url.lastIndexOf("/") + 1),
     };
 
     // post likes
