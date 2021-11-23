@@ -4,7 +4,7 @@ Reference: https://docs.djangoproject.com/en/3.2/topics/pagination/
 Author: Django doc
 '''
 from django.core import paginator
-from django.http.response import FileResponse, JsonResponse
+from django.http.response import FileResponse, JsonResponse, HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -33,7 +33,7 @@ import os
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def public_post(request, author_id):
+def stream_public_post(request, author_id):
     '''
     Get all posts this author can see
     '''
@@ -140,9 +140,11 @@ def post_detail(request, author_id, id):  # this id here is postID
 
         if(post.author == author_exists and post.visibility == 'PUBLIC'):
             if post.contentType == "image/png;base64":
-                return FileResponse(open(os.path.join(MEDIA_ROOT, "images/" + str(id) + ".png"), 'rb'))
+                binary = base64.b64decode(post.content)
+                return HttpResponse(binary, content_type='image/png')
             elif post.contentType == "image/jpeg;base64":
-                return FileResponse(open(MEDIA_ROOT, "images/" + str(id) + ".jpeg"), 'rb')
+                binary = base64.b64decode(post.content)
+                return HttpResponse(binary, content_type='image/jpeg')
             serializer = PostSerializer(post)
             return JsonResponse(serializer.data)
         else:
