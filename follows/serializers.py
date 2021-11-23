@@ -12,8 +12,8 @@ class FollowSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         follower_data = validated_data.pop("follower")
         following_data = validated_data.pop("following")
-        follower = User.objects.get(**follower_data)
-        following = User.objects.get(**following_data)
+        follower = User.objects.get_or_create(**follower_data)[0]
+        following = User.objects.get_or_create(**following_data)[0]
 
         return Follow.objects.create(follower=follower, following=following, **validated_data)
 

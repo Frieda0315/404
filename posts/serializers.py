@@ -19,16 +19,12 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author_data = validated_data.pop('author')
-        print(author_data)
-        author = User.objects.get(**author_data)
-        print(author)
+        author = User.objects.get_or_create(**author_data)[0]
         validated_data["author"] = author
 
         comments_data = validated_data.pop('commentsSrc')
-        print(comments_data)
         comments_data.pop("comments")
         comments = Comments.objects.get_or_create(**comments_data)[0]
-        print(comments)
         validated_data["commentsSrc"] = comments
 
         return Post.objects.create(**validated_data)

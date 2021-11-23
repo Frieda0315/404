@@ -40,7 +40,7 @@ def post_like_list(request, author_id, post_id):
 @permission_classes([IsAuthenticated])
 def comment_like_list(request, author_id, post_id, comment_id):
     comment_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/comments\/[-a-zA-Z0-9@:%._\+~#=]{2,256}'
-    comment_search_string = "/authors/" + \
+    comment_search_string = "/author/" + \
         str(author_id) + "/posts/" + str(post_id) + \
         "/comments/" + str(comment_id)
     try:
