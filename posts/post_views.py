@@ -161,11 +161,18 @@ def post_detail(request, author_id, id):  # this id here is postID
 
         if(Post.objects.filter(uuid=id)):
             return JsonResponse({"Error": "Post with this ID already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        uuid_data = post_id_parser(json_data)
         serializer = PostSerializer(data=json_data)
         print(serializer)
         if serializer.is_valid():
             # give POST object an attribute of author
-            return save_method(serializer)
+            new_post = serializer.save()
+            new_post.uuid = uuid_data
+            if json_data["contentType"] == "image/png;base64" or json_data["contentType"] == "image/jpeg;base64":
+                image_file = imageUploader(json_data, uuid_data)
+                new_post.image = image_file
+            new_post.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

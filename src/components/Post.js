@@ -18,6 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
+import AddIcon from "@mui/icons-material/Add";
 
 const heading = {
   fontSize: "30px",
@@ -50,9 +51,11 @@ const Post = () => {
   const [isImage, setIsImage] = React.useState(false);
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
-  const [textChoice, setTextChoice] = React.useState("text/plain");
+  const [textChoice, setTextChoice] = React.useState("text/plaintext");
   const [showImagebox, setshowImagebox] = React.useState(false);
   const [unlisted, setUnlisted] = React.useState(false);
+  const [categories, setCategories] = React.useState([]);
+  const [category, setCategory] = React.useState([]);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const uploadImage = (files) => {
@@ -123,7 +126,7 @@ const Post = () => {
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
-    const currentDateTime = Date().toLocaleString();
+    const currentDateTime = new Date().toISOString();
     const uuid = uuidv4();
     setDate(currentDateTime);
     const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
@@ -132,111 +135,162 @@ const Post = () => {
         password: "admin",
       },
     });
-    if (title !== "" && common !== "") {
-      if (textChoice === "text/plain") {
-        if (isImage === true) {
-          const newpost = await axios.put(
-            `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-            {
-              type: "post",
-              id: uuid,
-              title: title,
-              contentType: textChoice,
-              content: common,
-              // image: fileBase64String,
-              published: date,
-              author: author.data,
-              visibility: visibility,
-              source: "https://i-connect.herokuapp.com/service/posts/",
-              origin: "https://i-connect.herokuapp.com/service/posts/",
-            },
-            {
-              auth: {
-                username: "admin",
-                password: "admin",
-              },
-            }
-          );
-          history.push({ pathname: "/" });
-        } else {
-          const newpost = await axios.put(
-            `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-            {
-              type: "post",
-              id: uuid,
-              title: title,
-              contentType: textChoice,
-              content: common,
-              published: date,
-              author: author.data,
-              visibility: visibility,
-              source: "https://i-connect.herokuapp.com/service/posts/",
-              origin: "https://i-connect.herokuapp.com/service/posts/",
-            },
-            {
-              auth: {
-                username: "admin",
-                password: "admin",
-              },
-            }
-          );
-          history.push({ pathname: "/" });
-        }
-      } else if (textChoice === "text/markdown") {
-        const newpost = await axios.put(
-          `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-          {
-            type: "post",
-            id: uuid,
-            title: title,
-            contentType: textChoice,
-            content: common,
-            // image: fileBase64String,
-            published: date,
-            author: author.data,
-            visibility: visibility,
-            source: "https://i-connect.herokuapp.com/service/posts/",
-            origin: "https://i-connect.herokuapp.com/service/posts/",
-          },
-          {
-            auth: {
-              username: "admin",
-              password: "admin",
-            },
-          }
-        );
-        history.push({ pathname: "/" });
-      } else if (common === "") {
-        const newpost = await axios.put(
-          `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-          {
-            type: "post",
-            id: uuid,
-            title: title,
-            contentType: "image",
-            content: fileBase64String,
-            published: date,
-            author: author.data,
-            visibility: visibility,
-            source: "https://i-connect.herokuapp.com/service/posts/",
-            origin: "https://i-connect.herokuapp.com/service/posts/",
-          },
-          {
-            auth: {
-              username: "admin",
-              password: "admin",
-            },
-          }
-        );
-        history.push({ pathname: "/" });
-        // for pure image
-      } else {
-        console.log(fileBase64String);
-        console.log(textChoice);
-      }
-    } else {
+    if (title === "") {
       alert("Empty field is not allowed ^^");
+      return;
     }
+    const postId = baseUrl2 + "/author/" + authorID + "/posts/" + uuid;
+    const emptyComment = {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: postId,
+      id: postId,
+      comments: [],
+    };
+    const postTemplate = {
+      type: "post",
+      id: postId,
+      title: title,
+      source: "https://i-connect.herokuapp.com/",
+      origin: "https://i-connect.herokuapp.com/",
+      description: `${author.data.displayName} creates a new post "${title}"`,
+      contentType: textChoice,
+      author: author.data,
+      categories: categories,
+      count: 0,
+      comments: postId,
+      commentsSrc: emptyComment,
+      published: currentDateTime,
+      visibility: visibility,
+      unlisted: unlisted,
+    };
+    if (textChoice === "text/plaintext" || textChoice === "text/markdown") {
+      if (common === "") {
+        alert("Content field is empty!");
+        return;
+      }
+      postTemplate.content = common;
+    } else {
+      if (fileBase64String === "") {
+        alert("Image field is empty!");
+        return;
+      }
+      postTemplate.content = fileBase64String;
+    }
+    const newPost = await axios.put(`${postId}/`, postTemplate, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    console.log(newPost.data);
+    // if (textChoice === "")
+    //   if (title !== "" && common !== "") {
+    //     if (textChoice === "text/plain") {
+    //       if (isImage === true) {
+    //         const newpost = await axios.put(
+    //           `${baseUrl2}/author/${userid}/posts/${uuid}/`,
+    //           {
+    //             type: "post",
+    //             id: uuid,
+    //             title: title,
+    //             contentType: textChoice,
+    //             content: common,
+    //             // image: fileBase64String,
+    //             published: date,
+    //             author: author.data,
+    //             visibility: visibility,
+    //             source: "https://i-connect.herokuapp.com/service/posts/",
+    //             origin: "https://i-connect.herokuapp.com/service/posts/",
+    //           },
+    //           {
+    //             auth: {
+    //               username: "admin",
+    //               password: "admin",
+    //             },
+    //           }
+    //         );
+    //         history.push({ pathname: "/" });
+    //       } else {
+    //         const newpost = await axios.put(
+    //           `${baseUrl2}/author/${userid}/posts/${uuid}/`,
+    //           {
+    //             type: "post",
+    //             id: uuid,
+    //             title: title,
+    //             contentType: textChoice,
+    //             content: common,
+    //             published: date,
+    //             author: author.data,
+    //             visibility: visibility,
+    //             source: "https://i-connect.herokuapp.com/service/posts/",
+    //             origin: "https://i-connect.herokuapp.com/service/posts/",
+    //           },
+    //           {
+    //             auth: {
+    //               username: "admin",
+    //               password: "admin",
+    //             },
+    //           }
+    //         );
+    //         history.push({ pathname: "/" });
+    //       }
+    //     } else if (textChoice === "text/markdown") {
+    //       const newpost = await axios.put(
+    //         `${baseUrl2}/author/${userid}/posts/${uuid}/`,
+    //         {
+    //           type: "post",
+    //           id: uuid,
+    //           title: title,
+    //           contentType: textChoice,
+    //           content: common,
+    //           // image: fileBase64String,
+    //           published: date,
+    //           author: author.data,
+    //           visibility: visibility,
+    //           source: "https://i-connect.herokuapp.com/service/posts/",
+    //           origin: "https://i-connect.herokuapp.com/service/posts/",
+    //         },
+    //         {
+    //           auth: {
+    //             username: "admin",
+    //             password: "admin",
+    //           },
+    //         }
+    //       );
+    //       history.push({ pathname: "/" });
+    //     } else if (common === "") {
+    //       const newpost = await axios.put(
+    //         `${baseUrl2}/author/${userid}/posts/${uuid}/`,
+    //         {
+    //           type: "post",
+    //           id: uuid,
+    //           title: title,
+    //           contentType: "image",
+    //           content: fileBase64String,
+    //           published: date,
+    //           author: author.data,
+    //           visibility: visibility,
+    //           source: "https://i-connect.herokuapp.com/service/posts/",
+    //           origin: "https://i-connect.herokuapp.com/service/posts/",
+    //         },
+    //         {
+    //           auth: {
+    //             username: "admin",
+    //             password: "admin",
+    //           },
+    //         }
+    //       );
+    //       history.push({ pathname: "/" });
+    //       // for pure image
+    //     } else {
+    //       console.log(fileBase64String);
+    //       console.log(textChoice);
+    //     }
+    //   } else {
+    //     alert("Empty field is not allowed ^^");
+    //   }
   };
 
   const history = useHistory();
@@ -282,7 +336,7 @@ const Post = () => {
                 setTextChoice(e.target.value);
               }}
             >
-              <MenuItem value={"text/plain"}>text/plain</MenuItem>
+              <MenuItem value={"text/plaintext"}>text/plaintext</MenuItem>
               <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
               <MenuItem value={"image/png;base64"}>image/png</MenuItem>
               <MenuItem value={"image/jpeg;base64"}>image/jpeg</MenuItem>
@@ -420,7 +474,51 @@ const Post = () => {
         </FormControl>
       </Grid>
 
-      <Grid item>
+      <Grid
+        container
+        alignItems="center"
+        style={{
+          marginTop: 5,
+          marginBottom: 20,
+          marginLeft: 5,
+        }}
+      >
+        <div>
+          {categories.map((c) => {
+            return <span>{c}, </span>;
+          })}
+        </div>
+
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 20,
+            width: "10%",
+            marginLeft: 5,
+          }}
+          id="addTitle"
+          label="category"
+          variant="filled"
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+          }}
+        />
+        <AddIcon
+          sx={{ fontSize: 40 }}
+          cursor="pointer"
+          onClick={(e) => {
+            if (category !== "") {
+              let newCategories = categories;
+              newCategories.push(category);
+              setCategories(newCategories);
+              setCategory("");
+            }
+          }}
+        />
+      </Grid>
+
+      <Grid item style={{ marginBottom: 20 }}>
         <Button
           variant="contained"
           color="success"
