@@ -16,8 +16,6 @@ import {
 } from "@mui/material";
 
 const FollowProfile = ({ follow_user_url }) => {
-  console.log(follow_user_url.split("/").at(-1));
-  console.log(localStorage.getItem("current_user_id"));
   const useStyles = makeStyles(() => ({
     editbutton: {
       marginLeft: "-10px",
@@ -60,8 +58,6 @@ const FollowProfile = ({ follow_user_url }) => {
         authorinfor.displayName + " want follow " + followUser.displayName;
 
       try {
-        console.log(authorinfor.id);
-        console.log(followUser.id);
         await axios.post(
           `${baseUrl2}/author/${followerId}/inbox/`,
           {
@@ -91,14 +87,12 @@ const FollowProfile = ({ follow_user_url }) => {
             },
           }
         );
-        //console.log("res",res.data)
       } catch (err) {
         console.log("errors");
       }
     }
   };
   useEffect(() => {
-    console.log(follow_user_url);
     axios
       .get(follow_user_url, {
         auth: {
@@ -109,11 +103,12 @@ const FollowProfile = ({ follow_user_url }) => {
       .then((res) => {
         setFollowUser(res.data);
       });
+
     axios
       .get(
-        `${baseUrl2}/author/${localStorage.getItem(
-          "current_user_id"
-        )}/followers/${follow_user_url.split("/").at(-1)}`,
+        `${baseUrl2}/author/${follow_user_url
+          .split("/")
+          .at(-1)}/followers/${localStorage.getItem("current_user_id")}`,
         {
           auth: {
             username: "admin",
@@ -126,15 +121,12 @@ const FollowProfile = ({ follow_user_url }) => {
           follow_user_url.split("/").at(-1) ===
           localStorage.getItem("current_user_id")
         ) {
-          console.log("sadfhk");
           setIsfollowed(true);
         } else if (res.data.result) {
           setIsfollowed(true);
         } else {
-          console.log("sadfhk");
           setIsfollowed(false);
         }
-        console.log("sjahfk", res.data);
       })
       .catch((e) => {
         if (
@@ -143,10 +135,8 @@ const FollowProfile = ({ follow_user_url }) => {
         ) {
           setIsfollowed(true);
         } else {
-          console.log("sadfhk");
           setIsfollowed(false);
         }
-        console.log(e);
       });
   }, []);
 
