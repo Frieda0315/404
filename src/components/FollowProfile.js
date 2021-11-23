@@ -40,6 +40,7 @@ const FollowProfile = ({ follow_user_url }) => {
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [followUser, setFollowUser] = useState({ profileImage: "abc" });
+  const [isfollowed, setIsfollowed] = useState("");
   const styleClasses = useStyles();
   const handleFollow = async () => {
     const followerId = followUser.id.split("/").at(-1);
@@ -57,8 +58,6 @@ const FollowProfile = ({ follow_user_url }) => {
         authorinfor.displayName + " want follow " + followUser.displayName;
 
       try {
-        console.log(authorinfor.id);
-        console.log(followUser.id);
         await axios.post(
           `${baseUrl2}/author/${followerId}/inbox/`,
           {
@@ -88,14 +87,12 @@ const FollowProfile = ({ follow_user_url }) => {
             },
           }
         );
-        //console.log("res",res.data)
       } catch (err) {
         console.log("errors");
       }
     }
   };
   useEffect(() => {
-    console.log(follow_user_url);
     axios
       .get(follow_user_url, {
         auth: {
@@ -106,7 +103,43 @@ const FollowProfile = ({ follow_user_url }) => {
       .then((res) => {
         setFollowUser(res.data);
       });
+
+    axios
+      .get(
+        `${baseUrl2}/author/${follow_user_url
+          .split("/")
+          .at(-1)}/followers/${localStorage.getItem("current_user_id")}`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
+      .then((res) => {
+        if (
+          follow_user_url.split("/").at(-1) ===
+          localStorage.getItem("current_user_id")
+        ) {
+          setIsfollowed(true);
+        } else if (res.data.result) {
+          setIsfollowed(true);
+        } else {
+          setIsfollowed(false);
+        }
+      })
+      .catch((e) => {
+        if (
+          follow_user_url.split("/").at(-1) ===
+          localStorage.getItem("current_user_id")
+        ) {
+          setIsfollowed(true);
+        } else {
+          setIsfollowed(false);
+        }
+      });
   }, []);
+
   return (
     <Grid
       container
@@ -152,7 +185,7 @@ const FollowProfile = ({ follow_user_url }) => {
                     className={styleClasses.button1}
                     variant="contained"
                     size="small"
-                    // disabled={ifFollowed}
+                    disabled={isfollowed}
                     onClick={handleFollow}
                   >
                     Follow
