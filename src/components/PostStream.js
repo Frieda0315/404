@@ -231,8 +231,9 @@ function PostStream(props) {
       .then(
         axios.spread((...responses) => {
           const responseTwo = responses[1];
+
           responseTwo.data.map((single) => {
-            //console.log(single.actor);
+            console.log(single);
             newList.push({
               id: single.id,
               published: single.created_at,
@@ -241,7 +242,7 @@ function PostStream(props) {
               github_user: "",
               title: "Github Activity: " + single.type,
               avatar_url:
-                "https://avatars.githubusercontent.com/u/55036290?v=4",
+                "https://avatars.githubusercontent.com/" + single.actor.login,
               is_github_activity: true,
             });
           });
@@ -321,8 +322,9 @@ function PostStream(props) {
             <Avatar
               src={post.avatar_url}
               onClick={() => {
-                console.log(post);
-                open(post.author, post.github_user, post.author_url);
+                if (post.is_github_activity === false) {
+                  open(post.author, post.github_user, post.author_url);
+                }
               }}
             ></Avatar>
           </Grid>
@@ -333,7 +335,10 @@ function PostStream(props) {
             <Typography>
               {post != null ? post.published : "null date"}
             </Typography>
-            {post.visibility === "PUBLIC" ? (
+
+            {post.is_github_activity === true ? (
+              <Typography>Github Activity</Typography>
+            ) : post.visibility === "PUBLIC" ? (
               <Typography>Public</Typography>
             ) : post.visibility === "FRIENDS" ? (
               <Typography>Friend</Typography>
