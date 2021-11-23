@@ -52,6 +52,7 @@ const Post = () => {
   const [visibility, setVisibility] = React.useState("PUBLIC");
   const [textChoice, setTextChoice] = React.useState("text/plain");
   const [showImagebox, setshowImagebox] = React.useState(false);
+  const [unlisted, setUnlisted] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const uploadImage = (files) => {
@@ -85,10 +86,8 @@ const Post = () => {
       reader.onloadend = () => {
         const imagePrefix = reader.result.split("base64,")[0].split(":")[1];
         if (imagePrefix === "image/jpeg;") {
-          setTextChoice("image/jpeg;base64");
           setFileBase64String(reader.result.split("base64,")[1]);
         } else if (imagePrefix === "image/png;") {
-          setTextChoice("image/png;base64");
           setFileBase64String(reader.result.split("base64,")[1]);
         } else {
           console.log(imagePrefix);
@@ -269,52 +268,30 @@ const Post = () => {
               label="Input Type"
               autoWidth
               onChange={(e) => {
-                if (e.target.value === "text/markdown") {
+                if (
+                  e.target.value === "image/png;base64" ||
+                  e.target.value === "image/jpeg;base64"
+                ) {
                   setshowImagebox(true);
+                  setCommon("");
                 } else {
                   setshowImagebox(false);
+                  setFileBase64String("");
+                  setImage(null);
                 }
                 setTextChoice(e.target.value);
               }}
             >
               <MenuItem value={"text/plain"}>text/plain</MenuItem>
-
               <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
+              <MenuItem value={"image/png;base64"}>image/png</MenuItem>
+              <MenuItem value={"image/jpeg;base64"}>image/jpeg</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        {showImagebox ? (
-          <Grid item>
-            <FormControl sx={{ m: 1, minWidth: 80 }}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Image"
-                onChange={(e) => handleCheckBoxChange(e)}
-              />{" "}
-            </FormControl>
-          </Grid>
-        ) : null}
       </Grid>
 
-      <Grid item>
-        <TextField
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            width: "90%",
-            height: "90%",
-            marginLeft: 5,
-          }}
-          id="addDescription"
-          label="add description"
-          variant="filled"
-          multiline
-          rows={10}
-          value={common}
-          onChange={(e) => setCommon(e.target.value)}
-        />
-      </Grid>
-      {isImage ? (
+      {showImagebox ? (
         <CardContent>
           <Grid container spacing={2} direction="column">
             <Grid item>
@@ -322,11 +299,10 @@ const Post = () => {
                 type="file"
                 accept="image/*"
                 onChange={(event) => {
-                  console.log("abc");
                   uploadImage(event.target.files);
                 }}
               />
-              <Button
+              {/* <Button
                 variant="contained"
                 color="success"
                 sx={{ marginInlineStart: "5px" }}
@@ -335,14 +311,33 @@ const Post = () => {
                 }}
               >
                 Upload
-              </Button>
+              </Button> */}
             </Grid>
             <Card sx={{ maxWidth: 200, maxHeight: 200 }}>
               <img style={images} src={preview} />
             </Card>
           </Grid>
         </CardContent>
-      ) : null}
+      ) : (
+        <Grid item>
+          <TextField
+            style={{
+              marginTop: 5,
+              marginBottom: 5,
+              width: "90%",
+              height: "90%",
+              marginLeft: 5,
+            }}
+            id="addDescription"
+            label="add description"
+            variant="filled"
+            multiline
+            rows={10}
+            value={common}
+            onChange={(e) => setCommon(e.target.value)}
+          />
+        </Grid>
+      )}
 
       <Grid item alignItems="flex-start">
         <FormControl component="fieldset">
@@ -385,6 +380,41 @@ const Post = () => {
               }}
               control={<Radio />}
               label="Friend Only"
+            />
+          </RadioGroup>
+        </FormControl>
+        <FormControl component="fieldset">
+          <FormLabel
+            component="legend"
+            sx={{
+              marginInlineStart: "5px",
+            }}
+          >
+            Unlisted?
+          </FormLabel>
+          <RadioGroup
+            aria-label="unlisted?"
+            defaultValue="false"
+            name="radio-buttons-group"
+            onChange={(event) => {
+              setUnlisted(event.target.value);
+            }}
+          >
+            <FormControlLabel
+              value={false}
+              sx={{
+                marginInlineStart: "5px",
+              }}
+              control={<Radio />}
+              label="false"
+            />
+            <FormControlLabel
+              value={true}
+              sx={{
+                marginInlineStart: "5px",
+              }}
+              control={<Radio />}
+              label="true"
             />
           </RadioGroup>
         </FormControl>

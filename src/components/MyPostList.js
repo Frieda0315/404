@@ -55,6 +55,55 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const PostItemInList = ({ post, open_image_holder }) => {
+  if (post.contentType === "text/plaintext") {
+    return (
+      <Grid container>
+        <Grid item xs>
+          <Typography variant="h5" component="div">
+            {post.title}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {post.content}
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  } else if (post.contentType === "text/markdown") {
+    return (
+      <Grid container>
+        <Grid item xs>
+          <Typography variant="h5" component="div">
+            {post.title}
+          </Typography>
+          <ReactMarkdown className="markdown-container">
+            {post.content}
+          </ReactMarkdown>
+        </Grid>
+      </Grid>
+    );
+  } else if (
+    post.contentType === "image/png;base64" ||
+    post.contentType === "image/jpeg;base64"
+  ) {
+    return (
+      <Grid container>
+        <Grid item xs>
+          <Typography variant="h5" component="div">
+            {post.title}
+          </Typography>
+          <img
+            style={{ maxWidth: "100%" }}
+            src={`data:${post.contentType},${post.content}`}
+          />
+        </Grid>
+      </Grid>
+    );
+  } else {
+    return <div>Unsupported Type</div>;
+  }
+};
+
 function MyPostList() {
   const [user, setUser] = React.useState();
   const [github_user, setGit_user] = React.useState();
@@ -77,7 +126,7 @@ function MyPostList() {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/posts/${userid}/`, {
+      .get(`${baseUrl2}/author/${userid}/posts/`, {
         auth: {
           username: "admin",
           password: "admin",
@@ -85,6 +134,7 @@ function MyPostList() {
       })
       .then((res) => {
         res.data.map((single) => {
+          console.log(single);
           console.log(single.profileImage);
           newList.push({
             contentType: single.contentType,
@@ -99,7 +149,7 @@ function MyPostList() {
             author_id: single.author.uuid,
           });
         });
-
+        console.log(newList);
         setPostList(newList);
       })
       .catch((errors) => {
@@ -182,36 +232,7 @@ function MyPostList() {
       </Grid>
       <Grid container>
         <Grid item xs>
-          {post.contentType === "plain/text" ? (
-            <Grid container>
-              <Grid item xs>
-                <Typography variant="h5" component="div">
-                  {post.title}
-                </Typography>
-                {post.contentType === "text/markdown" ? (
-                  <ReactMarkdown>{post.content}</ReactMarkdown>
-                ) : (
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
-                )}
-              </Grid>
-            </Grid>
-          ) : (
-            <Grid container>
-              <CardActionArea onClick={() => open_image_holder(post)}>
-                <CardMedia component="img" height="150" image={post.image} />
-              </CardActionArea>
-              <Grid item xs>
-                <Typography variant="h5" component="div">
-                  {post.title}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {post.content}
-                </Typography>
-              </Grid>
-            </Grid>
-          )}
+          <PostItemInList post={post} open_image_holder={open_image_holder} />
         </Grid>
       </Grid>
 
@@ -282,9 +303,6 @@ function MyPostList() {
         setOpenPopup={setOpenPopup2}
       >
         <Share></Share>
-      </Popup>
-      <Popup title={""} openPopup={openPopup3} setOpenPopup={setOpenPopup3}>
-        <ImageHolder image={image}></ImageHolder>
       </Popup>
 
       <div class="text text-1">My Post</div>
