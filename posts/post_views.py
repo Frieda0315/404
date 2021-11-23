@@ -182,9 +182,15 @@ def post_detail(request, author_id, id):  # this id here is postID
             author_exists = User.objects.get(uuid=author_id)
         except:
             return JsonResponse({"Error": "No such post"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            comments = Comments.objects.get(post=post.id)
+        except Comments.DoesNotExist:
+            return JsonResponse({"Error": "No such post"}, status=status.HTTP_400_BAD_REQUEST)
         # if current post is owned by this author, then delete
         if(post.author == author_exists):
             post.delete()
+            comments.delete()
             if post.contentType == "image/png;base64":
                 os.remove(os.path.join(
                     MEDIA_ROOT, "images/" + str(id) + ".png"))

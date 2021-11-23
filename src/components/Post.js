@@ -51,7 +51,7 @@ const Post = () => {
   const [isImage, setIsImage] = React.useState(false);
   const [date, setDate] = React.useState(location.date);
   const [visibility, setVisibility] = React.useState("PUBLIC");
-  const [textChoice, setTextChoice] = React.useState("text/plaintext");
+  const [textChoice, setTextChoice] = React.useState("text/plain");
   const [showImagebox, setshowImagebox] = React.useState(false);
   const [unlisted, setUnlisted] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
@@ -139,6 +139,10 @@ const Post = () => {
       alert("Empty field is not allowed ^^");
       return;
     }
+    if (categories.length === 0) {
+      alert("Categories cannot be empty ^^");
+      return;
+    }
     const postId = baseUrl2 + "/author/" + authorID + "/posts/" + uuid;
     const emptyComment = {
       type: "comments",
@@ -165,7 +169,7 @@ const Post = () => {
       visibility: visibility,
       unlisted: unlisted,
     };
-    if (textChoice === "text/plaintext" || textChoice === "text/markdown") {
+    if (textChoice === "text/plain" || textChoice === "text/markdown") {
       if (common === "") {
         alert("Content field is empty!");
         return;
@@ -185,112 +189,7 @@ const Post = () => {
       },
     });
     console.log(newPost.data);
-    // if (textChoice === "")
-    //   if (title !== "" && common !== "") {
-    //     if (textChoice === "text/plain") {
-    //       if (isImage === true) {
-    //         const newpost = await axios.put(
-    //           `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-    //           {
-    //             type: "post",
-    //             id: uuid,
-    //             title: title,
-    //             contentType: textChoice,
-    //             content: common,
-    //             // image: fileBase64String,
-    //             published: date,
-    //             author: author.data,
-    //             visibility: visibility,
-    //             source: "https://i-connect.herokuapp.com/service/posts/",
-    //             origin: "https://i-connect.herokuapp.com/service/posts/",
-    //           },
-    //           {
-    //             auth: {
-    //               username: "admin",
-    //               password: "admin",
-    //             },
-    //           }
-    //         );
-    //         history.push({ pathname: "/" });
-    //       } else {
-    //         const newpost = await axios.put(
-    //           `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-    //           {
-    //             type: "post",
-    //             id: uuid,
-    //             title: title,
-    //             contentType: textChoice,
-    //             content: common,
-    //             published: date,
-    //             author: author.data,
-    //             visibility: visibility,
-    //             source: "https://i-connect.herokuapp.com/service/posts/",
-    //             origin: "https://i-connect.herokuapp.com/service/posts/",
-    //           },
-    //           {
-    //             auth: {
-    //               username: "admin",
-    //               password: "admin",
-    //             },
-    //           }
-    //         );
-    //         history.push({ pathname: "/" });
-    //       }
-    //     } else if (textChoice === "text/markdown") {
-    //       const newpost = await axios.put(
-    //         `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-    //         {
-    //           type: "post",
-    //           id: uuid,
-    //           title: title,
-    //           contentType: textChoice,
-    //           content: common,
-    //           // image: fileBase64String,
-    //           published: date,
-    //           author: author.data,
-    //           visibility: visibility,
-    //           source: "https://i-connect.herokuapp.com/service/posts/",
-    //           origin: "https://i-connect.herokuapp.com/service/posts/",
-    //         },
-    //         {
-    //           auth: {
-    //             username: "admin",
-    //             password: "admin",
-    //           },
-    //         }
-    //       );
-    //       history.push({ pathname: "/" });
-    //     } else if (common === "") {
-    //       const newpost = await axios.put(
-    //         `${baseUrl2}/author/${userid}/posts/${uuid}/`,
-    //         {
-    //           type: "post",
-    //           id: uuid,
-    //           title: title,
-    //           contentType: "image",
-    //           content: fileBase64String,
-    //           published: date,
-    //           author: author.data,
-    //           visibility: visibility,
-    //           source: "https://i-connect.herokuapp.com/service/posts/",
-    //           origin: "https://i-connect.herokuapp.com/service/posts/",
-    //         },
-    //         {
-    //           auth: {
-    //             username: "admin",
-    //             password: "admin",
-    //           },
-    //         }
-    //       );
-    //       history.push({ pathname: "/" });
-    //       // for pure image
-    //     } else {
-    //       console.log(fileBase64String);
-    //       console.log(textChoice);
-    //     }
-    //   } else {
-    //     alert("Empty field is not allowed ^^");
-    //   }
+    history.push({ pathname: "/" });
   };
 
   const history = useHistory();
@@ -336,7 +235,7 @@ const Post = () => {
                 setTextChoice(e.target.value);
               }}
             >
-              <MenuItem value={"text/plaintext"}>text/plaintext</MenuItem>
+              <MenuItem value={"text/plain"}>text/plain</MenuItem>
               <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
               <MenuItem value={"image/png;base64"}>image/png</MenuItem>
               <MenuItem value={"image/jpeg;base64"}>image/jpeg</MenuItem>

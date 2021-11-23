@@ -20,6 +20,7 @@ import ImageHolder from "./ImageHolder";
 import { Redirect } from "react-router";
 import ReactMarkdown from "react-markdown";
 import Share from "./Share";
+import PostItemInList from "./PostItemInList";
 import "../index.css";
 
 const useStyles = makeStyles(() => ({
@@ -240,7 +241,7 @@ function PostStream(props) {
               content: "Repo: " + single.repo.name,
               author: single.actor.login,
               github_user: "",
-              title: "Github Activity: " + single.type,
+              title: single.type,
               avatar_url:
                 "https://avatars.githubusercontent.com/" + single.actor.login,
               is_github_activity: true,
@@ -336,60 +337,41 @@ function PostStream(props) {
             </Typography>
 
             {post.is_github_activity === true ? (
-              <Typography>Github Activity</Typography>
+              <Typography className="tag-format github-tag">
+                Github Activity
+              </Typography>
             ) : post.visibility === "PUBLIC" ? (
-              <Typography>Public</Typography>
+              <Typography className="tag-format public-tag">Public</Typography>
             ) : post.visibility === "FRIENDS" ? (
-              <Typography>Friend</Typography>
+              <Typography className="tag-format private-tag">Friend</Typography>
             ) : (
-              <Typography>Private</Typography>
+              <Typography className="tag-format private-tag">
+                Private
+              </Typography>
             )}
+            <Typography
+              fontStyle="italic"
+              variant="h5"
+              component="div"
+              marginBottom="20px"
+              fontFamily="Monospace"
+            >
+              {post.title}
+            </Typography>
           </Grid>
         </Grid>
-        <Grid container>
-          <Grid item xs>
-            {true ? (
-              <Grid container>
-                <Grid item xs>
-                  <Typography variant="h5" component="div">
-                    {post.title}
-                  </Typography>
-                  {post.contentType === "text/markdown" ? (
-                    <div style={{ maxWidth: "100vh", display: "inline-block" }}>
-                      <ReactMarkdown className="markdown-container">
-                        {post.content}
-                      </ReactMarkdown>
-                    </div>
-                  ) : (
-                    <Typography variant="body1" color="text.secondary">
-                      {post.content}
-                    </Typography>
-                  )}
-                </Grid>
-              </Grid>
-            ) : (
-              <Grid container>
-                <CardActionArea onClick={() => open_image_holder(post)}>
-                  <CardMedia
-                    component="img"
-                    height="150"
-                    image={post.img}
-                    alt="fda"
-                  />
-                </CardActionArea>
 
-                <Grid item xs>
-                  <Typography variant="h5" component="div">
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {post.content}
-                  </Typography>
-                </Grid>
-              </Grid>
-            )}
+        {!post.is_github_activity ? (
+          <PostItemInList post={post} />
+        ) : (
+          <Grid container style={{ marginLeft: "48px" }}>
+            <Grid item xs>
+              <Typography variant="body1" color="text.secondary">
+                {post.content}
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
 
         {!post.is_github_activity ? (
           <Grid

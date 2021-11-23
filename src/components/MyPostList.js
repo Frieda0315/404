@@ -1,26 +1,17 @@
 import React, { useEffect } from "react";
-import {
-  CardMedia,
-  Typography,
-  IconButton,
-  Avatar,
-  CardActionArea,
-} from "@material-ui/core";
+import { Typography, IconButton, Avatar } from "@material-ui/core";
 import { Delete, Edit } from "@material-ui/icons";
 import { Grid } from "@mui/material";
 import { useHistory } from "react-router-dom";
-import dummy_image from "../static/musle.png";
-import head2 from "../static/2.JPG";
 import { ShareRounded, ThumbUp, Comment } from "@material-ui/icons";
 import Popup from "./Popup";
 import Share from "./Share";
 import "./font/style.css";
 import makeStyles from "@material-ui/styles/makeStyles";
-import { Card } from "reactstrap";
 import { Redirect } from "react-router";
 import axios from "axios";
-import ImageHolder from "./ImageHolder";
-import ReactMarkdown from "react-markdown";
+import PostItemInList from "./PostItemInList";
+
 const useStyles = makeStyles(() => ({
   stream: {
     marginLeft: "10px",
@@ -54,55 +45,6 @@ const useStyles = makeStyles(() => ({
     paddingTop: "56.25%", // 16:9
   },
 }));
-
-const PostItemInList = ({ post, open_image_holder }) => {
-  if (post.contentType === "text/plaintext") {
-    return (
-      <Grid container>
-        <Grid item xs>
-          <Typography variant="h5" component="div">
-            {post.title}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {post.content}
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  } else if (post.contentType === "text/markdown") {
-    return (
-      <Grid container>
-        <Grid item xs>
-          <Typography variant="h5" component="div">
-            {post.title}
-          </Typography>
-          <ReactMarkdown className="markdown-container">
-            {post.content}
-          </ReactMarkdown>
-        </Grid>
-      </Grid>
-    );
-  } else if (
-    post.contentType === "image/png;base64" ||
-    post.contentType === "image/jpeg;base64"
-  ) {
-    return (
-      <Grid container>
-        <Grid item xs>
-          <Typography variant="h5" component="div">
-            {post.title}
-          </Typography>
-          <img
-            style={{ maxWidth: "100%" }}
-            src={`data:${post.contentType},${post.content}`}
-          />
-        </Grid>
-      </Grid>
-    );
-  } else {
-    return <div>Unsupported Type</div>;
-  }
-};
 
 function MyPostList() {
   const [user, setUser] = React.useState();
@@ -144,9 +86,12 @@ function MyPostList() {
             author: single.author.displayName,
             github_user: single.author.github,
             title: single.title,
-            state: single.visibility,
+            visibility: single.visibility,
             profileImage: single.author.profileImage,
             author_id: single.author.uuid,
+            comments: single.comments,
+            categories: single.categories,
+            unlisted: single.unlisted,
           });
         });
         console.log(newList);
@@ -179,7 +124,7 @@ function MyPostList() {
     const newList = PostList1.filter((item) => item.id !== id);
     setPostList(newList);
     axios
-      .delete(`${baseUrl2}/author/${userid}/posts/${id}/`, {
+      .delete(id, {
         auth: {
           username: "admin",
           password: "admin",
@@ -199,7 +144,7 @@ function MyPostList() {
 
   const handleEdit = (e) => {
     const id = e.id;
-    const item = PostList1.find((item) => item.id == id);
+    const item = PostList1.find((item) => item.id === id);
     history.push({ pathname: "/mypost/edit", state: item });
   };
 
@@ -221,18 +166,27 @@ function MyPostList() {
         <Grid item>
           <Typography>{post != null ? post.author : "null author"}</Typography>
           <Typography>{post != null ? post.date : "null date"}</Typography>
-          {post.state === "PUBLIC" ? (
-            <Typography>Public</Typography>
-          ) : post.state === "FRIENDS" ? (
-            <Typography>Friend</Typography>
+          {post.visibility === "PUBLIC" ? (
+            <Typography className="tag-format public-tag">Public</Typography>
+          ) : post.visibility === "FRIENDS" ? (
+            <Typography className="tag-format private-tag">Friend</Typography>
           ) : (
-            <Typography>Private</Typography>
+            <Typography className="tag-format private-tag">Private</Typography>
           )}
+          <Typography
+            fontStyle="italic"
+            variant="h5"
+            component="div"
+            marginBottom="20px"
+            fontFamily="Monospace"
+          >
+            {post.title}
+          </Typography>
         </Grid>
       </Grid>
       <Grid container>
         <Grid item xs>
-          <PostItemInList post={post} open_image_holder={open_image_holder} />
+          <PostItemInList post={post} />
         </Grid>
       </Grid>
 
