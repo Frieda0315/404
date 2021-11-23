@@ -22,7 +22,7 @@ urlpatterns = [
          post_views.post_detail, name='post_detail'),
     # posts this author can see
     path('service/posts/<uuid:author_id>/',
-         post_views.public_post, name='public_post'),
+         post_views.stream_public_post, name='stream_public_post'),
 
 
     path('service/authors/', user_views.author_list, name='author_list'),

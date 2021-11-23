@@ -1,20 +1,23 @@
 import Grid from "@material-ui/core/Grid";
 
 import { Avatar, IconButton } from "@material-ui/core";
-import Button from "@mui/material/Button";
 import makeStyles from "@material-ui/styles/makeStyles";
 import React, { useEffect } from "react";
 import { Typography, Box } from "@material-ui/core";
 import TextField from "@mui/material/TextField";
 import { Form } from "reactstrap";
-
-import dummy_image from "../static/musle.png";
+import FormControl from "@mui/material/FormControl";
+import { Button } from "@mui/material";
+import ReactMarkdown from "react-markdown";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+
 import Popup from "./Popup";
 import Profile from "./Profile";
 import "./font/style.css";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
-import { v4 as uuidv4 } from "uuid";
 import { ThumbUp } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
@@ -42,11 +45,38 @@ function Comments(props) {
   const [github_user, setGit_user] = React.useState();
   const [newComment, setNewComment] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState(null);
+  const [textChoice, setTextChoice] = React.useState("text/plain");
 
   // const commentsList = tempCommentList;
 
   const [openPopup, setOpenPopup] = React.useState(false);
   const [comments, setComments] = React.useState([]);
+
+  const CommentItemInList = (comment) => {
+    console.log(comment);
+
+    if (comment.contentType === "text/plain") {
+      return (
+        <Grid container>
+          <Grid item xs>
+            <Typography variant="h5" component="div">
+              {comment.comment}
+            </Typography>
+          </Grid>
+        </Grid>
+      );
+    } else if (comment.contentType === "text/markdown") {
+      return (
+        <Grid container>
+          <Grid item xs>
+            <ReactMarkdown className="markdown-container">
+              {comment.comment}
+            </ReactMarkdown>
+          </Grid>
+        </Grid>
+      );
+    }
+  };
   useEffect(() => {
     //console.log(window.location);
     axios
@@ -177,7 +207,7 @@ function Comments(props) {
             "/comments/" +
             uuidv4(),
           type: "comment",
-          contentType: "text",
+          contentType: textChoice,
         },
         {
           auth: {
@@ -211,21 +241,19 @@ function Comments(props) {
       >
         <Grid item>
           <Avatar
-            src={dummy_image}
+            src={comment.author.profileImage}
             onClick={() =>
-              open(comment.author.user_name, comment.author.github_name)
+              open(comment.author.displayName, comment.author.github_name)
             }
           ></Avatar>
         </Grid>
         <Grid item>
-          <Typography>{comment.author.user_name}</Typography>
+          <Typography>{comment.author.displayName}</Typography>
           <Typography>{comment.published}</Typography>
         </Grid>
       </Grid>
       <Grid container justifyContent="center" alignItems="center">
-        <Typography variant="h5" color="text.primary">
-          {comment.comment}
-        </Typography>
+        {CommentItemInList(comment)}
       </Grid>
 
       <Grid
@@ -260,7 +288,6 @@ function Comments(props) {
       ></Grid>
     </Grid>
   ));
-  console.log(commentStream);
   // console.log(commentsList);
   return (
     <Form onSubmit={handleSubmit}>
@@ -299,6 +326,7 @@ function Comments(props) {
               label="Add your comments..."
               variant="standard"
               value={newComment}
+              multiline
               onChange={(e) => setNewComment(e.target.value)}
             />
             <Button
@@ -311,6 +339,21 @@ function Comments(props) {
               Add
             </Button>
           </Box>
+          <FormControl sx={{ m: 1, minWidth: 80 }}>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={textChoice}
+              label="Input Type"
+              autoWidth
+              onChange={(e) => {
+                setTextChoice(e.target.value);
+              }}
+            >
+              <MenuItem value={"text/plain"}>text/plain</MenuItem>
+              <MenuItem value={"text/markdown"}>text/markdown</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
 
         {commentStream}
