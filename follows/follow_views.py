@@ -81,6 +81,7 @@ def follower_detail(request, author_id, foreign_author_id):
         else:
             return JsonResponse(follow_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif(request.method == "GET"):
+        print(follow)
         if(not follow):
             return JsonResponse({"result": False}, status=status.HTTP_200_OK)
         return JsonResponse({"result": True}, status=status.HTTP_200_OK)
