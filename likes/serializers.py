@@ -16,7 +16,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author_data = validated_data.pop('author')
-        author = User.objects.get(**author_data)
+        author = User.objects.get_or_create(**author_data)[0]
         validated_data["author"] = author
         return Like.objects.create(**validated_data)
 

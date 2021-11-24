@@ -30,5 +30,23 @@ h1 {
 }
 
 .markdown-container img {
-  max-width: 100%;
+  max-width: 75%;
+}
+
+.tag-format {
+  display: inline;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.public-tag {
+  background-color: #b8c6db;
+}
+
+.private-tag {
+  background-color: rgba(255, 228, 196, 0.637);
+}
+
+.github-tag {
+  background-color: rgb(235, 146, 146);
 }

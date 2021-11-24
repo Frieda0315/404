@@ -40,7 +40,7 @@ def follower_detail(request, author_id, foreign_author_id):
         following = User.objects.get(uuid=author_id)
         follower = User.objects.get(uuid=foreign_author_id)
     except User.DoesNotExist:
-        return JsonResponse({"error": "cannot find the author or the follower"}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({"result": False}, status=status.HTTP_200_OK)
 
     # try to find the follow relationship
     follow = Follow.objects.filter(following=following, follower=follower)

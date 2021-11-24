@@ -29,7 +29,7 @@ class InboxSerializer(serializers.ModelSerializer):
         #     like = Like.objects.get(pk=like_data[0]["id"])
         #     instance.like.add(like)
         post_data = validated_data.pop("post", None)
-        post = Post.objects.get(pk=post_data[0]["id"])
+        post = Post.objects.get_or_create(pk=post_data[0]["id"])[0]
         instance.post.add(post)
 
         # like_data = validated_data.pop("like", None)
@@ -43,6 +43,6 @@ class InboxSerializer(serializers.ModelSerializer):
         fields = ['post', 'receive_author']
         #fields = ['like', 'post', 'receive_author']
         # extra_kwargs = {
-        #     'like': {'required': False}, 
-        #     'post': {'required': False}, 
+        #     'like': {'required': False},
+        #     'post': {'required': False},
         # }

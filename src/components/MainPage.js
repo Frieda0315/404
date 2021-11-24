@@ -1,3 +1,4 @@
+import { useHistory } from "react-router";
 import PostStream from "./PostStream";
 import React from "react";
 import { Grid, Fab } from "@material-ui/core";
@@ -7,7 +8,7 @@ import { Redirect } from "react-router";
 import "./font/style.css";
 
 function MainPage() {
-  //const history = useHistory();
+  const history = useHistory();
   const [creatNew, setCreatNew] = React.useState(false);
   if (creatNew) {
     return <Redirect from="/" to="/new/" />;
@@ -34,7 +35,9 @@ function MainPage() {
           <Fab color="primary" aria-label="add">
             <Add
               onClick={(e) => {
-                setCreatNew(true);
+                let path = `/new`;
+                history.push(path);
+                // return <Redirect from="/" to="/new/" />;
               }}
             />
           </Fab>
