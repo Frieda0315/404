@@ -20,7 +20,7 @@ def comment_list(request, author_id, post_id):
     if request.method == 'GET':
         comments = Comments.objects.filter(post__contains=query_string)
         if not comments:
-            return JsonResponse({"error": "comment not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = CommentsSerializer(comments[0])
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
@@ -32,7 +32,7 @@ def comment_list(request, author_id, post_id):
         comment_lists = Comments.objects.filter(
             post__contains=query_string)
         if not comment_lists:
-            return JsonResponse({"error": "comment not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
         comment_list = comment_lists[0]
         uuid_data = comment_id_parser(json_data)
         serializer = CommentSerializer(data=json_data)
