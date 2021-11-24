@@ -171,7 +171,7 @@ function PostStream(props) {
     };
 
     // post likes
-    await axios
+    axios
       .post(`${baseUrl2}/author/${userid}/inbox/`, likeData, {
         auth: {
           username: "admin",
@@ -291,7 +291,7 @@ function PostStream(props) {
           });
           Promise.all(like_promises).then(() => {
             setPostlist(newList);
-            console.log(newList);
+            //console.log(newList);
           });
         })
       )

@@ -119,8 +119,14 @@ const Inbox = () => {
         },
       }
     );
+    const requestThree = axios.get(
+      `${baseUrl2}/author/${userid}/inbox/likes/`,
+      {
+        auth: { username: "admin", password: "admin" },
+      }
+    );
     axios
-      .all([requestOne, requestTwo])
+      .all([requestOne, requestTwo, requestThree])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -150,6 +156,16 @@ const Inbox = () => {
               follower_id: single.actor.id.split("/").at(-1),
             });
           });
+
+          const responseThree = responses[2];
+          responseThree.data.map((single) => {
+            console.log(single);
+            newList.push({
+              type: "like",
+              summary: single.summary,
+            });
+          });
+
           setInboxList(newList);
         })
       )
