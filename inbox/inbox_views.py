@@ -84,7 +84,7 @@ def handleLikeRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
     like_object = json_data["object"]
     liker_id = json_data["author"]["id"]
-    liker = User.objects.get(pk=liker_id)
+    liker = User.objects.get_or_create(pk=liker_id)[0]
     if likeExist(liker, like_object):
         return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
     like_seralizer = LikeSerializer(data=json_data)

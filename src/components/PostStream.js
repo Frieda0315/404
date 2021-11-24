@@ -151,33 +151,31 @@ function PostStream(props) {
   const handle_like = async (post) => {
     const authorId = post.author_id.split("/").at(-1);
     const like_uuid = uuidv4();
-    const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
-      auth: {
-        username: "admin",
-        password: "admin",
-      },
-    });
-    const id_url = post.id;
+    const liker = await axios.get(
+      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+    console.log(liker.data);
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
-      object:
-        baseUrl2 +
-        "/author/" +
-        authorId +
-        "/posts/" +
-        id_url.substring(id_url.lastIndexOf("/") + 1),
+      object: post.id,
     };
 
     // post likes
     await axios
-      .post(`${baseUrl2}/author/${userid}/inbox/`, likeData, {
+      .post(`${post.author_id}/inbox/`, likeData, {
         auth: {
-          username: "admin",
-          password: "admin",
+          username: post.username,
+          password: post.password,
         },
       })
       .then((response) => {
