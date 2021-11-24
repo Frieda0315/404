@@ -264,7 +264,7 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 1) {
     // Likes
-    listItems = InboxList1.filter((item) => item.type === "Like").map(
+    listItems = InboxList1.filter((item) => item.type === "like").map(
       (item) => (
         <Grid item>
           <Card>{item.summary}</Card>
