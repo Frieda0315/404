@@ -108,13 +108,7 @@ function MyPostList() {
   if (Object.keys(comments).length !== 0) {
     return (
       <Redirect
-        to={
-          "/author/" +
-          comments.author_id +
-          "/posts/" +
-          comments.id +
-          "/comments"
-        }
+        to={comments.id.substring(30, comments.id.length) + "/comments"}
       ></Redirect>
     );
   }
