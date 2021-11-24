@@ -8,7 +8,7 @@ from .serializers import AdminUserSerializer, UserSerializer
 from .models import User, AdminUser
 import json
 import os
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from backend.helper import *
 
@@ -16,7 +16,7 @@ from backend.helper import *
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def author_list(request):
     users = User.objects.filter(host="https://i-connect.herokuapp.com")
@@ -27,7 +27,7 @@ def author_list(request):
 
 
 @api_view(['GET', 'POST', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def author_detail(request, id):
     """
@@ -62,7 +62,7 @@ def author_detail(request, id):
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def signup(request):
     current_dir = os.path.dirname(__file__)
@@ -96,7 +96,7 @@ def signup(request):
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def login(request):
     current_dir = os.path.dirname(__file__)
@@ -133,7 +133,7 @@ admin's signup
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def admin_signup(request):
     user_json_data = JSONParser().parse(request)
@@ -158,7 +158,7 @@ admin's login
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def admin_login(request):
     login_json_data = JSONParser().parse(request)
@@ -176,7 +176,7 @@ def admin_login(request):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def pending_author_list(request):
     if request.method == 'GET':
@@ -203,7 +203,7 @@ def pending_author_list(request):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def current_author_list(request):
     current_author_list = User.objects.filter(pending=False)

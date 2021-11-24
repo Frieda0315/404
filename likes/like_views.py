@@ -2,7 +2,7 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from .serializers import LikeSerializer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import Like
 from posts.models import Post
@@ -11,7 +11,7 @@ from users.models import User
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def post_like_list(request, author_id, post_id):
     '''
@@ -37,7 +37,7 @@ def post_like_list(request, author_id, post_id):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def comment_like_list(request, author_id, post_id, comment_id):
     comment_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/comments\/[-a-zA-Z0-9@:%._\+~#=]{2,256}'
@@ -65,7 +65,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def author_like_list(request, author_id):
     try:

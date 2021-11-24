@@ -6,7 +6,7 @@ from rest_framework import status
 from users.models import User
 from users.serializers import UserSerializer
 from .serializers import NodeSerializer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.http.response import JsonResponse
 from rest_framework.response import Response
@@ -22,7 +22,7 @@ from .models import Node
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def handle_signup_request(request, id):
     pending_users = User.objects.filter(uuid=id, pending=True)
@@ -37,7 +37,7 @@ def handle_signup_request(request, id):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def get_signup_requests(request):
     pending_user_objects = User.objects.filter(
@@ -47,7 +47,7 @@ def get_signup_requests(request):
 
 
 @api_view(['GET', 'PUT'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def approve_option(request):
     current_dir = os.path.dirname(__file__)
@@ -73,7 +73,7 @@ def approve_option(request):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def node_list(request):
     if request.method == 'GET':
@@ -94,7 +94,7 @@ def node_list(request):
 
 
 @api_view(['DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_node(request):
     if request.method == 'DELETE':

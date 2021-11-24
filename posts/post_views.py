@@ -18,7 +18,7 @@ from follows.models import Friend
 from users.models import User
 from backend.helper import *
 from backend.settings import MEDIA_ROOT
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -31,7 +31,7 @@ import os
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def stream_public_post(request, author_id):
     '''
@@ -73,7 +73,7 @@ def stream_public_post(request, author_id):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def post_list(request, author_id):
 

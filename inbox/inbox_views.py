@@ -19,7 +19,7 @@ from follows.serializers import FriendRequestSerializer
 from posts.models import Post
 from posts.serializers import PostSerializer
 from backend.helper import *
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 import uuid
@@ -123,7 +123,7 @@ def likeExist(liker, like_object):
 
 
 @api_view(['POST', 'GET', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def inbox_list(request, author_id):
     try:

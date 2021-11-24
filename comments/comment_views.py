@@ -5,7 +5,7 @@ from rest_framework.parsers import JSONParser
 from .serializers import CommentSerializer, CommentsSerializer
 from .models import Comment, Comments
 from posts.models import Post
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from backend.helper import *
 
@@ -13,7 +13,7 @@ from backend.helper import *
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def comment_list(request, author_id, post_id):
     query_string = "author/"+str(author_id)+"/posts/"+str(post_id)

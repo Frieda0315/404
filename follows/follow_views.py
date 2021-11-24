@@ -7,13 +7,13 @@ from .models import Follow, Friend, FriendRequest
 from users.models import User
 from users.serializers import UserSerializer
 from backend.helper import *
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def follower_list(request, author_id):
     try:
@@ -31,7 +31,7 @@ def follower_list(request, author_id):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def follower_detail(request, author_id, foreign_author_id):
     if(author_id == foreign_author_id):
@@ -88,7 +88,7 @@ def follower_detail(request, author_id, foreign_author_id):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def friend_list(request, author_id):
     try:
@@ -111,7 +111,7 @@ def friend_list(request, author_id):
 
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def friend_request_list(request, author_id):
     try:
@@ -124,7 +124,7 @@ def friend_request_list(request, author_id):
 
 
 @api_view(['DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def friend_request_item(request, actor_id, object_id):
     try:
