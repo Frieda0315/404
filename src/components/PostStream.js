@@ -103,6 +103,8 @@ function PostStream(props) {
   const [postlist, setPostlist] = React.useState([]);
 
   const [openPopup2, setOpenPopup2] = React.useState(false);
+  const [nodeMaps, setNodeMaps] = React.useState([]);
+
   const [shareBuffer, setShareBuffer] = React.useState({});
   const baseUrl = "https://api.github.com/users";
   const [url, setUrl] = React.useState([]);
@@ -149,33 +151,32 @@ function PostStream(props) {
   const handle_like = async (post) => {
     const authorId = post.author_id.split("/").at(-1);
     const like_uuid = uuidv4();
-    const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
-      auth: {
-        username: "admin",
-        password: "admin",
-      },
-    });
-    const id_url = post.id;
+    const liker = await axios.get(
+      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+    console.log(liker.data);
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
-      object:
-        baseUrl2 +
-        "/author/" +
-        authorId +
-        "/posts/" +
-        id_url.substring(id_url.lastIndexOf("/") + 1),
+      object: post.id,
     };
+    console.log(likeData);
 
     // post likes
-    axios
-      .post(`${baseUrl2}/author/${userid}/inbox/`, likeData, {
+    await axios
+      .post(`${post.author_id}/inbox/`, likeData, {
         auth: {
-          username: "admin",
-          password: "admin",
+          username: post.username,
+          password: post.password,
         },
       })
       .then((response) => {
@@ -220,84 +221,244 @@ function PostStream(props) {
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   useEffect(() => {
-    var newList = [];
-    const requestOne = axios.get(
-      `${baseUrl2}/posts/${localStorage.getItem("current_user_id")}/`,
-
-      {
+    axios
+      .get(`${baseUrl2}/admin/nodes/`, {
         auth: {
           username: "admin",
           password: "admin",
         },
-      }
-    );
-    const requestTwo = axios.get(
-      `${baseUrl}/${localStorage.getItem("github_user")}/events`
-    );
-    axios
-      .all([requestOne, requestTwo])
-      .then(
-        axios.spread((...responses) => {
-          const responseTwo = responses[1];
+      })
+      .then(async (res) => {
+        const nodeLists = res.data;
+        var requestList2 = [];
 
-          responseTwo.data.map((single) => {
-            newList.push({
-              id: single.id,
-              published: single.created_at,
-              content: "Repo: " + single.repo.name,
-              author: single.actor.login,
-              github_user: "",
-              title: single.type,
-              avatar_url:
-                "https://avatars.githubusercontent.com/" + single.actor.login,
-              is_github_activity: true,
-            });
-          });
-          let like_promises = [];
+        nodeLists.map((single) => {
+          var username = single.user_name;
+          var password = single.password;
+          requestList2.push(
+            axios.get(`${single.url}/authors/`, {
+              auth: {
+                username: username,
+                password: password,
+              },
+            })
+          );
+        });
+        const author_res = await axios.all(requestList2);
+        let resList = [];
+        author_res.map((r) => {
+          resList = resList.concat(r.data.items);
+        });
+        console.log(resList);
+        return [resList, nodeLists];
+      })
+      .then(async (res) => {
+        let all_post_list = [];
+        let requestList3 = [];
+        res[0].map((single) => {
+          let single_node = res[1].filter((item) =>
+            item.url.includes(single.host)
+          );
+          const username = single_node[0].user_name;
+          const password = single_node[0].password;
 
-          const responseOne = responses[0];
-          responseOne.data.map((single) => {
-            console.log(single);
-            let postItem = {
-              id: single.id,
-              published: single.published,
-              contentType: single.contentType,
-              content: single.content,
-              author: single.author.displayName,
-              author_id: single.author.id,
-              github: single.author.github,
-              author_url: single.author.url,
-              title: single.title,
-              visibility: single.visibility,
-              avatar_url: single.author.profileImage,
-              is_github_activity: false,
-              origin: single.origin,
-              source: single.source,
-            };
+          requestList3.push(
+            axios.get(`${single.id}/posts/`, {
+              auth: {
+                username: username,
+                password: password,
+              },
+            })
+          );
+        });
+        const post_res = await axios.all(requestList3);
+        let resList = [];
+        post_res.map((r) => {
+          resList = resList.concat(r.data);
+        });
 
-            // get the like numbers for each post
-            const authorId = single.author.id.split("/").at(-1);
-            const postId = single.id.split("/").at(-1);
-            like_promises.push(
-              axios
-                .get(`${baseUrl2}/author/${authorId}/posts/${postId}/likes/`, {
-                  auth: { username: "admin", password: "admin" },
-                })
-                .then((response) => {
-                  postItem.like_num = response.data.length;
-                })
-            );
-            newList.push(postItem);
+        all_post_list = resList.filter(
+          (item) => item && item.visibility === "PUBLIC"
+        );
+        all_post_list.map((post) => {
+          let single_node = res[1].filter((item) =>
+            item.url.includes(post.author.host)
+          );
+          const username = single_node[0].user_name;
+          const password = single_node[0].password;
+          post["username"] = username;
+          post["password"] = password;
+        });
+        return all_post_list;
+      })
+      .then((res) => {
+        var newList = [];
+        //newList.push(res);
+        const requestOne = axios.get(
+          `${baseUrl2}/posts/${localStorage.getItem("current_user_id")}/`,
+
+          {
+            auth: {
+              username: "admin",
+              password: "admin",
+            },
+          }
+        );
+        const requestTwo = axios.get(
+          `${baseUrl}/${localStorage.getItem("github_user")}/events`
+        );
+
+        axios
+          .all([requestOne, requestTwo])
+          .then(
+            axios.spread((...responses) => {
+              const responseTwo = responses[1];
+
+              responseTwo.data.map((single) => {
+                newList.push({
+                  id: single.id,
+                  published: single.created_at,
+                  content: "Repo: " + single.repo.name,
+                  author: single.actor.login,
+                  github_user: "",
+                  title: single.type,
+                  username: "admin",
+                  password: "admin",
+                  avatar_url:
+                    "https://avatars.githubusercontent.com/" +
+                    single.actor.login,
+                  is_github_activity: true,
+                });
+              });
+              let like_promises = [];
+
+              const responseOne = responses[0];
+
+              res.map((single) => {
+                let postItem = {
+                  id: single.id,
+                  published: single.published,
+                  username: single.username,
+                  password: single.password,
+                  contentType: single.contentType,
+                  content: single.content,
+                  author: single.author.displayName,
+                  author_id: single.author.id,
+                  github: single.author.github,
+                  author_url: single.author.url,
+                  title: single.title,
+                  visibility: single.visibility,
+                  avatar_url: single.author.profileImage,
+                  is_github_activity: false,
+                  origin: single.origin,
+                  source: single.source,
+                };
+
+                // get the like numbers for each post
+                //const authorId = single.author.id.split("/").at(-1);
+                const postId = single.id.split("/").at(-1);
+                like_promises.push(
+                  axios
+                    .get(`${single.author.id}/posts/${postId}/likes/`, {
+                      auth: {
+                        username: single.username,
+                        password: single.password,
+                      },
+                    })
+                    .then((response) => {
+                      postItem.like_num = response.data.length;
+                    })
+                );
+                newList.push(postItem);
+              });
+              Promise.all(like_promises).then(() => {
+                setPostlist(newList);
+              });
+            })
+          )
+          .catch((errors) => {
+            console.log(errors);
           });
-          Promise.all(like_promises).then(() => {
-            setPostlist(newList);
-            //console.log(newList);
-          });
-        })
-      )
-      .catch((errors) => {
-        console.log(errors);
       });
+    // var newList = [];
+    // const requestOne = axios.get(
+    //   `${baseUrl2}/posts/${localStorage.getItem("current_user_id")}/`,
+
+    //   {
+    //     auth: {
+    //       username: "admin",
+    //       password: "admin",
+    //     },
+    //   }
+    // );
+    // const requestTwo = axios.get(
+    //   `${baseUrl}/${localStorage.getItem("github_user")}/events`
+    // );
+
+    // axios
+    //   .all([requestOne, requestTwo])
+    //   .then(
+    //     axios.spread((...responses) => {
+    //       const responseTwo = responses[1];
+
+    //       responseTwo.data.map((single) => {
+    //         newList.push({
+    //           id: single.id,
+    //           published: single.created_at,
+    //           content: "Repo: " + single.repo.name,
+    //           author: single.actor.login,
+    //           github_user: "",
+    //           title: single.type,
+    //           avatar_url:
+    //             "https://avatars.githubusercontent.com/" + single.actor.login,
+    //           is_github_activity: true,
+    //         });
+    //       });
+    //       let like_promises = [];
+
+    //       const responseOne = responses[0];
+    //       responseOne.data.map((single) => {
+    //         console.log(single);
+    //         let postItem = {
+    //           id: single.id,
+    //           published: single.published,
+    //           contentType: single.contentType,
+    //           content: single.content,
+    //           author: single.author.displayName,
+    //           author_id: single.author.id,
+    //           github: single.author.github,
+    //           author_url: single.author.url,
+    //           title: single.title,
+    //           visibility: single.visibility,
+    //           avatar_url: single.author.profileImage,
+    //           is_github_activity: false,
+    //           origin: single.origin,
+    //           source: single.source,
+    //         };
+
+    //         // get the like numbers for each post
+    //         const authorId = single.author.id.split("/").at(-1);
+    //         const postId = single.id.split("/").at(-1);
+    //         like_promises.push(
+    //           axios
+    //             .get(`${baseUrl2}/author/${authorId}/posts/${postId}/likes/`, {
+    //               auth: { username: "admin", password: "admin" },
+    //             })
+    //             .then((response) => {
+    //               postItem.like_num = response.data.length;
+    //             })
+    //         );
+    //         newList.push(postItem);
+    //       });
+    //       Promise.all(like_promises).then(() => {
+    //         setPostlist(newList);
+    //         console.log(newList);
+    //       });
+    //     })
+    //   )
+    //   .catch((errors) => {
+    //     console.log(errors);
+    //   });
   }, []);
 
   if (Object.keys(comments).length !== 0) {

@@ -32,7 +32,8 @@ def post_like_list(request, author_id, post_id):
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    likes = Like.objects.filter(object__contains=post_search_string)
+    likes = Like.objects.filter(object__contains=post_search_string).exclude(
+        object__contains="comment")
     like_serializer = LikeSerializer(likes, many=True)
     return JsonResponse(like_serializer.data, status=status.HTTP_200_OK, safe=False)
 

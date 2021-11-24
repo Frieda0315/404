@@ -20,6 +20,7 @@ from backend.helper import *
 @permission_classes([IsAuthenticated])
 def author_list(request):
     users = User.objects.filter(host="https://i-connect.herokuapp.com")
+    print(users)
     serializer = UserSerializer(users, many=True)
     response = {"type": "authors", "items": serializer.data}
     return JsonResponse(response, safe=False)
