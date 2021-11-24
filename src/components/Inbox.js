@@ -55,6 +55,9 @@ const Inbox = () => {
           (item) => item.type !== "follower" && item.follower_id !== id
         );
         setInboxList(newList);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
   const declineFriendRequest = (id) => {
@@ -97,6 +100,8 @@ const Inbox = () => {
           console.log(err);
         });
     } else if (InboxToggle == 1) {
+      const newList = InboxList1.filter((item) => item.type !== "like");
+      setInboxList(newList);
     } else {
       const newList = InboxList1.filter((item) => item.type !== "follower");
       setInboxList(newList);
@@ -158,11 +163,15 @@ const Inbox = () => {
           });
 
           const responseThree = responses[2];
-          responseThree.data.map((single) => {
+          responseThree.data.map(async (single) => {
             console.log(single);
+            const like_object = await axios.get(single.object, {
+              auth: { username: "admin", password: "admin" },
+            });
             newList.push({
               type: "like",
               summary: single.summary,
+              // TODO: link the object
             });
           });
 
