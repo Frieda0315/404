@@ -169,6 +169,7 @@ function PostStream(props) {
       author: liker.data,
       object: post.id,
     };
+    console.log(likeData);
 
     // post likes
     await axios
@@ -229,7 +230,6 @@ function PostStream(props) {
       })
       .then(async (res) => {
         const nodeLists = res.data;
-        //console.log(nodeLists);
         var requestList2 = [];
 
         nodeLists.map((single) => {
@@ -249,7 +249,7 @@ function PostStream(props) {
         author_res.map((r) => {
           resList = resList.concat(r.data.items);
         });
-        //console.log(resList);
+        console.log(resList);
         return [resList, nodeLists];
       })
       .then(async (res) => {
@@ -274,14 +274,12 @@ function PostStream(props) {
         const post_res = await axios.all(requestList3);
         let resList = [];
         post_res.map((r) => {
-          console.log(r.data);
           resList = resList.concat(r.data);
         });
-        console.log(resList);
+
         all_post_list = resList.filter(
           (item) => item && item.visibility === "PUBLIC"
         );
-        console.log(all_post_list);
         all_post_list.map((post) => {
           let single_node = res[1].filter((item) =>
             item.url.includes(post.author.host)
@@ -294,7 +292,6 @@ function PostStream(props) {
         return all_post_list;
       })
       .then((res) => {
-        console.log(res);
         var newList = [];
         //newList.push(res);
         const requestOne = axios.get(
@@ -338,7 +335,6 @@ function PostStream(props) {
               const responseOne = responses[0];
 
               res.map((single) => {
-                console.log(single);
                 let postItem = {
                   id: single.id,
                   published: single.published,
@@ -377,7 +373,6 @@ function PostStream(props) {
               });
               Promise.all(like_promises).then(() => {
                 setPostlist(newList);
-                console.log(newList);
               });
             })
           )
