@@ -13,11 +13,11 @@ class FollowSerializer(serializers.ModelSerializer):
         follower_data = validated_data.pop("follower")
         following_data = validated_data.pop("following")
         try:
-            follower = User.objects.get(id=follower_data.id)
+            follower = User.objects.get(id=follower_data["id"])
         except User.DoesNotExist:
             follower = User.objects.create(follower_data)
         try:
-            following = User.objects.get(id=following_data.id)
+            following = User.objects.get(id=following_data["id"])
         except User.DoesNotExist:
             following = User.objects.create(following_data)
 
@@ -37,11 +37,11 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         object_data = validated_data.pop("object")
         actor_data = validated_data.pop("actor")
         try:
-            object = User.objects.get(id=object_data.id)
+            object = User.objects.get(id=object_data["id"])
         except User.DoesNotExist:
             object = User.objects.create(object_data)
         try:
-            actor = User.objects.get(id=actor_data.id)
+            actor = User.objects.get(id=actor_data["id"])
         except User.DoesNotExist:
             actor = User.objects.create(actor_data)
 
@@ -60,11 +60,11 @@ class FriendSerializer(serializers.ModelSerializer):
         user1_data = validated_data.pop("first_user")
         user2_data = validated_data.pop("second_user")
         try:
-            user1 = User.objects.get(id=user1_data.id)
+            user1 = User.objects.get(id=user1_data["id"])
         except User.DoesNotExist:
             user1 = User.objects.create(user1_data)
         try:
-            user2 = User.objects.get(id=user2_data.id)
+            user2 = User.objects.get(id=user2_data["id"])
         except User.DoesNotExist:
             user2 = User.objects.create(user2_data)
 

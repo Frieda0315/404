@@ -15,7 +15,7 @@ class InboxSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         author_data = validated_data.pop("receive_author")
         try:
-            author = User.objects.get(id=author_data.id)
+            author = User.objects.get(id=author_data["id"])
         except User.DoesNotExist:
             author = User.objects.create(author_data)
 

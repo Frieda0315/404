@@ -13,7 +13,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         author_data = validated_data.pop('author')
         try:
-            author = User.objects.get(id=author_data.id)
+            author = User.objects.get(id=author_data["id"])
         except User.DoesNotExist:
             author = User.objects.create(author_data)
         return Comment.objects.create(author=author, **validated_data)

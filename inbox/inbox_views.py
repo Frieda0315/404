@@ -32,7 +32,7 @@ def handleFollowRequest(json_data, receiver):
     # except User.DoesNotExist:
     #     return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
     try:
-        actor = User.objects.get(id=json_data["actor"].id)
+        actor = User.objects.get(id=json_data["actor"]["id"])
     except User.DoesNotExist:
         actor = User.objects.create(json_data["actor"])
     existing_request = FriendRequest.objects.filter(
@@ -89,7 +89,7 @@ def handleLikeRequest(json_data, receiver):
     like_object = json_data["object"]
     liker_object = json_data["author"]
     try:
-        liker = User.objects.get(id=liker_object.id)
+        liker = User.objects.get(id=liker_object["id"])
     except User.DoesNotExist:
         liker = User.objects.create(liker_object)
     if likeExist(liker, like_object):
