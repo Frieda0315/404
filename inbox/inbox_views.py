@@ -26,11 +26,12 @@ import uuid
 
 
 def handleFollowRequest(json_data, receiver):
-    try:
-        uuid_data = user_id_parser(json_data["actor"])
-        actor = User.objects.get(uuid=uuid_data)
-    except User.DoesNotExist:
-        return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
+    # try:
+    #     uuid_data = user_id_parser(json_data["actor"])
+    #     actor = User.objects.get(uuid=uuid_data)
+    # except User.DoesNotExist:
+    #     return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
+    actor = User.objects.get_or_create(json_data["actor"])
     existing_request = FriendRequest.objects.filter(
         object=receiver, actor=actor)
     if existing_request:
@@ -83,8 +84,8 @@ def handlePostRequest(json_data, receiver):
 def handleLikeRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
     like_object = json_data["object"]
-    liker_id = json_data["author"]["id"]
-    liker = User.objects.get_or_create(pk=liker_id)[0]
+    liker_object = json_data["author"]
+    liker = User.objects.get_or_create(liker_object)[0]
     if likeExist(liker, like_object):
         return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
     like_seralizer = LikeSerializer(data=json_data)
