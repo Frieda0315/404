@@ -13,6 +13,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { useHistory, useLocation } from "react-router-dom";
 
 import Popup from "./Popup";
 import Profile from "./Profile";
@@ -37,6 +38,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Comments(props) {
+  const history = useHistory();
+  const location = useLocation();
+  const [post, setPost] = React.useState(location.state);
   const styleClasses = useStyles();
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const path = window.location.pathname;
@@ -80,102 +84,109 @@ function Comments(props) {
   useEffect(() => {
     //console.log(window.location);
     axios
-      .get(`${baseUrl2}${path}/`, {
+      .get(`${baseUrl2}/admin/nodes/`, {
         auth: {
           username: "admin",
           password: "admin",
+        },
+      })
+
+      .then((res) => {
+        axios
+          .get(`${post.id}/comments/`, {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          })
+          .then((response) => {
+            console.log(response.data.comments);
+            setComments(response.data.comments);
+
+            let commentPromises = [];
+            let newComments = [];
+            response.data.comments.map((commentItem) => {
+              const fileteredNode = res.data.filter((item) =>
+                item.url.includes(commentItem.author.host)
+              );
+              commentPromises.push(
+                axios
+                  .get(
+                    `${post.id}/comments/${commentItem.id
+                      .split("/")
+                      .at(-1)}/likes/`,
+                    {
+                      auth: {
+                        username: fileteredNode[0].user_name,
+                        password: fileteredNode[0].password,
+                      },
+                    }
+                  )
+                  .then((response) => {
+                    commentItem.like_num = response.data.length;
+                    commentItem.username = fileteredNode[0].user_name;
+                    commentItem.password = fileteredNode[0].password;
+                    console.log(commentItem.password);
+                  })
+              );
+              newComments.push(commentItem);
+            });
+            Promise.all(commentPromises).then(() => {
+              setComments(newComments);
+            });
+          });
+        axios
+          .get(
+            `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+            {
+              auth: {
+                username: "admin",
+                password: "admin",
+              },
+            }
+          )
+          .then((res) => {
+            setCurrentUser(res.data);
+          });
+      });
+  }, []);
+  const handle_like = async (commment) => {
+    const likeData = {
+      //"@context": "https://www.w3.org/ns/activitystreams",
+      summary: localStorage.getItem("user_name") + " Likes your comment",
+      type: "Like",
+      author: currentUser,
+      object: commment.id,
+    };
+    console.log(likeData);
+
+    // post likes
+    await axios
+      .post(`${commment.author.id}/inbox/`, likeData, {
+        auth: {
+          username: commment.username,
+          password: commment.password,
         },
       })
       .then((response) => {
-        console.log(response.data.comments);
-        setComments(response.data.comments);
-
-        let commentPromises = [];
-        let newComments = [];
-        response.data.comments.map((commentItem) => {
-          commentPromises.push(
-            axios
-              .get(
-                `${baseUrl2}/author/${localStorage.getItem(
-                  "current_user_id"
-                )}/posts/${path.split("/").at(-2)}/comments/${commentItem.id
-                  .split("/")
-                  .at(-1)}/likes/`,
-                {
-                  auth: { username: "admin", password: "admin" },
-                }
-              )
-              .then((response) => {
-                commentItem.like_num = response.data.length;
-                console.log(commentItem.like_num);
-                console.log(response.data.length);
-              })
-          );
-          newComments.push(commentItem);
-        });
-        Promise.all(commentPromises).then(() => {
-          setComments(newComments);
-        });
-      });
-    axios
-      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        setCurrentUser(res.data);
-      });
-  }, []);
-
-  const handle_like = async (comment) => {
-    const authorId = comment.author.id.split("/").at(-1);
-    const like_uuid = uuidv4();
-    const liker = await axios.get(`${baseUrl2}/author/${userid}/`, {
-      auth: {
-        username: "admin",
-        password: "admin",
-      },
-    });
-    const likeData = {
-      //"@context": "https://www.w3.org/ns/activitystreams",
-      id: like_uuid,
-      summary: localStorage.getItem("user_name") + " Likes your comment",
-      type: "Like",
-      author: liker.data,
-      object:
-        baseUrl2 +
-        window.location.pathname +
-        "/" +
-        comment.id.split("/").at(-1),
-    };
-
-    // post likes
-
-    const response = await axios.post(
-      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}/inbox/`,
-      likeData,
-      {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      }
-    );
-
-    // update the like number accordingly
-    if (response.status === 201) {
-      let newCommentList = [];
-      comments.map((item) => {
-        console.log(item);
-        if (item.id === comment.id) {
-          item.like_num += 1;
+        // update the like number accordingly
+        if (response.status === 201) {
+          let newCommentList = [];
+          newComment.map((item) => {
+            if (item.id === commment.id) {
+              if (isNaN(item.like_num)) {
+                item.like_num = 0;
+              }
+              item.like_num += 1;
+            }
+            newCommentList.push(item);
+          });
+          setNewComment(newCommentList);
         }
-        newCommentList.push(item);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      setComments(newCommentList);
-    }
   };
 
   const handleRemove = (e) => {
@@ -194,7 +205,7 @@ function Comments(props) {
     const isoString = now.toISOString();
     axios
       .post(
-        `${baseUrl2}${path}/`,
+        `${post.id}/comments/`,
         {
           author: currentUser,
           comment: newComment,
@@ -211,13 +222,14 @@ function Comments(props) {
         },
         {
           auth: {
-            username: "admin",
-            password: "admin",
+            username: post.username,
+            password: post.password,
           },
         }
       )
       .then(
         (response) => {
+          response.data.like_num = 0;
           const newComments = comments.concat([response.data]);
 
           setComments(newComments);

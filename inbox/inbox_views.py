@@ -31,7 +31,10 @@ def handleFollowRequest(json_data, receiver):
     #     actor = User.objects.get(uuid=uuid_data)
     # except User.DoesNotExist:
     #     return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
-    actor = User.objects.get_or_create(json_data["actor"])
+    try:
+        actor = User.objects.get(id=json_data["actor"]["id"])
+    except User.DoesNotExist:
+        actor = User.objects.create(json_data["actor"])
     existing_request = FriendRequest.objects.filter(
         object=receiver, actor=actor)
     if existing_request:
@@ -85,7 +88,10 @@ def handleLikeRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
     like_object = json_data["object"]
     liker_object = json_data["author"]
-    liker = User.objects.get_or_create(liker_object)[0]
+    try:
+        liker = User.objects.get(id=liker_object["id"])
+    except User.DoesNotExist:
+        liker = User.objects.create(liker_object)
     if likeExist(liker, like_object):
         return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
     like_seralizer = LikeSerializer(data=json_data)
@@ -159,9 +165,11 @@ def inbox_list(request, author_id):
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
         inbox.post.all().delete()
         friend_requests = FriendRequest.objects.filter(object=receiver)
+        print(friend_requests)
         friend_requests.delete()
-        likes = Like.objects.filter(object__contains=receiver.id)
-        likes.update(inbox=False)
+        print(author_id)
+        Like.objects.filter(object__contains="author/" +
+                            str(author_id)).update(inbox=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)

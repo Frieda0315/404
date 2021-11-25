@@ -14,7 +14,10 @@ class InboxSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author_data = validated_data.pop("receive_author")
-        author = User.objects.get_or_create(**author_data)[0]
+        try:
+            author = User.objects.get(id=author_data["id"])
+        except User.DoesNotExist:
+            author = User.objects.create(author_data)
 
         instance = Inbox.objects.get_or_create(
             receive_author=author)[0]
