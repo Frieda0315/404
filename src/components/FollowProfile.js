@@ -61,6 +61,7 @@ const FollowProfile = ({ follow_user_url }) => {
 
       try {
         console.log(followUser.id);
+        console.log(node.username);
         await axios.post(
           //`${baseUrl2}/author/${followerId}/inbox/`,
           `${followUser.url}/inbox/`,
@@ -105,8 +106,7 @@ const FollowProfile = ({ follow_user_url }) => {
         const nodeList = response.data;
         nodeList.map((item) => {
           if (item.url === follow_user_url.split("/author/")[0]) {
-            setNode({ username: item.username, password: item.password });
-            console.log(node);
+            setNode({ username: item.user_name, password: item.password });
           }
         });
       })
