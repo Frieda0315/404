@@ -58,8 +58,10 @@ const FollowProfile = ({ follow_user_url }) => {
         authorinfor.displayName + " want follow " + followUser.displayName;
 
       try {
+        //console.log(followUser.id);
         await axios.post(
           `${baseUrl2}/author/${followerId}/inbox/`,
+          //`${followUser.id}/inbox/`,
           {
             type: "follow",
             summary: message,
