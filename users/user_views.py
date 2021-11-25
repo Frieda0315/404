@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+
+from inbox.models import Inbox
 from .serializers import AdminUserSerializer, UserSerializer
 from .models import User, AdminUser
 import json
@@ -89,6 +91,8 @@ def signup(request):
         if not config_data["approve_option"]:
             new_user_object.pending = False
         new_user_object.save()
+        print(new_user_object)
+        Inbox.objects.create(receive_author=new_user_object)
         return JsonResponse(new_user_serializer.data, status=status.HTTP_201_CREATED)
     return JsonResponse(new_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

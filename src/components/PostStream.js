@@ -163,7 +163,6 @@ function PostStream(props) {
     console.log(liker.data);
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
-      id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your post",
       type: "like",
       author: liker.data,
