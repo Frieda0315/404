@@ -20,27 +20,35 @@ function Share(props) {
   const handleShare = (user) => {
     console.log(postToShare);
     axios
-      .post(
-        `${baseUrl2}/author/${user.id.split("/").at(-1)}/inbox/`,
-        postToShare,
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        // setSuccess(true);
-        setInfo("Post shared!");
-        setTimeout(() => {
-          props.setOpen(false);
-          setInfo(null);
-        }, 5000);
+      .get(`${baseUrl2}/admin/nodes/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
       })
-      .catch((error) => {
-        console.log(error);
+      .then((res) => {
+        const fileteredNode = res.data.filter((item) =>
+          item.url.includes(user.host)
+        );
+        axios
+          .post(`${user.id}/inbox/`, postToShare, {
+            auth: {
+              username: fileteredNode[0].user_name,
+              password: fileteredNode[0].password,
+            },
+          })
+          .then((response) => {
+            console.log(response);
+            // setSuccess(true);
+            setInfo("Post shared!");
+            setTimeout(() => {
+              props.setOpen(false);
+              setInfo(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       });
   };
   React.useEffect(() => {
@@ -78,7 +86,7 @@ function Share(props) {
       <CardActionArea>
         <ListItem alignItems="flex-start" onClick={() => handleShare(s)}>
           <ListItemAvatar>
-            <Avatar alt="o" src={ava} />
+            <Avatar alt="o" src={s.profileImage} />
           </ListItemAvatar>
           <ListItemText primary={s.displayName} secondary={s.github} />
         </ListItem>

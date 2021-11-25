@@ -114,26 +114,21 @@ function PostStream(props) {
         },
       })
       .then((response) => {
-        const newPost = {
-          id: post.id,
-          type: "post",
-          title: post.title,
-          description: post.description,
-          content: post.content,
-          contentType: post.contentType,
-          published: post.published,
-          author: response.data,
-          categories: post.categories,
-          count: post.count,
-          comments: post.comments,
-          commentsSrc: post.commentsSrc,
-          unlisted: post.unlisted,
-          visibility: "FRIENDS",
-          source: "https://i-connect.herokuapp.com/service/posts/",
-          origin: post.origin,
-        };
-        setOpenPopup2(true);
-        setShareBuffer(newPost);
+        axios
+          .get(`${post.id}/`, {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          })
+          .then((res) => {
+            let newPost = res.data;
+            newPost.source = "https://i-connect.herokuapp.com/service/posts/";
+            newPost.visibility = "FRIENDS";
+            console.log(newPost);
+            setOpenPopup2(true);
+            setShareBuffer(newPost);
+          });
       })
       .catch((error) => {
         console.log(error);
