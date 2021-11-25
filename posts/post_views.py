@@ -85,7 +85,7 @@ def post_list(request, author_id):
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
         posts = Post.objects.filter(
-            author=author_exist, shared=False).order_by('-published')
+            author=author_exist).order_by('-published')
         paginator = Paginator(posts, 3)
         page = request.GET.get('page', 1)
 

@@ -16,12 +16,12 @@ from django.conf.urls.static import static
 urlpatterns = [
     # TODO: update urls for post and authors
     # TODO: update all urls using posts, in order to support with/without slash in the end
-    path('service/author/<uuid:author_id>/posts/',
+    path('service/author/<str:author_id>/posts/',
          post_views.post_list, name='post_list'),
-    path('service/author/<uuid:author_id>/posts/<uuid:id>/',
+    path('service/author/<str:author_id>/posts/<str:id>/',
          post_views.post_detail, name='post_detail'),
     # posts this author can see
-    path('service/posts/<uuid:author_id>/',
+    path('service/posts/<str:author_id>/',
          post_views.stream_public_post, name='stream_public_post'),
 
 
@@ -30,7 +30,7 @@ urlpatterns = [
          user_views.pending_author_list, name='pending_author_list'),
     path('service/authors/currentlist/',
          user_views.current_author_list, name='current_author_list'),
-    path('service/author/<uuid:id>/',
+    path('service/author/<str:id>/',
          user_views.author_detail, name='author_detail'),
 
     re_path('^service/users/signup/?$', user_views.signup, name='signup'),
@@ -41,42 +41,42 @@ urlpatterns = [
     re_path('^service/admin/login/?$',
             user_views.admin_login, name='admin_login'),
 
-    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/comments/',
+    path('service/author/<str:author_id>/posts/<str:post_id>/comments/',
          comment_views.comment_list, name='comment_list'),
 
     # likes
-    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/likes/',
+    path('service/author/<str:author_id>/posts/<str:post_id>/likes/',
          like_views.post_like_list, name='post_like_list'),
-    path('service/author/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/',
+    path('service/author/<str:author_id>/posts/<str:post_id>/comments/<str:comment_id>/likes/',
          like_views.comment_like_list, name='comment_like_list'),
-    path('service/author/<uuid:author_id>/liked/',
+    path('service/author/<str:author_id>/liked/',
          like_views.author_like_list, name='author_like_list'),
-    
-    path('service/author/<uuid:author_id>/inbox/likes/', 
-        like_views.inbox_like_list, name='inbox_like_list'),
+
+    path('service/author/<str:author_id>/inbox/likes/',
+         like_views.inbox_like_list, name='inbox_like_list'),
 
     # follower
-    path('service/author/<uuid:author_id>/followers/',
+    path('service/author/<str:author_id>/followers/',
          follow_views.follower_list, name='follower_list'),
-    path('service/author/<uuid:author_id>/followers/<uuid:foreign_author_id>/',
+    path('service/author/<str:author_id>/followers/<str:foreign_author_id>/',
          follow_views.follower_detail, name='follower_detail'),
 
-    path('service/author/<uuid:author_id>/friends/',
+    path('service/author/<str:author_id>/friends/',
          follow_views.friend_list, name='friend_list'),
 
-    path('service/author/<uuid:author_id>/friendrequests/',
+    path('service/author/<str:author_id>/friendrequests/',
          follow_views.friend_request_list, name='friend_request_list'),
 
-    path('service/friendrequest/actor/<uuid:actor_id>/object/<uuid:object_id>/',
+    path('service/friendrequest/actor/<str:actor_id>/object/<str:object_id>/',
          follow_views.friend_request_item, name='friend_request_item'),
 
     # inbox
     # r'^about$'
-    path('service/author/<uuid:author_id>/inbox/',
+    path('service/author/<str:author_id>/inbox/',
          inbox_views.inbox_list, name='inbox_list'),
 
     # admin server
-    path('service/admin/handle/<uuid:id>/',
+    path('service/admin/handle/<str:id>/',
          admin_servers_views.handle_signup_request, name='handle_signup_request'),
     path('service/admin/get/', admin_servers_views.get_signup_requests,
          name='get_signup_request'),
