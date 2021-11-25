@@ -62,9 +62,6 @@ def handlePostRequest(json_data, receiver):
     except Inbox.DoesNotExist:
         return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if (inbox.post.filter(post)):
-        return JsonResponse({"result", "You already sent once"}, status=status.HTTP_200_OK)
-
     inbox.post.add(post)
     inbox.save()
     return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK)
