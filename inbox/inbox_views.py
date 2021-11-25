@@ -54,34 +54,20 @@ def handlePostRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
     try:
         post = Post.objects.get(pk=json_data["id"])
-    except Exception as e:
-        return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
-
-    new_id = uuid.uuid4()
-    json_data["id"] = new_id
-    print(json_data)
-    new_post_serializer = PostSerializer(data=json_data)
-    if new_post_serializer.is_valid():
-        new_post = new_post_serializer.save()
-        new_post.shared = True
-        new_post.save()
-    else:
-        print(new_post_serializer.errors)
-        return JsonResponse(new_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Post.DoesNotExist:
+        post = Post.objects.create(json_data)
 
     try:
-        new_post = Post.objects.get(pk=new_id)
-    except Exception as e:
-        return JsonResponse({"error": "cannot find this post"}, status=status.HTTP_404_NOT_FOUND)
+        inbox = Inbox.objects.get(receive_author=receiver)
+    except Inbox.DoesNotExist:
+        return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    inbox_data = {"post": [new_post.__dict__],
-                  "receive_author": receiver.__dict__}
-    inbox_data["post"][0]["author"] = new_post.author.__dict__
-    inbox_seralizer = InboxSerializer(data=inbox_data)
-    if inbox_seralizer.is_valid():
-        return save_method(inbox_seralizer)
-    else:
-        return JsonResponse(inbox_seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if (inbox.post.filter(post)):
+        return JsonResponse({"result", "You already sent once"}, status=status.HTTP_200_OK)
+
+    inbox.post.add(post)
+    inbox.save()
+    return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK)
 
 
 def handleLikeRequest(json_data, receiver):
