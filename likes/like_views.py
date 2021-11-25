@@ -1,3 +1,5 @@
+from os import stat
+from re import search
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -6,7 +8,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import Like
 from posts.models import Post
-from comments.models import Comment
+from comments.models import Comment, Comments
 from users.models import User
 
 
@@ -76,3 +78,17 @@ def author_like_list(request, author_id):
     serializer = LikeSerializer(likes, many=True)
     like_json = {'type': 'liked', 'items': serializer.data}
     return JsonResponse(like_json, safe=False)
+
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def inbox_like_list(request, author_id):
+    try:
+        inbox_author = User.objects.get(uuid=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": 'Author not found'}, status=status.HTTP_404_NOT_FOUND)
+    search_string = "/author/" + str(author_id) + "/"
+    likes = Like.objects.filter(object__contains=search_string)
+    like_serializer = LikeSerializer(likes, many=True)
+    return JsonResponse(like_serializer.data, status=status.HTTP_200_OK, safe=False)

@@ -51,6 +51,9 @@ urlpatterns = [
          like_views.comment_like_list, name='comment_like_list'),
     path('service/author/<uuid:author_id>/liked/',
          like_views.author_like_list, name='author_like_list'),
+    
+    path('service/author/<uuid:author_id>/inbox/likes/', 
+        like_views.inbox_like_list, name='inbox_like_list'),
 
     # follower
     path('service/author/<uuid:author_id>/followers/',

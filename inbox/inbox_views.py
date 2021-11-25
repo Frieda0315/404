@@ -26,11 +26,12 @@ import uuid
 
 
 def handleFollowRequest(json_data, receiver):
-    try:
-        uuid_data = user_id_parser(json_data["actor"])
-        actor = User.objects.get(uuid=uuid_data)
-    except User.DoesNotExist:
-        return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
+    # try:
+    #     uuid_data = user_id_parser(json_data["actor"])
+    #     actor = User.objects.get(uuid=uuid_data)
+    # except User.DoesNotExist:
+    #     return JsonResponse({"error": "Actor not found"}, status=status.HTTP_404_NOT_FOUND)
+    actor = User.objects.get_or_create(json_data["actor"])
     existing_request = FriendRequest.objects.filter(
         object=receiver, actor=actor)
     if existing_request:
@@ -83,8 +84,8 @@ def handlePostRequest(json_data, receiver):
 def handleLikeRequest(json_data, receiver):
     # TODO: check if the db post is same as input post
     like_object = json_data["object"]
-    liker_id = json_data["author"]["id"]
-    liker = User.objects.get_or_create(pk=liker_id)[0]
+    liker_object = json_data["author"]
+    liker = User.objects.get_or_create(liker_object)[0]
     if likeExist(liker, like_object):
         return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
     like_seralizer = LikeSerializer(data=json_data)
@@ -133,12 +134,12 @@ def inbox_list(request, author_id):
     # Post a shared post or a like or a friend request
     if request.method == 'POST':
         json_data = JSONParser().parse(request)
-        if json_data["type"] == "follow":
+        if json_data["type"] == "Follow":
             return handleFollowRequest(json_data, receiver)
         elif json_data["type"] == "post":
 
             return handlePostRequest(json_data, receiver)
-        elif json_data["type"] == "like":
+        elif json_data["type"] == "Like":
             return handleLikeRequest(json_data, receiver)
     # Get shared posts
     elif request.method == 'GET':
@@ -157,7 +158,10 @@ def inbox_list(request, author_id):
         except Inbox.DoesNotExist:
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
         inbox.post.all().delete()
-        inbox.delete()
+        friend_requests = FriendRequest.objects.filter(object=receiver)
+        friend_requests.delete()
+        likes = Like.objects.filter(object__contains=receiver.id)
+        likes.update(inbox=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)
