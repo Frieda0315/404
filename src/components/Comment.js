@@ -142,7 +142,7 @@ function Comments(props) {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your comment",
-      type: "like",
+      type: "Like",
       author: liker.data,
       object:
         baseUrl2 +

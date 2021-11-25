@@ -63,7 +63,7 @@ const FollowProfile = ({ follow_user_url }) => {
           `${baseUrl2}/author/${followerId}/inbox/`,
           //`${followUser.id}/inbox/`,
           {
-            type: "follow",
+            type: "Follow",
             summary: message,
             actor: {
               id: authorinfor.id,
