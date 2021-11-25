@@ -64,7 +64,7 @@ const FollowProfile = ({ follow_user_url }) => {
         console.log(node.username);
         await axios.post(
           //`${baseUrl2}/author/${followerId}/inbox/`,
-          `${followUser.url}/inbox/`,
+          `${followUser.id}/inbox/`,
           {
             type: "Follow",
             summary: message,
