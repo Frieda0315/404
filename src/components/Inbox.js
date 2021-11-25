@@ -55,6 +55,9 @@ const Inbox = () => {
           (item) => item.type !== "follower" && item.follower_id !== id
         );
         setInboxList(newList);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
   const declineFriendRequest = (id) => {
@@ -97,6 +100,8 @@ const Inbox = () => {
           console.log(err);
         });
     } else if (InboxToggle == 1) {
+      const newList = InboxList1.filter((item) => item.type !== "like");
+      setInboxList(newList);
     } else {
       const newList = InboxList1.filter((item) => item.type !== "follower");
       setInboxList(newList);
@@ -119,8 +124,14 @@ const Inbox = () => {
         },
       }
     );
+    const requestThree = axios.get(
+      `${baseUrl2}/author/${userid}/inbox/likes/`,
+      {
+        auth: { username: "admin", password: "admin" },
+      }
+    );
     axios
-      .all([requestOne, requestTwo])
+      .all([requestOne, requestTwo, requestThree])
       .then(
         axios.spread((...responses) => {
           const responseOne = responses[0];
@@ -150,6 +161,39 @@ const Inbox = () => {
               follower_id: single.actor.id.split("/").at(-1),
             });
           });
+
+          const responseThree = responses[2];
+          responseThree.data.map(async (single) => {
+            console.log(single);
+            let objectURL = single.object;
+            if (single.object.includes("comments")) {
+              // TODO: get the post
+              objectURL = objectURL.split("/comments/")[0];
+            }
+            const like_object = await axios
+              .get(objectURL, {
+                auth: { username: "admin", password: "admin" },
+              })
+              .then((response) => {
+                const item = response.data;
+                console.log(item);
+                newList.push({
+                  type: "like",
+                  summary: single.summary,
+                  title: item.title,
+                  content: item.content,
+                  date: item.published,
+                  image: item.image,
+                  user_name: item.author.displayName,
+                  id: item.author.id.split("/").at(-1),
+                  github_name: item.author.github.split("/").at(-1),
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          });
+
           setInboxList(newList);
         })
       )
@@ -248,10 +292,51 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 1) {
     // Likes
-    listItems = InboxList1.filter((item) => item.type === "Like").map(
+    listItems = InboxList1.filter((item) => item.type === "like").map(
       (item) => (
-        <Grid item>
-          <Card>{item.summary}</Card>
+        <Grid
+          item
+          xs={8}
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          backgroundColor="#fff"
+          borderBottom="1.2px solid #f0f2f7"
+          padding="30px"
+          boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
+          marginLeft={20}
+          marginRight={20}
+        >
+          <Grid item>
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+            >
+              {/* <Grid item>
+                <Avatar src={item.author.profileImage}></Avatar>
+              </Grid> */}
+              <Grid item>
+                <Grid container direction="column">
+                  <Grid item>
+                    <Typography>{item.summary}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography>{item.date}</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item>
+            <Typography variant="h5">{item.title}</Typography>
+          </Grid>
+
+          <Grid item spacing={2}>
+            <Typography>{item.content}</Typography>
+          </Grid>
         </Grid>
       )
     );

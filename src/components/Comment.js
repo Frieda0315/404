@@ -141,7 +141,7 @@ function Comments(props) {
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
       id: like_uuid,
-      summary: localStorage.getItem("user_name") + " Likes your post",
+      summary: localStorage.getItem("user_name") + " Likes your comment",
       type: "like",
       author: liker.data,
       object:
