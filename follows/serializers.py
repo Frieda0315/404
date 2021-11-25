@@ -12,8 +12,14 @@ class FollowSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         follower_data = validated_data.pop("follower")
         following_data = validated_data.pop("following")
-        follower = User.objects.get_or_create(**follower_data)[0]
-        following = User.objects.get_or_create(**following_data)[0]
+        try:
+            follower = User.objects.get(id=follower_data.id)
+        except User.DoesNotExist:
+            follower = User.objects.create(follower_data)
+        try:
+            following = User.objects.get(id=following_data.id)
+        except User.DoesNotExist:
+            following = User.objects.create(following_data)
 
         return Follow.objects.create(follower=follower, following=following, **validated_data)
 
@@ -30,8 +36,14 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         object_data = validated_data.pop("object")
         actor_data = validated_data.pop("actor")
-        object = User.objects.get_or_create(**object_data)[0]
-        actor = User.objects.get_or_create(**actor_data)[0]
+        try:
+            object = User.objects.get(id=object_data.id)
+        except User.DoesNotExist:
+            object = User.objects.create(object_data)
+        try:
+            actor = User.objects.get(id=actor_data.id)
+        except User.DoesNotExist:
+            actor = User.objects.create(actor_data)
 
         return FriendRequest.objects.create(object=object, actor=actor, **validated_data)
 
@@ -47,8 +59,14 @@ class FriendSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user1_data = validated_data.pop("first_user")
         user2_data = validated_data.pop("second_user")
-        user1 = User.objects.get_or_create(**user1_data)[0]
-        user2 = User.objects.get_or_create(**user2_data)[0]
+        try:
+            user1 = User.objects.get(id=user1_data.id)
+        except User.DoesNotExist:
+            user1 = User.objects.create(user1_data)
+        try:
+            user2 = User.objects.get(id=user2_data.id)
+        except User.DoesNotExist:
+            user2 = User.objects.create(user2_data)
 
         return Friend.objects.create(first_user=user1, second_user=user2, **validated_data)
 

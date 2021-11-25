@@ -84,28 +84,19 @@ const Inbox = () => {
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
 
   const handelClear = () => {
-    if (InboxToggle == 0) {
-      axios
-        .delete(`${baseUrl2}/author/${userid}/inbox/`, {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        })
-        .then((res) => {
-          const newList = InboxList1.filter((item) => item.type !== "inbox");
-          setInboxList(newList);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (InboxToggle == 1) {
-      const newList = InboxList1.filter((item) => item.type !== "Like");
-      setInboxList(newList);
-    } else {
-      const newList = InboxList1.filter((item) => item.type !== "follower");
-      setInboxList(newList);
-    }
+    axios
+      .delete(`${baseUrl2}/author/${userid}/inbox/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        setInboxList([]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   var newList = [];
   useEffect(() => {
@@ -412,7 +403,11 @@ const Inbox = () => {
           </Fab>
         </Grid>
         <Grid item>
-          <Fab variant="extended" color="secondary" onClick={handelClear}>
+          <Fab
+            variant="extended"
+            color="secondary"
+            onClick={() => handelClear()}
+          >
             <Typography>{"Clear"}</Typography>
           </Fab>
         </Grid>
