@@ -240,21 +240,21 @@ function PostStream(props) {
         author_res.map((r) => {
           resList = resList.concat(r.data.items);
         });
-        console.log(resList);
         return [resList, nodeLists];
       })
       .then(async (res) => {
         let all_post_list = [];
         let requestList3 = [];
         res[0].map((single) => {
-          let single_node = res[1].filter((item) =>
-            item.url.includes(single.host)
+          let single_node = res[1].filter(
+            (item) =>
+              item.url.includes(single.host) || single.host.includes(item.url)
           );
           const username = single_node[0].user_name;
           const password = single_node[0].password;
 
           requestList3.push(
-            axios.get(`${single.id}/posts/`, {
+            axios.get(`${single.id}/posts`, {
               auth: {
                 username: username,
                 password: password,
@@ -264,16 +264,24 @@ function PostStream(props) {
         });
         const post_res = await axios.all(requestList3);
         let resList = [];
+        // temp adaptor for t4
         post_res.map((r) => {
-          resList = resList.concat(r.data);
+          if (r.data instanceof Array) {
+            resList = resList.concat(r.data);
+          } else {
+            console.log(r.data.items);
+            resList = resList.concat(r.data.items);
+          }
         });
 
         all_post_list = resList.filter(
           (item) => item && item.visibility === "PUBLIC"
         );
         all_post_list.map((post) => {
-          let single_node = res[1].filter((item) =>
-            item.url.includes(post.author.host)
+          let single_node = res[1].filter(
+            (item) =>
+              item.url.includes(post.author.host) ||
+              post.author.host.includes(item.url)
           );
           const username = single_node[0].user_name;
           const password = single_node[0].password;
@@ -350,7 +358,7 @@ function PostStream(props) {
                 const postId = single.id.split("/").at(-1);
                 like_promises.push(
                   axios
-                    .get(`${single.author.id}/posts/${postId}/likes/`, {
+                    .get(`${single.author.id}/posts/${postId}/likes`, {
                       auth: {
                         username: single.username,
                         password: single.password,
