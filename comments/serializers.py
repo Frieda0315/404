@@ -16,7 +16,6 @@ class CommentSerializer(serializers.ModelSerializer):
             author = User.objects.get(id=author_data["id"])
         except User.DoesNotExist:
             author = User.objects.create(author_data)
-
         return Comment.objects.create(author=author, **validated_data)
 
     class Meta:

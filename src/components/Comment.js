@@ -229,6 +229,7 @@ function Comments(props) {
       )
       .then(
         (response) => {
+          response.data.like_num = 0;
           const newComments = comments.concat([response.data]);
 
           setComments(newComments);
