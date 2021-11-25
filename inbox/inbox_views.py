@@ -134,12 +134,12 @@ def inbox_list(request, author_id):
     # Post a shared post or a like or a friend request
     if request.method == 'POST':
         json_data = JSONParser().parse(request)
-        if json_data["type"] == "follow":
+        if json_data["type"] == "Follow":
             return handleFollowRequest(json_data, receiver)
         elif json_data["type"] == "post":
 
             return handlePostRequest(json_data, receiver)
-        elif json_data["type"] == "like":
+        elif json_data["type"] == "Like":
             return handleLikeRequest(json_data, receiver)
     # Get shared posts
     elif request.method == 'GET':
@@ -158,7 +158,10 @@ def inbox_list(request, author_id):
         except Inbox.DoesNotExist:
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
         inbox.post.all().delete()
-        inbox.delete()
+        friend_requests = FriendRequest.objects.filter(object=receiver)
+        friend_requests.delete()
+        likes = Like.objects.filter(object__contains=receiver.id)
+        likes.update(inbox=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({"error": "Author found"}, status=status.HTTP_404_NOT_FOUND)
