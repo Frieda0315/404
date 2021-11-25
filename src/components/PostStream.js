@@ -246,10 +246,12 @@ function PostStream(props) {
       .then(async (res) => {
         let all_post_list = [];
         let requestList3 = [];
+        console.log(res[0]);
         res[0].map((single) => {
           let single_node = res[1].filter((item) =>
             item.url.includes(single.host)
           );
+
           const username = single_node[0].user_name;
           const password = single_node[0].password;
 
