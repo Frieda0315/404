@@ -127,13 +127,11 @@ const FollowProfile = ({ follow_user_url }) => {
     // get current user
     axios
       .get(
-        `${baseUrl2}/author/${follow_user_url
-          .split("/")
-          .at(-1)}/followers/${localStorage.getItem("current_user_id")}`,
+        `${followUser.id}/followers/${localStorage.getItem("current_user_id")}`,
         {
           auth: {
-            username: "admin",
-            password: "admin",
+            username: node.username,
+            password: node.password,
           },
         }
       )
