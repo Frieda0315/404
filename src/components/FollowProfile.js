@@ -105,7 +105,7 @@ const FollowProfile = ({ follow_user_url }) => {
         const nodeList = response.data;
         nodeList.map((item) => {
           if (item.url === follow_user_url.split("/author/")[0]) {
-            setNode(item);
+            setNode({ username: item.username, password: item.password });
             console.log(node);
           }
         });

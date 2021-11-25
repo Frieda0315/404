@@ -105,9 +105,9 @@ def handleLikeRequest(json_data, receiver):
     #     like = Like.objects.get(pk=like_id)
     # except Exception as e:
     #     return JsonResponse({"error": "like failed"}, status=status.HTTP_404_NOT_FOUND)
-    # inbox_data = {"like": [like.__dict__], "receive_author": receiver.__dict__}
-    # inbox_data["like"][0]["author"] = like.author.__dict__
-    # inbox_data["like"][0]["id"] = like_id
+    # inbox_data = {"Like": [like.__dict__], "receive_author": receiver.__dict__}
+    # inbox_data["Like"][0]["author"] = like.author.__dict__
+    # inbox_data["Like"][0]["id"] = like_id
     # inbox_seralizer = InboxSerializer(data=inbox_data)
     # if inbox_seralizer.is_valid():
     #     return save_method(inbox_seralizer)
@@ -139,7 +139,7 @@ def inbox_list(request, author_id):
         elif json_data["type"] == "post":
 
             return handlePostRequest(json_data, receiver)
-        elif json_data["type"] == "like":
+        elif json_data["type"] == "Like":
             return handleLikeRequest(json_data, receiver)
     # Get shared posts
     elif request.method == 'GET':

@@ -100,7 +100,7 @@ const Inbox = () => {
           console.log(err);
         });
     } else if (InboxToggle == 1) {
-      const newList = InboxList1.filter((item) => item.type !== "like");
+      const newList = InboxList1.filter((item) => item.type !== "Like");
       setInboxList(newList);
     } else {
       const newList = InboxList1.filter((item) => item.type !== "follower");
@@ -178,7 +178,7 @@ const Inbox = () => {
                 const item = response.data;
                 console.log(item);
                 newList.push({
-                  type: "like",
+                  type: "Like",
                   summary: single.summary,
                   title: item.title,
                   content: item.content,
@@ -292,7 +292,7 @@ const Inbox = () => {
     );
   } else if (InboxToggle === 1) {
     // Likes
-    listItems = InboxList1.filter((item) => item.type === "like").map(
+    listItems = InboxList1.filter((item) => item.type === "Like").map(
       (item) => (
         <Grid
           item

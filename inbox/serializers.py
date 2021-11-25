@@ -25,14 +25,14 @@ class InboxSerializer(serializers.ModelSerializer):
         #     instance.post.add(post)
         # elif validated_data.get('like', None) != None:
         #     #print(validated_data)
-        #     like_data = validated_data.pop("like")
+        #     like_data = validated_data.pop("Like")
         #     like = Like.objects.get(pk=like_data[0]["id"])
         #     instance.like.add(like)
         post_data = validated_data.pop("post", None)
         post = Post.objects.get_or_create(pk=post_data[0]["id"])[0]
         instance.post.add(post)
 
-        # like_data = validated_data.pop("like", None)
+        # like_data = validated_data.pop("Like", None)
         # like = Like.objects.get(pk=like_data[0]["id"])
         # instance.like.add(like)
 

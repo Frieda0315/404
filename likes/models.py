@@ -11,5 +11,5 @@ class Like(models.Model):
     # author of the like
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     summary = models.CharField(max_length=100)
-    type = models.CharField(max_length=100, default="like")
+    type = models.CharField(max_length=100, default="Like")
     object = models.CharField(max_length=200)
