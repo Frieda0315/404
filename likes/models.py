@@ -13,3 +13,5 @@ class Like(models.Model):
     summary = models.CharField(max_length=100)
     type = models.CharField(max_length=100, default="Like")
     object = models.CharField(max_length=200)
+
+    inbox = models.BooleanField(default=True)

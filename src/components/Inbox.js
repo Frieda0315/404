@@ -408,7 +408,7 @@ const Inbox = () => {
             color="primary"
             onClick={() => setInboxToggle(2)}
           >
-            <Typography>{"follow"}</Typography>
+            <Typography>{"Follow"}</Typography>
           </Fab>
         </Grid>
         <Grid item>

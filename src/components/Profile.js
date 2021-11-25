@@ -149,7 +149,7 @@ export default function Profile({
         await axios.post(
           `${baseUrl2}/author/${userid_folllow.split("/").at(-1)}/inbox/`,
           {
-            type: "follow",
+            type: "Follow",
             summary: message,
             actor: originalAuthor,
             object: wantedFollowAuthor,

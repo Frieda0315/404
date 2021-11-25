@@ -77,17 +77,16 @@ function MyPostList() {
       .then((res) => {
         res.data.map((single) => {
           console.log(single);
-          console.log(single.profileImage);
           newList.push({
             contentType: single.contentType,
             id: single.id,
             date: single.published,
             content: single.content,
-            author: single.author.displayName,
-            github_user: single.author.github,
+            author: single.author,
+            count: single.count,
+            commentsSrc: single.commentsSrc,
             title: single.title,
             visibility: single.visibility,
-            profileImage: single.author.profileImage,
             author_id: single.author.uuid,
             comments: single.comments,
             categories: single.categories,
@@ -145,6 +144,7 @@ function MyPostList() {
   const handleEdit = (e) => {
     const id = e.id;
     const item = PostList1.find((item) => item.id === id);
+    console.log(item);
     history.push({ pathname: "/mypost/edit", state: item });
   };
 
@@ -159,12 +159,14 @@ function MyPostList() {
       >
         <Grid item>
           <Avatar
-            src={post.profileImage}
-            onClick={() => open(post.author, post.github)}
+            src={post.author.profileImage}
+            onClick={() => open(post.author, post.author.github)}
           ></Avatar>
         </Grid>
         <Grid item>
-          <Typography>{post != null ? post.author : "null author"}</Typography>
+          <Typography>
+            {post != null ? post.author.displayName : "null author"}
+          </Typography>
           <Typography>{post != null ? post.date : "null date"}</Typography>
           {post.visibility === "PUBLIC" ? (
             <Typography className="tag-format public-tag">Public</Typography>

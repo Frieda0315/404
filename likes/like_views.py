@@ -3,7 +3,6 @@ from re import search
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.fields import UUIDField
 from .serializers import LikeSerializer
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -79,6 +78,7 @@ def author_like_list(request, author_id):
     serializer = LikeSerializer(likes, many=True)
     like_json = {'type': 'liked', 'items': serializer.data}
     return JsonResponse(like_json, safe=False)
+
 
 @api_view(['GET'])
 @authentication_classes([BasicAuthentication])
