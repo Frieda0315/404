@@ -170,6 +170,9 @@ function Comments(props) {
       comments.map((item) => {
         console.log(item);
         if (item.id === comment.id) {
+          if (isNaN(item.like_num)) {
+            item.like_num = 0;
+          }
           item.like_num += 1;
         }
         newCommentList.push(item);
@@ -218,6 +221,7 @@ function Comments(props) {
       )
       .then(
         (response) => {
+          response.data.like_num = 0;
           const newComments = comments.concat([response.data]);
 
           setComments(newComments);
