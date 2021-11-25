@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 
 const FollowProfile = ({ follow_user_url }) => {
+  console.log(follow_user_url);
   const useStyles = makeStyles(() => ({
     editbutton: {
       marginLeft: "-10px",
@@ -40,7 +41,8 @@ const FollowProfile = ({ follow_user_url }) => {
 
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [followUser, setFollowUser] = useState({ profileImage: "abc" });
-  const [isfollowed, setIsfollowed] = useState("");
+  const [isfollowed, setIsfollowed] = useState(true);
+  const [node, setNode] = useState({ username: "admin", password: "admin" });
   const styleClasses = useStyles();
   const handleFollow = async () => {
     const followerId = followUser.id.split("/").at(-1);
@@ -58,10 +60,11 @@ const FollowProfile = ({ follow_user_url }) => {
         authorinfor.displayName + " want follow " + followUser.displayName;
 
       try {
-        //console.log(followUser.id);
+        console.log(followUser.id);
+        console.log(node.username);
         await axios.post(
-          `${baseUrl2}/author/${followerId}/inbox/`,
-          //`${followUser.id}/inbox/`,
+          //`${baseUrl2}/author/${followerId}/inbox/`,
+          `${followUser.id}/inbox/`,
           {
             type: "Follow",
             summary: message,
@@ -84,8 +87,8 @@ const FollowProfile = ({ follow_user_url }) => {
           },
           {
             auth: {
-              username: "admin",
-              password: "admin",
+              username: node.username,
+              password: node.password,
             },
           }
         );
@@ -94,18 +97,34 @@ const FollowProfile = ({ follow_user_url }) => {
       }
     }
   };
-  useEffect(() => {
+  useEffect(async () => {
+    await axios
+      .get(`${baseUrl2}/admin/nodes/`, {
+        auth: { username: "admin", password: "admin" },
+      })
+      .then((response) => {
+        const nodeList = response.data;
+        nodeList.map((item) => {
+          if (item.url === follow_user_url.split("/author/")[0]) {
+            setNode({ username: item.user_name, password: item.password });
+          }
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // get followee
     axios
       .get(follow_user_url, {
         auth: {
-          username: "admin",
-          password: "admin",
+          username: node.username,
+          password: node.password,
         },
       })
       .then((res) => {
         setFollowUser(res.data);
       });
-
+    // get current user
     axios
       .get(
         `${baseUrl2}/author/${follow_user_url
