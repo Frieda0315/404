@@ -28,6 +28,12 @@ const Inbox = () => {
   // 1 for likes;
   // 2 for follow;
   const [InboxToggle, setInboxToggle] = React.useState(0);
+  const [nodes, setNodes] = React.useState([
+    {
+      username: "admin",
+      password: "admin",
+    },
+  ]);
 
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const open_share = () => setOpenPopup2(true);
@@ -99,7 +105,19 @@ const Inbox = () => {
       });
   };
   var newList = [];
-  useEffect(() => {
+  useEffect(async () => {
+    // get all the nodes
+    await axios
+      .get(`${baseUrl2}/admin/nodes/`, {
+        auth: { username: "admin", password: "admin" },
+      })
+      .then((response) => {
+        setNodes(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     const requestOne = axios.get(`${baseUrl2}/author/${userid}/inbox/`, {
       auth: {
         username: "admin",
