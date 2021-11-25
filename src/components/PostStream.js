@@ -22,6 +22,7 @@ import ReactMarkdown from "react-markdown";
 import Share from "./Share";
 import PostItemInList from "./PostItemInList";
 import "../index.css";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   stream: {
@@ -75,19 +76,7 @@ const useStyles = makeStyles(() => ({
 const baseUrl = "https://api.github.com/users";
 
 function PostStream(props) {
-  const viewComments = (post) => {
-    setComments(post);
-    // console.log(props);
-    // props.history.push({
-    //   pathname: "/posts/" + post.id + "/comments",
-    //   state: {
-    //     commentsSrc: post.commentsSrc,
-    //   },
-    // });
-  };
-
-  const userid = localStorage.getItem("current_user_id");
-  const [vote, setVote] = React.useState(0);
+  const history = useHistory();
 
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
@@ -152,7 +141,9 @@ function PostStream(props) {
     const authorId = post.author_id.split("/").at(-1);
     const like_uuid = uuidv4();
     const liker = await axios.get(
-      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+      `https://i-connect.herokuapp.com/service/author/${localStorage.getItem(
+        "current_user_id"
+      )}`,
       {
         auth: {
           username: "admin",
@@ -163,9 +154,8 @@ function PostStream(props) {
     console.log(liker.data);
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
-      id: like_uuid,
       summary: localStorage.getItem("user_name") + " Likes your post",
-      type: "like",
+      type: "Like",
       author: liker.data,
       object: post.id,
     };
@@ -380,101 +370,22 @@ function PostStream(props) {
             console.log(errors);
           });
       });
-    // var newList = [];
-    // const requestOne = axios.get(
-    //   `${baseUrl2}/posts/${localStorage.getItem("current_user_id")}/`,
-
-    //   {
-    //     auth: {
-    //       username: "admin",
-    //       password: "admin",
-    //     },
-    //   }
-    // );
-    // const requestTwo = axios.get(
-    //   `${baseUrl}/${localStorage.getItem("github_user")}/events`
-    // );
-
-    // axios
-    //   .all([requestOne, requestTwo])
-    //   .then(
-    //     axios.spread((...responses) => {
-    //       const responseTwo = responses[1];
-
-    //       responseTwo.data.map((single) => {
-    //         newList.push({
-    //           id: single.id,
-    //           published: single.created_at,
-    //           content: "Repo: " + single.repo.name,
-    //           author: single.actor.login,
-    //           github_user: "",
-    //           title: single.type,
-    //           avatar_url:
-    //             "https://avatars.githubusercontent.com/" + single.actor.login,
-    //           is_github_activity: true,
-    //         });
-    //       });
-    //       let like_promises = [];
-
-    //       const responseOne = responses[0];
-    //       responseOne.data.map((single) => {
-    //         console.log(single);
-    //         let postItem = {
-    //           id: single.id,
-    //           published: single.published,
-    //           contentType: single.contentType,
-    //           content: single.content,
-    //           author: single.author.displayName,
-    //           author_id: single.author.id,
-    //           github: single.author.github,
-    //           author_url: single.author.url,
-    //           title: single.title,
-    //           visibility: single.visibility,
-    //           avatar_url: single.author.profileImage,
-    //           is_github_activity: false,
-    //           origin: single.origin,
-    //           source: single.source,
-    //         };
-
-    //         // get the like numbers for each post
-    //         const authorId = single.author.id.split("/").at(-1);
-    //         const postId = single.id.split("/").at(-1);
-    //         like_promises.push(
-    //           axios
-    //             .get(`${baseUrl2}/author/${authorId}/posts/${postId}/likes/`, {
-    //               auth: { username: "admin", password: "admin" },
-    //             })
-    //             .then((response) => {
-    //               postItem.like_num = response.data.length;
-    //             })
-    //         );
-    //         newList.push(postItem);
-    //       });
-    //       Promise.all(like_promises).then(() => {
-    //         setPostlist(newList);
-    //         console.log(newList);
-    //       });
-    //     })
-    //   )
-    //   .catch((errors) => {
-    //     console.log(errors);
-    //   });
   }, []);
 
-  if (Object.keys(comments).length !== 0) {
+  const handleComment = (post) => {
     console.log(comments);
-    return (
-      <Redirect
-        to={
-          "/author/" +
-          comments.author_id.split("/").at(-1) +
-          "/posts/" +
-          comments.id.split("/").at(-1) +
-          "/comments"
-        }
-      ></Redirect>
-    );
-  }
+
+    history.push({
+      pathname:
+        "/author/" +
+        post.author_id.split("/").at(-1) +
+        "/posts/" +
+        post.id.split("/").at(-1) +
+        "/comments",
+      state: post,
+    });
+  };
+
   const postStream = postlist
     .slice(0)
     .reverse()
@@ -579,7 +490,7 @@ function PostStream(props) {
               <IconButton
                 edge="end"
                 aria-label="comment"
-                onClick={() => viewComments(post)}
+                onClick={() => handleComment(post)}
               >
                 <Comment />
               </IconButton>

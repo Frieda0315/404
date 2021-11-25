@@ -62,12 +62,15 @@ const FriendList = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl2}/author/${userid}/followers/`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
+      .get(
+        `https://i-connect.herokuapp.com/service/author/${userid}/followers/`,
+        {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        }
+      )
       .then((res) => {
         setFollowerList(res.data.items);
         console.log(res.data.items);
@@ -156,7 +159,7 @@ const FriendList = () => {
   return (
     <div>
       <Grid container direction="column" alignSelf="center" marginTop={2}>
-        <div class="text text-1">your friend</div>
+        <div class="text text-1">your follower</div>
         {listItems}
       </Grid>
     </div>
