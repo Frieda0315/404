@@ -116,13 +116,6 @@ const Post = () => {
     console.log(fileBase64String);
     setPreview(fileBase64String);
   };
-  const handleDropDownChange = (event) => {
-    setTextChoice(event.target.value);
-  };
-
-  const handleCheckBoxChange = (e) => {
-    setIsImage(!isImage);
-  };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
@@ -255,16 +248,6 @@ const Post = () => {
                   uploadImage(event.target.files);
                 }}
               />
-              {/* <Button
-                variant="contained"
-                color="success"
-                sx={{ marginInlineStart: "5px" }}
-                onClick={() => {
-                  imageUpload();
-                }}
-              >
-                Upload
-              </Button> */}
             </Grid>
             <Card sx={{ maxWidth: 200, maxHeight: 200 }}>
               <img style={images} src={preview} />

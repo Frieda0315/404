@@ -11,6 +11,7 @@ import { Button, CardContent, Card } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
+import AddIcon from "@mui/icons-material/Add";
 
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
@@ -22,7 +23,8 @@ const heading = {
 };
 const images = {
   marginBottom: "15px",
-  maxWidth: "25%",
+  height: "200px",
+  width: "200px",
 };
 
 const EditPost = () => {
@@ -30,6 +32,7 @@ const EditPost = () => {
   const location = useLocation();
   console.log(location.state);
   const [item1, setItem] = React.useState(location.state);
+  const [preview, setPreview] = React.useState();
   const [isImage, setIsImage] = React.useState(() => {
     if (
       item1.contentType !== "image/png;base64" &&
@@ -45,15 +48,15 @@ const EditPost = () => {
       item1.contentType === "image/png;base64" ||
       item1.contentType === "image/jpeg;base64"
     ) {
+      console.log(`data:${item1.contentType},${item1.content}`);
+      setPreview(`data:${item1.contentType},${item1.content}`);
       return `data:${item1.contentType},${item1.content}`;
     } else {
       return null;
     }
   });
 
-  const [image, setImage] = React.useState("current image");
-
-  const [preview, setPreview] = React.useState();
+  const [image, setImage] = React.useState();
   const [textChoice, setTextChoice] = React.useState(item1.contentType);
   const [visibility, setVisibility] = React.useState(item1.visibility);
 
@@ -78,6 +81,7 @@ const EditPost = () => {
     }
   };
   const encodeFileBase64 = (file) => {
+    console.log(file);
     var reader = new FileReader();
     if (file) {
       reader.readAsDataURL(file);
@@ -95,22 +99,18 @@ const EditPost = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (image) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setPreview(reader.result);
-  //       encodeFileBase64(image);
-  //     };
-  //     reader.readAsDataURL(noimage);
-  //   } else {
-  //     if (isImage == true) {
-  //       setPreview(noimage);
-  //     } else {
-  //       setPreview(noimage);
-  //     }
-  //   }
-  // }, [image]);
+  useEffect(() => {
+    if (image && isImage) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+        encodeFileBase64(image);
+      };
+      reader.readAsDataURL(image);
+    } else {
+      setPreview(noimage);
+    }
+  }, [image]);
 
   const imageUpload = () => {
     //encodeFileBase64(image);
@@ -120,112 +120,55 @@ const EditPost = () => {
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
-    const currentDateTime = Date().toLocaleString();
+    const currentDateTime = new Date().toISOString();
     setDate(currentDateTime);
-    const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+    if (title === "") {
+      alert("Empty field is not allowed ^^");
+      return;
+    }
+    if (categories.length === 0) {
+      alert("Categories cannot be empty ^^");
+      return;
+    }
+
+    const postTemplate = {
+      type: "post",
+      id: item1.id,
+      title: title,
+      source: "https://i-connect.herokuapp.com/",
+      origin: "https://i-connect.herokuapp.com/",
+      description: `${item1.author.displayName} creates a new post "${title}"`,
+      contentType: textChoice,
+      author: item1.author,
+      categories: categories,
+      count: item1.count,
+      comments: item1.comments,
+      commentsSrc: item1.commentsSrc,
+      published: currentDateTime,
+      visibility: visibility,
+      unlisted: unlisted,
+    };
+    if (textChoice === "text/plain" || textChoice === "text/markdown") {
+      if (common === "") {
+        alert("Content field is empty!");
+        return;
+      }
+      postTemplate.content = common;
+    } else {
+      if (fileBase64String === "") {
+        alert("Image field is empty!");
+        return;
+      }
+      postTemplate.content = fileBase64String;
+    }
+    const newPost = await axios.post(`${item1.id}/`, postTemplate, {
       auth: {
         username: "admin",
         password: "admin",
       },
     });
-
-    if (textChoice === "text/plain") {
-      if (isImage === true) {
-        const newpost = await axios.put(
-          `${baseUrl2}/author/${userid}/posts/${item1.id}/`,
-          {
-            type: "post",
-            id: item1.id,
-            title: title,
-            contentType: textChoice,
-            content: common,
-            // image: fileBase64String,
-            published: date,
-            author: author.data,
-            visibility: visibility,
-            source: "https://i-connect.herokuapp.com/service/posts/",
-            origin: "https://i-connect.herokuapp.com/service/posts/",
-          },
-          {
-            auth: {
-              username: "admin",
-              password: "admin",
-            },
-          }
-        );
-        history.push({ pathname: "/" });
-      } else {
-        const newpost = await axios.put(
-          `${baseUrl2}/author/${userid}/posts/${item1.id}/`,
-          {
-            type: "post",
-            id: item1.id,
-            title: title,
-            contentType: textChoice,
-            content: common,
-            published: date,
-            author: author.data,
-            visibility: visibility,
-            source: "https://i-connect.herokuapp.com/service/posts/",
-            origin: "https://i-connect.herokuapp.com/service/posts/",
-          },
-
-          {
-            auth: {
-              username: "admin",
-              password: "admin",
-            },
-          }
-        );
-        history.push({ pathname: "/" });
-      }
-    } else if (textChoice === "text/markdown") {
-      const newpost = await axios.put(
-        `${baseUrl2}/author/${userid}/posts/${item1.id}/`,
-        {
-          type: "post",
-          id: item1.id,
-          title: title,
-          contentType: textChoice,
-          content: common,
-          published: date,
-          author: author.data,
-          visibility: visibility,
-          source: "https://i-connect.herokuapp.com/service/posts/",
-          origin: "https://i-connect.herokuapp.com/service/posts/",
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      history.push({ pathname: "/" });
-    } else if (common === "") {
-      const newpost = await axios.put(
-        `${baseUrl2}/author/${userid}/posts/${item1.id}/`,
-        {
-          type: "post",
-          id: item1.id,
-          title: title,
-          contentType: "image",
-          content: fileBase64String,
-          published: date,
-          author: author.data,
-          visibility: visibility,
-          source: "https://i-connect.herokuapp.com/service/posts/",
-          origin: "https://i-connect.herokuapp.com/service/posts/",
-        },
-        {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        }
-      );
-      history.push({ pathname: "/" });
-    }
+    console.log(newPost.data);
+    history.push({ pathname: "/mypost" });
   };
 
   return (
@@ -294,7 +237,9 @@ const EditPost = () => {
                 }}
               />
             </Grid>
-            <img style={images} src={fileBase64String} />
+            <Card sx={{ maxWidth: 200, maxHeight: 200 }}>
+              <img style={images} src={preview} />
+            </Card>
           </Grid>
         </CardContent>
       ) : (
@@ -397,6 +342,50 @@ const EditPost = () => {
             />
           </RadioGroup>
         </FormControl>
+      </Grid>
+
+      <Grid
+        container
+        alignItems="center"
+        style={{
+          marginTop: 5,
+          marginBottom: 20,
+          marginLeft: 5,
+        }}
+      >
+        <div>
+          {categories.map((c) => {
+            return <span>{c}, </span>;
+          })}
+        </div>
+
+        <TextField
+          style={{
+            marginTop: 5,
+            marginBottom: 20,
+            width: "10%",
+            marginLeft: 5,
+          }}
+          id="addTitle"
+          label="category"
+          variant="filled"
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+          }}
+        />
+        <AddIcon
+          sx={{ fontSize: 40 }}
+          cursor="pointer"
+          onClick={(e) => {
+            if (category !== "") {
+              let newCategories = categories;
+              newCategories.push(category);
+              setCategories(newCategories);
+              setCategory("");
+            }
+          }}
+        />
       </Grid>
 
       <Grid

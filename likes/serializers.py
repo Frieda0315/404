@@ -12,7 +12,6 @@ from users.models import User
 class LikeSerializer(serializers.ModelSerializer):
 
     author = UserSerializer()
-    id = serializers.UUIDField()
 
     def create(self, validated_data):
         author_data = validated_data.pop('author')
@@ -25,4 +24,4 @@ class LikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
-        fields = ['id', 'type', 'author', 'summary', 'object']
+        fields = ['type', 'author', 'summary', 'object']

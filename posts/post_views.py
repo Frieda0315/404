@@ -5,7 +5,7 @@ Author: Django doc
 '''
 from django.core import paginator
 from django.http.response import FileResponse, JsonResponse, HttpResponse
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
@@ -224,7 +224,7 @@ def post_detail(request, author_id, id):  # this id here is postID
                 return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return JsonResponse({"Error": "bad permission"}, status=status.HTTP_403_FORBIDDEN)
-        return JsonResponse({"Error": "serilizer is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # helper function under
