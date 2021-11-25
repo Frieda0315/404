@@ -81,7 +81,7 @@ def author_like_list(request, author_id):
     return JsonResponse(like_json, safe=False)
 
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def inbox_like_list(request, author_id):
     try:
