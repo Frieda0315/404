@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from likes.models import Like
+from users.serializers import UserSerializer
 from .serializers import InboxSerializer
 from likes.serializers import LikeSerializer
 from .models import Inbox
@@ -34,7 +35,12 @@ def handleFollowRequest(json_data, receiver):
     try:
         actor = User.objects.get(id=json_data["actor"]["id"])
     except User.DoesNotExist:
-        actor = User.objects.create(json_data["actor"])
+        actor_serializer = UserSerializer(json_data["actor"])
+        if actor_serializer.is_valid():
+            save_method(actor_serializer)
+        else:
+            return JsonResponse(actor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     existing_request = FriendRequest.objects.filter(
         object=receiver, actor=actor)
     if existing_request:
@@ -55,16 +61,20 @@ def handlePostRequest(json_data, receiver):
     try:
         post = Post.objects.get(pk=json_data["id"])
     except Post.DoesNotExist:
-        post = Post.objects.create(json_data)
+        shared_post_serializer = PostSerializer(json_data)
+        if shared_post_serializer.is_valid():
+            save_method(shared_post_serializer)
+        else:
+            return JsonResponse(shared_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         inbox = Inbox.objects.get(receive_author=receiver)
     except Inbox.DoesNotExist:
-        return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND, safe=False,)
 
     inbox.post.add(post)
     inbox.save()
-    return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK)
+    return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK, safe=False,)
 
 
 def handleLikeRequest(json_data, receiver):
@@ -74,7 +84,12 @@ def handleLikeRequest(json_data, receiver):
     try:
         liker = User.objects.get(id=liker_object["id"])
     except User.DoesNotExist:
-        liker = User.objects.create(liker_object)
+        liker_serializer = UserSerializer(liker_object)
+        if liker_serializer.is_valid():
+            save_method(liker_serializer)
+        else:
+            return JsonResponse(liker_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     if likeExist(liker, like_object):
         return JsonResponse({}, status=status.HTTP_202_ACCEPTED)
     like_seralizer = LikeSerializer(data=json_data)
