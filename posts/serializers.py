@@ -22,7 +22,7 @@ class PostSerializer(serializers.ModelSerializer):
         try:
             author = User.objects.get(id=author_data["id"])
         except User.DoesNotExist:
-            author = User.objects.create(author_data)
+            author = User.objects.create(**author_data)
         validated_data["author"] = author
 
         if "commentsSrc" in validated_data:
