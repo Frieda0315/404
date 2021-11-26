@@ -18,7 +18,7 @@ class Post(models.Model):
     type = models.CharField(max_length=120, default="post")
     title = models.CharField(max_length=120)
     id = models.CharField(primary_key=True, unique=True,
-                          max_length=180, editable=False)
+                          max_length=300, editable=False)
     source = models.CharField(max_length=300)
     origin = models.CharField(max_length=300)
     description = models.CharField(max_length=200)
@@ -27,7 +27,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     categories = models.JSONField()
     count = models.IntegerField(default=0)
-    comments = models.CharField(max_length=180)
+    comments = models.CharField(max_length=300)
     # Reference: https://stackoverflow.com/a/34003965
     # Author: https://stackoverflow.com/users/3945375/gocht
     commentsSrc = models.ForeignKey(
