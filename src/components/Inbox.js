@@ -527,7 +527,7 @@ const Inbox = () => {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <Share></Share>
+        <Share post={shareBuffer} setOpen={setOpenPopup2}></Share>
       </Popup>
       <Grid container direction="row">
         <Grid item>
