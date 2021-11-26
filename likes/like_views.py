@@ -46,6 +46,7 @@ def comment_like_list(request, author_id, post_id, comment_id):
     comment_search_string = "/author/" + \
         str(author_id) + "/posts/" + str(post_id) + \
         "/comments/" + str(comment_id)
+    print(comment_search_string)
     try:
         User.objects.get(uuid=author_id)
     except User.DoesNotExist:
@@ -62,6 +63,8 @@ def comment_like_list(request, author_id, post_id, comment_id):
         return JsonResponse({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
     likes = Like.objects.filter(object__contains=comment_search_string)
+    print(likes)
+    print(comment_search_string)
     like_serializer = LikeSerializer(likes, many=True)
     return JsonResponse(like_serializer.data, status=status.HTTP_200_OK, safe=False)
 
