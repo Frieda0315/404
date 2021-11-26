@@ -438,7 +438,7 @@ function PostStream(props) {
                 Github Activity
               </Typography>
             ) : (
-              <SourceTag host={post.author.host} />
+              <SourceTag host={post.author_item.host} />
             )}
             <Typography
               fontStyle="italic"
