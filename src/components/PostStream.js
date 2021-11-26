@@ -355,6 +355,7 @@ function PostStream(props) {
                   is_github_activity: false,
                   origin: single.origin,
                   source: single.source,
+                  comments: single.comments,
                 };
 
                 // get the like numbers for each post
