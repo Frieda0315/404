@@ -490,7 +490,7 @@ function PostStream(props) {
             </Grid>
             <Grid item>
               <Typography>{post.like_num}</Typography>
-            </Grid>{" "}
+            </Grid>
             <Grid item>
               <IconButton
                 edge="end"

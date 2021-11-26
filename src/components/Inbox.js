@@ -31,7 +31,8 @@ const Inbox = () => {
   const [InboxToggle, setInboxToggle] = React.useState(0);
   const [nodes, setNodes] = React.useState([
     {
-      username: "admin",
+      url: "http://localhost:8000/service",
+      user_name: "admin",
       password: "admin",
     },
   ]);
@@ -39,14 +40,61 @@ const Inbox = () => {
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [shareBuffer, setShareBuffer] = React.useState({});
 
-  // const open_share = () => {
-  //   setOpenPopup2(true);
-  //   console.log("I trigger the share popup?");
-  // };
-
+  const open_share = () => setOpenPopup2(true);
+  const handleLike = (post) => {
+    const liker = await axios.get(
+      `https://i-connect.herokuapp.com/service/author/${localStorage.getItem(
+        "current_user_id"
+      )}`,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+    const likeData = {
+      //"@context": "https://www.w3.org/ns/activitystreams",
+      summary: localStorage.getItem("user_name") + " Likes your post",
+      type: "Like",
+      author: liker.data,
+      object: post.id,
+    };
+    // post likes
+    let single_node = nodes.filter(
+      (item) =>
+        item.url.includes(post.author.host) ||
+        post.author.host.includes(item.url)
+    );
+    await axios
+      .post(`${post.author.id}/inbox/`, likeData, {
+        auth: {
+          username: single_node.user_name,
+          password: single_node.password,
+        },
+      })
+      .then((response) => {
+        // update the like number accordingly
+        if (response.status === 201) {
+          let newList = [];
+          InboxList1.map((item) => {
+            if (item.type === "inbox") {
+              if (item.post_id === post.id) {
+                item.like_num += 1;
+              }
+            }
+            newList.push(item);
+          });
+          setInboxList(newList);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const handleRemove = (e) => {
-    const id = e.id;
-    const newList = InboxList1.filter((item) => item.id !== id);
+    const id = e.post_id;
+    const newList = InboxList1.filter((item) => item.post_id !== id);
     setInboxList(newList);
   };
 
@@ -192,18 +240,44 @@ const Inbox = () => {
         axios.spread((...responses) => {
           const responseOne = responses[0];
           if (responseOne.data.items) {
+            let like_promises = [];
             responseOne.data.items.map((single) => {
-              newList.push({
+              let post = {
+                // this is a post
                 type: "inbox",
                 title: single.title,
                 content: single.content,
                 date: single.published,
                 image: single.image,
+                post_id: single.id,
                 user_name: single.author.displayName,
-                id: single.author.id.split("/").at(-1),
+                author: single.author,
                 github_name: single.author.github.split("/").at(-1),
-              });
+              };
+              let single_node = nodes.filter(
+                (item) =>
+                  item.url.includes(post.author.host) ||
+                  post.author.host.includes(item.url)
+              );
+              like_promises.push(
+                axios
+                  .get(`${single.author.id}/posts/${post.post_id}/likes`, {
+                    auth: {
+                      username: single_node.user_name,
+                      password: single_node.password,
+                    },
+                  })
+                  .then((response) => {
+                    if (response.data instanceof Array) {
+                      post.like_num = response.data.length;
+                    } else {
+                      post.like_num = response.data.items.length;
+                    }
+                  })
+              );
+              newList.push(post);
             });
+            Promise.all(like_promises);
           }
 
           const responseTwo = responses[1];
@@ -223,7 +297,6 @@ const Inbox = () => {
             console.log(single);
             let objectURL = single.object;
             if (single.object.includes("comments")) {
-              // TODO: get the post
               objectURL = objectURL.split("/comments/")[0];
             }
             const like_object = await axios
@@ -241,7 +314,7 @@ const Inbox = () => {
                   date: item.published,
                   image: item.image,
                   user_name: item.author.displayName,
-                  id: item.author.id.split("/").at(-1),
+                  author_id: item.author.id.split("/").at(-1),
                   github_name: item.author.github.split("/").at(-1),
                 });
               })
@@ -325,6 +398,9 @@ const Inbox = () => {
               >
                 <ThumbUp />
               </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography>{item.like_num}</Typography>
             </Grid>
             <Grid item>
               <IconButton
