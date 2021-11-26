@@ -427,18 +427,6 @@ const Inbox = () => {
                 <Comment />
               </IconButton>
             </Grid>
-
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="Delete"
-                onClick={() => {
-                  handleRemove(item);
-                }}
-              >
-                <Delete />
-              </IconButton>
-            </Grid>
           </Grid>
         </Grid>
       )
