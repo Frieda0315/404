@@ -8,6 +8,7 @@ from posts.models import Post
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from backend.helper import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -21,6 +22,17 @@ def comment_list(request, author_id, post_id):
         comments = Comments.objects.filter(post__contains=query_string)
         if not comments:
             return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
+        # pagination
+        size = request.GET.get('size', 5)
+        paginator = Paginator(comments, size)
+        page = request.GET.get('page', 1)
+        try:
+            comments = paginator.page(page)
+        except PageNotAnInteger:
+            comments = paginator.page(1)
+        except EmptyPage:
+            comments = paginator.page(paginator.num_pages)
+        
         serializer = CommentsSerializer(comments[0])
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':
