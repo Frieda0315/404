@@ -268,10 +268,9 @@ const Inbox = () => {
         like_promises.push(
           axios
             .get(
-              "http://localhost:8000/service/author/ab50cfbc-8036-4188-8f9c-c05802380a9c/posts/9754714d-5d45-40b8-80e3-07e102ff59fd/likes/",
-              // `${single.author.id}/posts/${post.post_id
-              //   .split("/")
-              //   .at(-1)}/likes`,
+              `${single.author.id}/posts/${post.post_id
+                .split("/")
+                .at(-1)}/likes`,
               {
                 auth: {
                   username: single_node[0].user_name,
