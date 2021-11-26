@@ -201,12 +201,14 @@ const Inbox = () => {
   var newList = [];
   useEffect(async () => {
     // get all the nodes
+    let tempNodes = [];
     await axios
       .get(`${baseUrl2}/admin/nodes/`, {
         auth: { username: "admin", password: "admin" },
       })
       .then((response) => {
         setNodes(response.data);
+        tempNodes = response.data;
       })
       .catch((error) => {
         console.log(error);
@@ -246,6 +248,9 @@ const Inbox = () => {
                 type: "inbox",
                 title: single.title,
                 content: single.content,
+                contentType: single.contentType,
+                comments: single.comments,
+                commentsSrc: single.commentsSrc,
                 date: single.published,
                 image: single.image,
                 post_id: single.id,
@@ -253,7 +258,7 @@ const Inbox = () => {
                 author: single.author,
                 github_name: single.author.github.split("/").at(-1),
               };
-              let single_node = nodes.filter(
+              let single_node = tempNodes.filter(
                 (item) =>
                   item.url.includes(single.author.host) ||
                   single.author.host.includes(item.url)
