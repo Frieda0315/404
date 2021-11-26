@@ -253,6 +253,8 @@ function Comments(props) {
                     "/comments/" +
                     uuidv4(),
                   type: "comment",
+                  username: "admin",
+                  password: "admin",
                   contentType: textChoice,
                 },
               ]);
