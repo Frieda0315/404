@@ -255,10 +255,10 @@ const Inbox = () => {
               };
               let single_node = nodes.filter(
                 (item) =>
-                  item.url.includes(post.author.host) ||
-                  post.author.host.includes(item.url)
+                  item.url.includes(single.author.host) ||
+                  single.author.host.includes(item.url)
               );
-
+              console.log(single_node);
               like_promises.push(
                 axios
                   .get(
