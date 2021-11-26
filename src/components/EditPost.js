@@ -90,23 +90,25 @@ const EditPost = () => {
     const file = files[0];
     console.log(file);
     if (file) {
-      console.log("did I went here");
-      setImage(file);
       encodeFileBase64(image);
+      setImage(file);
       //setPreview(codeNeedToSend);
     }
   };
   const encodeFileBase64 = (file) => {
-    console.log(file);
     var reader = new FileReader();
     if (file) {
+      console.log("did I went here");
       //reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setFileBase64String(reader.result);
+      reader.onloadend = (e) => {
+        setFileBase64String(e.reader.result);
+        console.log(e.reader.result);
         const imagePrefix = reader.result.split("base64,")[0].split(":")[1];
         if (imagePrefix === "image/jpeg;") {
+          //console.log("did I went here");
           setCodeNeedToSend(reader.result.split("base64,")[1]);
         } else if (imagePrefix === "image/png;") {
+          //console.log("did I went here");
           setCodeNeedToSend(reader.result.split("base64,")[1]);
         } else {
           console.log(imagePrefix);
@@ -118,14 +120,15 @@ const EditPost = () => {
   };
 
   useEffect(() => {
+    //console.log(fileBase64String);
+    setPreview(fileBase64String);
     if (image && isImage) {
-      //console.log("did I went here");
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log(reader.result);
-        setPreview(fileBase64String);
-        encodeFileBase64(image);
-      };
+      console.log("did I went here");
+      // const reader = new FileReader();
+      // reader.onloadend = () => {
+      //   console.log(reader.result);
+      //   encodeFileBase64(image);
+      // };
       //reader.readAsDataURL(image);
     } else {
       //setPreview(noimage);`data:${item1.contentType},${item1.content}`
