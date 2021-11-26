@@ -122,15 +122,12 @@ const Post = () => {
     const currentDateTime = new Date().toISOString();
     const uuid = uuidv4();
     setDate(currentDateTime);
-    const author = await axios.get(
-      `https://i-connect.herokuapp.com/service/author/${userid}/`,
-      {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      }
-    );
+    const author = await axios.get(`${baseUrl2}/author/${userid}/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
     if (title === "") {
       alert("Empty field is not allowed ^^");
       return;
@@ -140,10 +137,8 @@ const Post = () => {
       return;
     }
     const postId =
-      "https://i-connect.herokuapp.com/service/author/" +
-      authorID +
-      "/posts/" +
-      uuid;
+      // "https://i-connect.herokuapp.com/service/author/"
+      baseUrl2 + "/author/" + authorID + "/posts/" + uuid;
     const emptyComment = {
       type: "comments",
       page: 1,

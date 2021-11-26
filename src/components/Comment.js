@@ -172,7 +172,7 @@ function Comments(props) {
         // update the like number accordingly
         if (response.status === 201) {
           let newCommentList = [];
-          newComment.map((item) => {
+          comments.map((item) => {
             if (item.id === commment.id) {
               if (isNaN(item.like_num)) {
                 item.like_num = 0;
@@ -181,7 +181,7 @@ function Comments(props) {
             }
             newCommentList.push(item);
           });
-          setNewComment(newCommentList);
+          setComments(newCommentList);
         }
       })
       .catch((error) => {

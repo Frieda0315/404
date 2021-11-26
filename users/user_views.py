@@ -13,6 +13,7 @@ import os
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from backend.helper import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -22,7 +23,17 @@ from backend.helper import *
 @permission_classes([IsAuthenticated])
 def author_list(request):
     users = User.objects.filter(host="https://i-connect.herokuapp.com")
-    print(users)
+
+    # pagination
+    size = request.GET.get('size', 5)
+    paginator = Paginator(users, size)
+    page = request.GET.get('page', 1)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
     serializer = UserSerializer(users, many=True)
     response = {"type": "authors", "items": serializer.data}
     return JsonResponse(response, safe=False)

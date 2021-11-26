@@ -60,8 +60,6 @@ const FollowProfile = ({ follow_user_url }) => {
         authorinfor.displayName + " want follow " + followUser.displayName;
 
       try {
-        console.log(followUser.id);
-        console.log(node.username);
         await axios.post(
           //`${baseUrl2}/author/${followerId}/inbox/`,
           `${followUser.id}/inbox/`,
@@ -70,6 +68,7 @@ const FollowProfile = ({ follow_user_url }) => {
             summary: message,
             actor: {
               id: authorinfor.id,
+              host: authorinfor.host,
               displayName: authorinfor.displayName,
               github: authorinfor.github,
               type: "author",
@@ -78,6 +77,7 @@ const FollowProfile = ({ follow_user_url }) => {
             },
             object: {
               id: followUser.id,
+              host: followUser.host,
               displayName: followUser.displayName,
               github: followUser.github,
               type: "author",
