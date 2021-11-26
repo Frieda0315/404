@@ -235,115 +235,110 @@ const Inbox = () => {
         auth: { username: "admin", password: "admin" },
       }
     );
-    axios
-      .all([requestOne, requestTwo, requestThree])
-      .then(
-        axios.spread((...responses) => {
-          const responseOne = responses[0];
-          if (responseOne.data.items) {
-            let like_promises = [];
-            responseOne.data.items.map((single) => {
-              let post = {
-                // this is a post
-                type: "inbox",
-                title: single.title,
-                content: single.content,
-                contentType: single.contentType,
-                comments: single.comments,
-                commentsSrc: single.commentsSrc,
-                date: single.published,
-                image: single.image,
-                post_id: single.id,
-                author_item: single.author,
-                user_name: single.author.displayName,
-                author: single.author,
-                github_name: single.author.github.split("/").at(-1),
-              };
-              let single_node = tempNodes.filter(
-                (item) =>
-                  item.url.includes(single.author.host) ||
-                  single.author.host.includes(item.url)
-              );
-              console.log(single_node);
-              like_promises.push(
-                axios
-                  .get(
-                    `${single.author.id}/posts/${post.post_id
-                      .split("/")
-                      .at(-1)}/likes`,
-                    {
-                      auth: {
-                        username: single_node[0].user_name,
-                        password: single_node[0].password,
-                      },
-                    }
-                  )
-                  .then((response) => {
-                    if (response.data instanceof Array) {
-                      post.like_num = response.data.length;
-                    } else {
-                      post.like_num = response.data.items.length;
-                    }
-                    const username = single_node[0].user_name;
-                    const password = single_node[0].password;
-                    post["username"] = username;
-                    post["password"] = password;
-                  })
-              );
-              newList.push(post);
-            });
-            Promise.all(like_promises);
-          }
-
-          const responseTwo = responses[1];
-
-          responseTwo.data.map((single) => {
-            console.log(single);
-            newList.push({
-              type: "follower",
-              summary: single.summary,
-              follower_user_name: single.actor.user_name,
-              follower_id: single.actor.id.split("/").at(-1),
-            });
-          });
-
-          const responseThree = responses[2];
-          responseThree.data.map(async (single) => {
-            console.log(single);
-            let objectURL = single.object;
-            if (single.object.includes("comments")) {
-              objectURL = objectURL.split("/comments/")[0];
-            }
-            const like_object = await axios
-              .get(objectURL, {
-                auth: { username: "admin", password: "admin" },
-              })
-              .then((response) => {
-                const item = response.data;
-                console.log(item);
-                newList.push({
-                  type: "Like",
-                  summary: single.summary,
-                  title: item.title,
-                  content: item.content,
-                  date: item.published,
-                  image: item.image,
-                  user_name: item.author.displayName,
-                  author_id: item.author.id.split("/").at(-1),
-                  github_name: item.author.github.split("/").at(-1),
-                });
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          });
-
-          setInboxList(newList);
-        })
-      )
-      .catch((errors) => {
-        console.log(errors);
+    let [responseOne, responseTwo, responseThree] = await axios.all([
+      requestOne,
+      requestTwo,
+      requestThree,
+    ]);
+    if (responseOne.data.items) {
+      let like_promises = [];
+      responseOne.data.items.map(async (single) => {
+        let post = {
+          // this is a post
+          type: "inbox",
+          title: single.title,
+          content: single.content,
+          contentType: single.contentType,
+          comments: single.comments,
+          commentsSrc: single.commentsSrc,
+          date: single.published,
+          image: single.image,
+          post_id: single.id,
+          author_item: single.author,
+          user_name: single.author.displayName,
+          author: single.author,
+          github_name: single.author.github.split("/").at(-1),
+        };
+        let single_node = tempNodes.filter(
+          (item) =>
+            item.url.includes(single.author.host) ||
+            single.author.host.includes(item.url)
+        );
+        console.log(single_node);
+        like_promises.push(
+          axios
+            .get(
+              `${single.author.id}/posts/${post.post_id
+                .split("/")
+                .at(-1)}/likes`,
+              {
+                auth: {
+                  username: single_node[0].user_name,
+                  password: single_node[0].password,
+                },
+              }
+            )
+            .then((response) => {
+              if (response.data instanceof Array) {
+                post.like_num = response.data.length;
+              } else {
+                post.like_num = response.data.items.length;
+              }
+              const username = single_node[0].user_name;
+              const password = single_node[0].password;
+              post["username"] = username;
+              post["password"] = password;
+            })
+        );
+        newList.push(post);
       });
+      await Promise.all(like_promises).then((res) => {
+        console.log(res);
+        console.log(newList);
+      });
+    }
+
+    responseTwo.data.map((single) => {
+      console.log(single);
+      newList.push({
+        type: "follower",
+        summary: single.summary,
+        follower_user_name: single.actor.user_name,
+        follower_id: single.actor.id.split("/").at(-1),
+      });
+    });
+
+    responseThree.data.map(async (single) => {
+      console.log(single);
+      let objectURL = single.object;
+      if (single.object.includes("comments")) {
+        objectURL = objectURL.split("/comments/")[0];
+      }
+      const like_object = await axios
+        .get(objectURL, {
+          auth: { username: "admin", password: "admin" },
+        })
+        .then((response) => {
+          const item = response.data;
+          console.log(item);
+          newList.push({
+            type: "Like",
+            summary: single.summary,
+            title: item.title,
+            content: item.content,
+            date: item.published,
+            image: item.image,
+            user_name: item.author.displayName,
+            author_id: item.author.id.split("/").at(-1),
+            github_name: item.author.github.split("/").at(-1),
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+
+    setInboxList(newList);
   }, []);
 
   var listItems;
@@ -351,96 +346,99 @@ const Inbox = () => {
   if (InboxToggle === 0) {
     // Posts
     listItems = InboxList1.filter((item) => item.type === "inbox").map(
-      (item) => (
-        <Grid
-          item
-          xs={8}
-          justifyContent="flex-start"
-          alignItems="flex-start"
-          backgroundColor="#fff"
-          borderBottom="1.2px solid #f0f2f7"
-          padding="30px"
-          boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
-          marginLeft={20}
-          marginRight={20}
-        >
-          <Grid item>
-            <Grid
-              container
-              spacing={2}
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-              {/* <Grid item>
+      (item) => {
+        console.log(item.like_num);
+        return (
+          <Grid
+            item
+            xs={8}
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            backgroundColor="#fff"
+            borderBottom="1.2px solid #f0f2f7"
+            padding="30px"
+            boxShadow="0 1px 3px rgb(18 18 18 / 10%)"
+            marginLeft={20}
+            marginRight={20}
+          >
+            <Grid item>
+              <Grid
+                container
+                spacing={2}
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="flex-start"
+              >
+                {/* <Grid item>
                 <Avatar src={item.author.profileImage}></Avatar>
               </Grid> */}
-              <Grid item>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Typography>
-                      {item.user_name + " share a new post."}
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography>{item.date}</Typography>
+                <Grid item>
+                  <Grid container direction="column">
+                    <Grid item>
+                      <Typography>
+                        {item.user_name + " share a new post."}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography>{item.date}</Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
 
-          <Grid item>
-            <Typography variant="h5">{item.title}</Typography>
-          </Grid>
+            <Grid item>
+              <Typography variant="h5">{item.title}</Typography>
+            </Grid>
 
-          <Grid item spacing={2}>
-            <PostItemInList post={item} />
-          </Grid>
+            <Grid item spacing={2}>
+              <PostItemInList post={item} />
+            </Grid>
 
-          <Grid
-            container
-            spacing={1}
-            direction="row"
-            justifyContent="flex-end"
-            alignItems="flex-end"
-          >
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="thumbup"
-                onClick={() => handleLike(item)}
-              >
-                <ThumbUp />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <Typography>{item.like_num}</Typography>
-            </Grid>
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="share"
-                onClick={() => {
-                  open_share(item);
-                  //console.log(shareBuffer);
-                }}
-              >
-                <ShareRounded />
-              </IconButton>
-            </Grid>
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="comment"
-                onClick={() => handleComment(item)}
-              >
-                <Comment />
-              </IconButton>
+            <Grid
+              container
+              spacing={1}
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+            >
+              <Grid item>
+                <IconButton
+                  edge="end"
+                  aria-label="thumbup"
+                  onClick={() => handleLike(item)}
+                >
+                  <ThumbUp />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <Typography>{item.like_num}</Typography>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  edge="end"
+                  aria-label="share"
+                  onClick={() => {
+                    open_share(item);
+                    //console.log(shareBuffer);
+                  }}
+                >
+                  <ShareRounded />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  edge="end"
+                  aria-label="comment"
+                  onClick={() => handleComment(item)}
+                >
+                  <Comment />
+                </IconButton>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      )
+        );
+      }
     );
   } else if (InboxToggle === 1) {
     // Likes
