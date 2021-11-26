@@ -146,11 +146,9 @@ def inbox_list(request, author_id):
             inbox = Inbox.objects.get(receive_author=receiver)
         except Inbox.DoesNotExist:
             return JsonResponse([], status=status.HTTP_404_NOT_FOUND, safe=False)
-        inbox.post.all().delete()
+        inbox.post.clear()
         friend_requests = FriendRequest.objects.filter(object=receiver)
-        print(friend_requests)
         friend_requests.delete()
-        print(author_id)
         Like.objects.filter(object__contains="author/" +
                             str(author_id)).update(inbox=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
