@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import axios from "axios";
-import { Form } from "reactstrap";
 import "./font/style.css";
 import { makeStyles } from "@material-ui/styles";
 import {
@@ -114,20 +113,19 @@ const FollowProfile = ({ follow_user_url }) => {
         console.log(error);
       });
     // get followee
-    axios
-      .get(follow_user_url, {
-        auth: {
-          username: node.username,
-          password: node.password,
-        },
-      })
-      .then((res) => {
-        setFollowUser(res.data);
-      });
+    const follow_user_res = await axios.get(follow_user_url, {
+      auth: {
+        username: node.username,
+        password: node.password,
+      },
+    });
+    setFollowUser(follow_user_res.data);
     // get current user
     axios
       .get(
-        `${followUser.id}/followers/${localStorage.getItem("current_user_id")}`,
+        `${follow_user_res.data.id}/followers/${localStorage.getItem(
+          "current_user_id"
+        )}`,
         {
           auth: {
             username: node.username,

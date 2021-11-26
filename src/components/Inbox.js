@@ -90,7 +90,7 @@ const Inbox = () => {
           let newList = [];
           InboxList1.map((item) => {
             if (item.type === "inbox") {
-              if (item.post_id === post.id) {
+              if (item.post_id === post.post_id) {
                 item.like_num += 1;
               }
             }
@@ -143,18 +143,6 @@ const Inbox = () => {
           (item) => item.type !== "follower" && item.follower_id !== id
         );
         setInboxList(newList);
-      })
-      .then((response) => {
-        axios
-          .delete(`${baseUrl2}/friendrequest/actor/${id}/object/${userid}/`, {
-            auth: {
-              username: "admin",
-              password: "admin",
-            },
-          })
-          .catch((error) => {
-            console.log(error);
-          });
       })
       .catch((error) => {
         console.log(error);
@@ -268,9 +256,10 @@ const Inbox = () => {
         like_promises.push(
           axios
             .get(
-              `${single.author.id}/posts/${post.post_id
-                .split("/")
-                .at(-1)}/likes`,
+              "http://localhost:8000/service/author/ab50cfbc-8036-4188-8f9c-c05802380a9c/posts/f2e93750-1303-4e77-bbb5-8c2840e3e73a/likes/",
+              // `${single.author.id}/posts/${post.post_id
+              //   .split("/")
+              //   .at(-1)}/likes`,
               {
                 auth: {
                   username: single_node[0].user_name,
