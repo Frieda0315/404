@@ -112,9 +112,7 @@ function Comments(props) {
                   item.url.includes(commentItem.author.host) ||
                   commentItem.author.host.includes(item.url)
               );
-              console.log(
-                "id: " + post.id + "    pass: " + fileteredNode[0].user_name
-              );
+              console.log(commentItem);
               commentPromises.push(
                 axios
                   .get(`${commentItem.id}/likes`, {
@@ -133,6 +131,7 @@ function Comments(props) {
                     commentItem.password = fileteredNode[0].password;
                     console.log(commentItem.username);
                     console.log(commentItem.password);
+                    console.log(commentItem);
                   })
               );
               newComments.push(commentItem);
