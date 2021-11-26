@@ -3,6 +3,7 @@ pagination:
 Reference: https://docs.djangoproject.com/en/3.2/topics/pagination/
 Author: Django doc
 '''
+from re import U
 from django.core import paginator
 from django.http.response import FileResponse, JsonResponse, HttpResponse
 from rest_framework import serializers, status
@@ -28,6 +29,20 @@ import os
 
 
 # Create your views here.
+
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def my_post(request, author_id):
+    try:
+        current_user = User.objects.get(uuid=author_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    my_posts = Post.objects.filter(author=current_user)
+    my_posts_serializer = PostSerializer(my_posts, many=True)
+    return JsonResponse(my_posts_serializer.data, status=status.HTTP_200_OK, safe=False)
 
 
 @api_view(['GET'])
@@ -86,7 +101,7 @@ def post_list(request, author_id):
             return JsonResponse({"Error": "No such arthor"}, status=status.HTTP_400_BAD_REQUEST)
 
         posts = Post.objects.filter(
-            author=author_exist).order_by('-published')
+            author=author_exist, unlisted=False).order_by('-published')
         size = request.GET.get('size', 5)
         paginator = Paginator(posts, size)
         page = request.GET.get('page', 1)
