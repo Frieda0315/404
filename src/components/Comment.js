@@ -252,6 +252,7 @@ function Comments(props) {
                   username: "admin",
                   password: "admin",
                   contentType: textChoice,
+                  like_num: 0,
                 },
               ]);
 
