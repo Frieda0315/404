@@ -8,6 +8,7 @@ import Popup from "./Popup";
 import Share from "./Share";
 import makeStyles from "@material-ui/styles/makeStyles";
 import axios from "axios";
+import Post from "./Post";
 
 const useStyles = makeStyles(() => ({
   FollowItem: {
@@ -36,7 +37,12 @@ const Inbox = () => {
   ]);
 
   const [openPopup2, setOpenPopup2] = React.useState(false);
-  const open_share = () => setOpenPopup2(true);
+  const [shareBuffer, setShareBuffer] = React.useState({});
+
+  // const open_share = () => {
+  //   setOpenPopup2(true);
+  //   console.log("I trigger the share popup?");
+  // };
 
   const handleRemove = (e) => {
     const id = e.id;
@@ -44,6 +50,35 @@ const Inbox = () => {
     setInboxList(newList);
   };
 
+  const open_share = (post) => {
+    axios
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((response) => {
+        axios
+          .get(`${post.id}/`, {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          })
+          .then((res) => {
+            let newPost = res.data;
+            newPost.source = "https://i-connect.herokuapp.com/service/posts/";
+            newPost.visibility = "FRIENDS";
+            console.log(newPost);
+            setOpenPopup2(true);
+            setShareBuffer(newPost);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const acceptFriendRequest = (id) => {
     axios
       .put(
@@ -271,12 +306,24 @@ const Inbox = () => {
             alignItems="flex-end"
           >
             <Grid item>
-              <IconButton edge="end" aria-label="thumbup">
+              <IconButton
+                edge="end"
+                aria-label="thumbup"
+                onClick={() => handleLike(item)}
+              >
                 <ThumbUp />
               </IconButton>
             </Grid>
             <Grid item>
-              <IconButton edge="end" aria-label="share" onClick={open_share}>
+              <IconButton
+                edge="end"
+                aria-label="share"
+                onClick={(e) => {
+                  e.preventDefault();
+                  open_share(item);
+                  //console.log(shareBuffer);
+                }}
+              >
                 <ShareRounded />
               </IconButton>
             </Grid>
@@ -290,7 +337,9 @@ const Inbox = () => {
               <IconButton
                 edge="end"
                 aria-label="Delete"
-                onClick={() => handleRemove(item)}
+                onClick={() => {
+                  handleRemove(item);
+                }}
               >
                 <Delete />
               </IconButton>
