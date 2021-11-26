@@ -70,11 +70,11 @@ def handlePostRequest(json_data, receiver):
     try:
         inbox = Inbox.objects.get(receive_author=receiver)
     except Inbox.DoesNotExist:
-        return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND, safe=False,)
+        return JsonResponse({"error", "inbox not found"}, status=status.HTTP_404_NOT_FOUND, safe=False)
 
     inbox.post.add(post)
     inbox.save()
-    return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK, safe=False,)
+    return JsonResponse({"result", "Post shared"}, status=status.HTTP_200_OK, safe=False)
 
 
 def handleLikeRequest(json_data, receiver):
