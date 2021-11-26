@@ -41,7 +41,7 @@ const Inbox = () => {
   const [shareBuffer, setShareBuffer] = React.useState({});
 
   const open_share = () => setOpenPopup2(true);
-  const handleLike = (post) => {
+  const handleLike = async (post) => {
     const liker = await axios.get(
       `https://i-connect.herokuapp.com/service/author/${localStorage.getItem(
         "current_user_id"
