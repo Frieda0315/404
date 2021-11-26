@@ -17,7 +17,7 @@ import Profile from "./Profile";
 import FollowProfile from "./FollowProfile";
 import { v4 as uuidv4 } from "uuid";
 import ImageHolder from "./ImageHolder";
-import { Redirect } from "react-router";
+import SourceTag from "./SourceTag";
 import ReactMarkdown from "react-markdown";
 import Share from "./Share";
 import PostItemInList from "./PostItemInList";
@@ -437,14 +437,8 @@ function PostStream(props) {
               <Typography className="tag-format github-tag">
                 Github Activity
               </Typography>
-            ) : post.visibility === "PUBLIC" ? (
-              <Typography className="tag-format public-tag">Public</Typography>
-            ) : post.visibility === "FRIENDS" ? (
-              <Typography className="tag-format private-tag">Friend</Typography>
             ) : (
-              <Typography className="tag-format private-tag">
-                Private
-              </Typography>
+              <SourceTag host={post.author.host} />
             )}
             <Typography
               fontStyle="italic"

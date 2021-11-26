@@ -273,7 +273,7 @@ function Comments(props) {
     } else {
       axios
         .post(
-          `${post.comments}`,
+          `${post.comments}/`,
           {
             author: currentUser,
             comment: newComment,
