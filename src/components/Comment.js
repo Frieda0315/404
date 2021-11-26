@@ -271,9 +271,18 @@ function Comments(props) {
           }
         );
     } else {
+      let url = "";
+      if (
+        post.author_item.host ===
+        "https://social-distribution-fall2021.herokuapp.com/api/"
+      ) {
+        url = post.comments;
+      } else {
+        url = post.comments + "/";
+      }
       axios
         .post(
-          `${post.comments}/`,
+          `${url}`,
           {
             author: currentUser,
             comment: newComment,
