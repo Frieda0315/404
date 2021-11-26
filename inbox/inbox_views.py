@@ -37,7 +37,8 @@ def handleFollowRequest(json_data, receiver):
     except User.DoesNotExist:
         actor_serializer = UserSerializer(data=json_data["actor"])
         if actor_serializer.is_valid():
-            save_method(actor_serializer)
+            actor_serializer.save()
+            actor = actor_serializer.data
         else:
             return JsonResponse(actor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
