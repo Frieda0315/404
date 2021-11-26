@@ -11,7 +11,7 @@ from users.serializers import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.CharField()
     author = UserSerializer()
-    commentsSrc = CommentsSerializer(required=False, allow_null=True,allow_blank = True)
+    commentsSrc = CommentsSerializer(required=False, allow_null=True)
     categories = serializers.JSONField()
     count = serializers.IntegerField()
     published = serializers.DateTimeField()
