@@ -57,7 +57,7 @@ function Comments(props) {
   const [comments, setComments] = React.useState([]);
 
   const CommentItemInList = (comment) => {
-    console.log(comment);
+    //console.log(comment);
 
     if (comment.contentType === "text/plain") {
       return (
@@ -100,7 +100,7 @@ function Comments(props) {
             },
           })
           .then((response) => {
-            console.log(response.data.comments);
+            //console.log(response.data.comments);
             setComments(response.data.comments);
 
             let commentPromises = [];
@@ -110,6 +110,9 @@ function Comments(props) {
                 (item) =>
                   item.url.includes(commentItem.author.host) ||
                   commentItem.author.host.includes(item.url)
+              );
+              console.log(
+                "id: " + post.id + "    pass: " + fileteredNode[0].user_name
               );
               commentPromises.push(
                 axios
@@ -132,6 +135,7 @@ function Comments(props) {
                     }
                     commentItem.username = fileteredNode[0].user_name;
                     commentItem.password = fileteredNode[0].password;
+                    console.log(commentItem.username);
                     console.log(commentItem.password);
                   })
               );
@@ -164,9 +168,10 @@ function Comments(props) {
       author: currentUser,
       object: commment.id,
     };
-    console.log(likeData);
+    console.log(commment);
 
     // post likes
+    console.log("like,", commment.author.ids);
     await axios
       .post(`${commment.author.id}/inbox/`, likeData, {
         auth: {
@@ -209,43 +214,106 @@ function Comments(props) {
     e.preventDefault();
     const now = new Date();
     const isoString = now.toISOString();
-    axios
-      .post(
-        `${post.id}/comments/`,
-        {
-          author: currentUser,
-          comment: newComment,
-          published: isoString,
-          id:
-            "https://i-connect.herokuapp.com/service/author/" +
-            localStorage.getItem("current_user_id") +
-            "/posts/" +
-            window.location.pathname.split("/").at(-2) +
-            "/comments/" +
-            uuidv4(),
-          type: "comment",
-          contentType: textChoice,
-        },
-        {
-          auth: {
-            username: post.username,
-            password: post.password,
+    if (
+      post.author_item.host === "https://newconnection-server.herokuapp.com/"
+    ) {
+      axios
+        .post(
+          `${post.author_item.id}/inbox/`,
+          {
+            author: currentUser,
+            comment: newComment,
+            published: isoString,
+            id:
+              "https://i-connect.herokuapp.com/service/author/" +
+              localStorage.getItem("current_user_id") +
+              "/posts/" +
+              window.location.pathname.split("/").at(-2) +
+              "/comments/" +
+              uuidv4(),
+            type: "comment",
+            contentType: textChoice,
           },
-        }
-      )
-      .then(
-        (response) => {
-          response.data.like_num = 0;
-          const newComments = comments.concat([response.data]);
+          {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          }
+        )
+        .then(
+          (response) => {
+            if (200 <= response.status < 300) {
+              response.data.like_num = 0;
+              const newComments = comments.concat([
+                {
+                  author: currentUser,
+                  comment: newComment,
+                  published: isoString,
+                  id:
+                    "https://i-connect.herokuapp.com/service/author/" +
+                    localStorage.getItem("current_user_id") +
+                    "/posts/" +
+                    window.location.pathname.split("/").at(-2) +
+                    "/comments/" +
+                    uuidv4(),
+                  type: "comment",
+                  contentType: textChoice,
+                },
+              ]);
 
-          setComments(newComments);
-          setNewComment("");
-        },
-        (error) => {
-          alert("error ");
-          console.log(error);
-        }
-      );
+              setComments(newComments);
+              setNewComment("");
+            } else {
+              alert("failed to comment this post QAQ");
+              setNewComment("");
+            }
+          },
+          (error) => {
+            alert("error ");
+            console.log(error);
+            return;
+          }
+        );
+    } else {
+      axios
+        .post(
+          `${post.id}/comments/`,
+          {
+            author: currentUser,
+            comment: newComment,
+            published: isoString,
+            id:
+              "https://i-connect.herokuapp.com/service/author/" +
+              localStorage.getItem("current_user_id") +
+              "/posts/" +
+              window.location.pathname.split("/").at(-2) +
+              "/comments/" +
+              uuidv4(),
+            type: "comment",
+            contentType: textChoice,
+          },
+          {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          }
+        )
+        .then(
+          (response) => {
+            response.data.like_num = 0;
+            const newComments = comments.concat([response.data]);
+
+            setComments(newComments);
+            setNewComment("");
+          },
+          (error) => {
+            alert("error ");
+            console.log(error);
+          }
+        );
+    }
   };
 
   const commentStream = comments.map((comment) => (

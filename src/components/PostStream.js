@@ -340,6 +340,7 @@ function PostStream(props) {
                 let postItem = {
                   id: single.id,
                   published: single.published,
+                  author_item: single.author,
                   username: single.username,
                   password: single.password,
                   contentType: single.contentType,
