@@ -11,7 +11,7 @@ from users.serializers import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.CharField()
     author = UserSerializer()
-    commentsSrc = CommentsSerializer()
+    commentsSrc = CommentsSerializer(required=False, allow_null=True)
     categories = serializers.JSONField()
     count = serializers.IntegerField()
     published = serializers.DateTimeField()
@@ -25,10 +25,11 @@ class PostSerializer(serializers.ModelSerializer):
             author = User.objects.create(author_data)
         validated_data["author"] = author
 
-        comments_data = validated_data.pop('commentsSrc')
-        comments_data.pop("comments")
-        comments = Comments.objects.get_or_create(**comments_data)[0]
-        validated_data["commentsSrc"] = comments
+        if "commentsSrc" in validated_data:
+            comments_data = validated_data.pop('commentsSrc')
+            comments_data.pop("comments")
+            comments = Comments.objects.get_or_create(**comments_data)[0]
+            validated_data["commentsSrc"] = comments
 
         return Post.objects.create(**validated_data)
 

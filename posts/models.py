@@ -31,7 +31,7 @@ class Post(models.Model):
     # Reference: https://stackoverflow.com/a/34003965
     # Author: https://stackoverflow.com/users/3945375/gocht
     commentsSrc = models.ForeignKey(
-        Comments, on_delete=models.CASCADE, related_name='+')
+        Comments, on_delete=models.CASCADE, related_name='+', null=True, blank=True)
     published = models.DateTimeField(auto_now=True, null=True)
     visibility = models.CharField(
         max_length=30, choices=visibilityTypes, default="PUBLIC")
