@@ -144,7 +144,7 @@ const Post = () => {
       page: 1,
       size: 5,
       post: postId,
-      id: postId,
+      id: postId + "/comments",
       comments: [],
     };
     const postTemplate = {
@@ -158,7 +158,7 @@ const Post = () => {
       author: author.data,
       categories: categories,
       count: 0,
-      comments: postId,
+      comments: postId + "/comments",
       commentsSrc: emptyComment,
       published: currentDateTime,
       visibility: visibility,
