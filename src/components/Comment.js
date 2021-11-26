@@ -210,7 +210,9 @@ function Comments(props) {
     const now = new Date();
     const isoString = now.toISOString();
     if (
-      post.author_item.host === "https://newconnection-server.herokuapp.com/"
+      post.author_item.host === "https://newconnection-server.herokuapp.com/" ||
+      post.author_item.host ===
+        "https://social-distribution-fall2021.herokuapp.com/api/"
     ) {
       axios
         .post(
@@ -219,13 +221,7 @@ function Comments(props) {
             author: currentUser,
             comment: newComment,
             published: isoString,
-            id:
-              "https://i-connect.herokuapp.com/service/author/" +
-              localStorage.getItem("current_user_id") +
-              "/posts/" +
-              window.location.pathname.split("/").at(-2) +
-              "/comments/" +
-              uuidv4(),
+            id: post.id,
             type: "comment",
             contentType: textChoice,
           },
@@ -245,14 +241,16 @@ function Comments(props) {
                   author: currentUser,
                   comment: newComment,
                   published: isoString,
-                  id:
-                    "https://i-connect.herokuapp.com/service/author/" +
-                    localStorage.getItem("current_user_id") +
-                    "/posts/" +
-                    window.location.pathname.split("/").at(-2) +
-                    "/comments/" +
-                    uuidv4(),
+                  id: post.id,
+                  // "https://i-connect.herokuapp.com/service/author/" +
+                  // localStorage.getItem("current_user_id") +
+                  // "/posts/" +
+                  // window.location.pathname.split("/").at(-2) +
+                  // "/comments/" +
+                  // uuidv4(),
                   type: "comment",
+                  username: "admin",
+                  password: "admin",
                   contentType: textChoice,
                 },
               ]);

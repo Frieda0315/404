@@ -29,6 +29,18 @@ const PostItemInList = ({ post }) => {
     post.contentType === "image/png;base64" ||
     post.contentType === "image/jpeg;base64"
   ) {
+    if (post.content.startsWith("data:")) {
+      return (
+        <Grid container style={{ marginLeft: "48px" }}>
+          <Grid item xs>
+            <Typography variant="body1" color="text.secondary">
+              Image ID: {post.id}
+            </Typography>
+            <img style={{ maxWidth: "75%" }} src={post.content} />
+          </Grid>
+        </Grid>
+      );
+    }
     return (
       <Grid container style={{ marginLeft: "48px" }}>
         <Grid item xs>
