@@ -23,6 +23,7 @@ import Share from "./Share";
 import PostItemInList from "./PostItemInList";
 import "../index.css";
 import { useHistory } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles(() => ({
   stream: {
@@ -77,7 +78,7 @@ const baseUrl = "https://api.github.com/users";
 
 function PostStream(props) {
   const history = useHistory();
-
+  const [dataFetched, setDataFetched] = React.useState(false);
   const styleClasses = useStyles();
   const [page, setPage] = React.useState(1);
   //  const [tempPostList1, setTempPostList] = React.useState(tempPostList);
@@ -372,6 +373,7 @@ function PostStream(props) {
               });
               Promise.all(like_promises).then(() => {
                 setPostlist(newList);
+                setDataFetched(true);
               });
             })
           )
@@ -527,21 +529,27 @@ function PostStream(props) {
       >
         <Share post={shareBuffer} setOpen={setOpenPopup2}></Share>
       </Popup>
-      <Grid
-        container
-        spacing={2}
-        className={styleClasses.stream}
-        justifyContent="center"
-        alignItems="center"
-      >
-        {postStream}
-      </Grid>
-      {/* <Pagination
-        count={3}
-        page={page}
-        onChange={changePage}
-        className={styleClasses.pagination}
-      /> */}
+      {dataFetched ? (
+        <Grid
+          container
+          spacing={2}
+          className={styleClasses.stream}
+          justifyContent="center"
+          alignItems="center"
+        >
+          {postStream}
+        </Grid>
+      ) : (
+        <Grid
+          container
+          spacing={2}
+          className={styleClasses.stream}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <CircularProgress />
+        </Grid>
+      )}
     </div>
   );
 }
