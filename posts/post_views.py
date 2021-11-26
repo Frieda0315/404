@@ -143,6 +143,8 @@ def post_list(request, author_id):
 
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def post_detail(request, author_id, id):  # this id here is postID
     """
     Retrieve, create, update or delete a code snippet.
@@ -244,7 +246,19 @@ def post_detail(request, author_id, id):  # this id here is postID
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def plain_post(requset, post_id):
+    try:
+        post = Post.objects.get(uuid=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "post not found"}, status=status.HTTP_400_BAD_REQUEST)
+    post_serializer = PostSerializer(post)
+    return JsonResponse(post_serializer.data, status=status.HTTP_200_OK)
+
 # helper function under
+
 
 def imageUploader(json_data, id):
     if os.path.isfile(os.path.join(MEDIA_ROOT, "images/" + str(id) + ".png")):

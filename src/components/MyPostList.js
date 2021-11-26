@@ -60,6 +60,7 @@ function MyPostList() {
   const userid = localStorage.getItem("current_user_id");
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const [image, setImage] = React.useState();
+  const [shareBuffer, setShareBuffer] = React.useState({});
 
   const open_image_holder = (post) => {
     setImage(post.image);
@@ -68,7 +69,7 @@ function MyPostList() {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/mypots/${userid}/`, {
+      .get(`${baseUrl2}/myposts/${userid}/`, {
         auth: {
           username: "admin",
           password: "admin",
@@ -101,16 +102,16 @@ function MyPostList() {
       });
   }, []);
 
-  const viewComments = (post) => {
-    setComments(post);
-  };
-  if (Object.keys(comments).length !== 0) {
-    return (
-      <Redirect
-        to={comments.id.substring(30, comments.id.length) + "/comments"}
-      ></Redirect>
-    );
-  }
+  // const viewComments = (post) => {
+  //   setComments(post);
+  // };
+  // if (Object.keys(comments).length !== 0) {
+  //   return (
+  //     <Redirect
+  //       to={comments.id.substring(30, comments.id.length) + "/comments"}
+  //     ></Redirect>
+  //   );
+  // }
 
   const handleRemove = (e) => {
     const id = e.id;
@@ -128,7 +129,24 @@ function MyPostList() {
       });
   };
 
-  const open_share = () => setOpenPopup2(true);
+  const open_share = (post) => {
+    const postUuid = post.id.split("/").at(-1);
+    axios
+      .get(`https://i-connect.herokuapp.com/service/plainpost/${postUuid}/`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        let newPost = res.data;
+        newPost.source = "https://i-connect.herokuapp.com/service/posts/";
+        newPost.visibility = "FRIENDS";
+        console.log(newPost);
+        setOpenPopup2(true);
+        setShareBuffer(newPost);
+      });
+  };
   const open = (author, git) => {
     setUser(author);
     setGit_user(git);
@@ -197,29 +215,13 @@ function MyPostList() {
           <Grid item>
             <IconButton
               edge="end"
-              aria-label="thumbup"
-              onClick={() => setVote(vote + 1)}
+              aria-label="share"
+              onClick={() => open_share(post)}
             >
-              <ThumbUp />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <Typography>{vote}</Typography>
-          </Grid>
-          <Grid item>
-            <IconButton edge="end" aria-label="share" onClick={open_share}>
               <ShareRounded />
             </IconButton>
           </Grid>
-          <Grid item>
-            <IconButton
-              edge="end"
-              aria-label="comment"
-              onClick={() => viewComments(post)}
-            >
-              <Comment />
-            </IconButton>
-          </Grid>
+
           <Grid item>
             <Grid item>
               <IconButton
@@ -252,7 +254,7 @@ function MyPostList() {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <Share></Share>
+        <Share post={shareBuffer} setOpen={setOpenPopup2}></Share>
       </Popup>
 
       <div class="text text-1">My Post</div>

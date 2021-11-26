@@ -9,6 +9,7 @@ import Share from "./Share";
 import makeStyles from "@material-ui/styles/makeStyles";
 import axios from "axios";
 import Post from "./Post";
+import PostItemInList from "./PostItemInList";
 
 const useStyles = makeStyles(() => ({
   FollowItem: {
@@ -383,7 +384,7 @@ const Inbox = () => {
           </Grid>
 
           <Grid item spacing={2}>
-            <Typography>{item.content}</Typography>
+            <PostItemInList post={item} />
           </Grid>
 
           <Grid
