@@ -37,7 +37,8 @@ def handleFollowRequest(json_data, receiver):
     except User.DoesNotExist:
         actor_serializer = UserSerializer(data=json_data["actor"])
         if actor_serializer.is_valid():
-            save_method(actor_serializer)
+            actor_serializer.save()
+            actor = actor_serializer.data
         else:
             return JsonResponse(actor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,7 +64,8 @@ def handlePostRequest(json_data, receiver):
     except Post.DoesNotExist:
         shared_post_serializer = PostSerializer(data=json_data)
         if shared_post_serializer.is_valid():
-            save_method(shared_post_serializer)
+            shared_post_serializer.save()
+            post = shared_post_serializer.data
         else:
             return JsonResponse(shared_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,7 +88,8 @@ def handleLikeRequest(json_data, receiver):
     except User.DoesNotExist:
         liker_serializer = UserSerializer(data=liker_object)
         if liker_serializer.is_valid():
-            save_method(liker_serializer)
+            liker_serializer.save()
+            liker = liker_serializer.data
         else:
             return JsonResponse(liker_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
