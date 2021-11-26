@@ -106,15 +106,17 @@ function Comments(props) {
             let commentPromises = [];
             let newComments = [];
             response.data.comments.map((commentItem) => {
-              const fileteredNode = res.data.filter((item) =>
-                item.url.includes(commentItem.author.host)
+              const fileteredNode = res.data.filter(
+                (item) =>
+                  item.url.includes(commentItem.author.host) ||
+                  commentItem.author.host.includes(item.url)
               );
               commentPromises.push(
                 axios
                   .get(
                     `${post.id}/comments/${commentItem.id
                       .split("/")
-                      .at(-1)}/likes/`,
+                      .at(-1)}/likes`,
                     {
                       auth: {
                         username: fileteredNode[0].user_name,
@@ -123,7 +125,11 @@ function Comments(props) {
                     }
                   )
                   .then((response) => {
-                    commentItem.like_num = response.data.length;
+                    if (response.data instanceof Array) {
+                      commentItem.like_num = response.data.length;
+                    } else {
+                      commentItem.like_num = response.data.items.length;
+                    }
                     commentItem.username = fileteredNode[0].user_name;
                     commentItem.password = fileteredNode[0].password;
                     console.log(commentItem.password);

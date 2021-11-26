@@ -116,7 +116,7 @@ function PostStream(props) {
       })
       .then((response) => {
         axios
-          .get(`${post.id}/`, {
+          .get(`${post.id}`, {
             auth: {
               username: post.username,
               password: post.password,
@@ -368,7 +368,11 @@ function PostStream(props) {
                       },
                     })
                     .then((response) => {
-                      postItem.like_num = response.data.length;
+                      if (response.data instanceof Array) {
+                        postItem.like_num = response.data.length;
+                      } else {
+                        postItem.like_num = response.data.items.length;
+                      }
                     })
                 );
                 newList.push(postItem);

@@ -27,8 +27,8 @@ function Share(props) {
         },
       })
       .then((res) => {
-        const fileteredNode = res.data.filter((item) =>
-          item.url.includes(user.host)
+        const fileteredNode = res.data.filter(
+          (item) => item.url.includes(user.host) || user.host.includes(item.url)
         );
         axios
           .post(`${user.id}/inbox/`, postToShare, {
