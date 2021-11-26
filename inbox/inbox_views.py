@@ -64,8 +64,7 @@ def handlePostRequest(json_data, receiver):
     except Post.DoesNotExist:
         shared_post_serializer = PostSerializer(data=json_data)
         if shared_post_serializer.is_valid():
-            shared_post_serializer.save()
-            post = shared_post_serializer.data
+            post = shared_post_serializer.save()
         else:
             return JsonResponse(shared_post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
