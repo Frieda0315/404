@@ -258,6 +258,7 @@ const Inbox = () => {
                   item.url.includes(post.author.host) ||
                   post.author.host.includes(item.url)
               );
+
               like_promises.push(
                 axios
                   .get(
@@ -266,8 +267,8 @@ const Inbox = () => {
                       .at(-1)}/likes`,
                     {
                       auth: {
-                        username: single_node.user_name,
-                        password: single_node.password,
+                        username: single_node[0].user_name,
+                        password: single_node[0].password,
                       },
                     }
                   )
@@ -277,6 +278,10 @@ const Inbox = () => {
                     } else {
                       post.like_num = response.data.items.length;
                     }
+                    const username = single_node[0].user_name;
+                    const password = single_node[0].password;
+                    post["username"] = username;
+                    post["password"] = password;
                   })
               );
               newList.push(post);
