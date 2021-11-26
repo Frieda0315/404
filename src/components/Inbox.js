@@ -80,8 +80,8 @@ const Inbox = () => {
     await axios
       .post(`${post.author.id}/inbox/`, likeData, {
         auth: {
-          username: single_node.user_name,
-          password: single_node.password,
+          username: single_node[0].user_name,
+          password: single_node[0].password,
         },
       })
       .then((response) => {
@@ -111,31 +111,19 @@ const Inbox = () => {
 
   const open_share = (post) => {
     axios
-      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}/`, {
+      .get(`${post.post_id}`, {
         auth: {
-          username: "admin",
-          password: "admin",
+          username: post.username,
+          password: post.password,
         },
       })
-      .then((response) => {
-        axios
-          .get(`${post.id}`, {
-            auth: {
-              username: post.username,
-              password: post.password,
-            },
-          })
-          .then((res) => {
-            let newPost = res.data;
-            newPost.source = "https://i-connect.herokuapp.com/service/posts/";
-            newPost.visibility = "FRIENDS";
-            console.log(newPost);
-            setOpenPopup2(true);
-            setShareBuffer(newPost);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
+      .then((res) => {
+        let newPost = res.data;
+        newPost.source = "https://i-connect.herokuapp.com/service/posts/";
+        newPost.visibility = "FRIENDS";
+        console.log(newPost);
+        setOpenPopup2(true);
+        setShareBuffer(newPost);
       });
   };
   const acceptFriendRequest = (id) => {
@@ -270,6 +258,7 @@ const Inbox = () => {
                   item.url.includes(post.author.host) ||
                   post.author.host.includes(item.url)
               );
+
               like_promises.push(
                 axios
                   .get(
@@ -278,8 +267,8 @@ const Inbox = () => {
                       .at(-1)}/likes`,
                     {
                       auth: {
-                        username: single_node.user_name,
-                        password: single_node.password,
+                        username: single_node[0].user_name,
+                        password: single_node[0].password,
                       },
                     }
                   )
@@ -289,6 +278,10 @@ const Inbox = () => {
                     } else {
                       post.like_num = response.data.items.length;
                     }
+                    const username = single_node[0].user_name;
+                    const password = single_node[0].password;
+                    post["username"] = username;
+                    post["password"] = password;
                   })
               );
               newList.push(post);
@@ -422,8 +415,7 @@ const Inbox = () => {
               <IconButton
                 edge="end"
                 aria-label="share"
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   open_share(item);
                   //console.log(shareBuffer);
                 }}
@@ -438,18 +430,6 @@ const Inbox = () => {
                 onClick={() => handleComment(item)}
               >
                 <Comment />
-              </IconButton>
-            </Grid>
-
-            <Grid item>
-              <IconButton
-                edge="end"
-                aria-label="Delete"
-                onClick={() => {
-                  handleRemove(item);
-                }}
-              >
-                <Delete />
               </IconButton>
             </Grid>
           </Grid>
@@ -547,7 +527,7 @@ const Inbox = () => {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <Share></Share>
+        <Share post={shareBuffer} setOpen={setOpenPopup2}></Share>
       </Popup>
       <Grid container direction="row">
         <Grid item>
