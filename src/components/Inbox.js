@@ -63,15 +63,16 @@ const Inbox = () => {
         setInboxList(newList);
       })
       .then((response) => {
-        axios.delete(
-          `${baseUrl2}/friendrequest/actor/${id}/object/${userid}/`,
-          {
+        axios
+          .delete(`${baseUrl2}/friendrequest/actor/${id}/object/${userid}/`, {
             auth: {
               username: "admin",
               password: "admin",
             },
-          }
-        );
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
