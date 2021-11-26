@@ -43,9 +43,9 @@ const Inbox = () => {
     history.push({
       pathname:
         "/author/" +
-        post.author_id.split("/").at(-1) +
+        post.author.id.split("/").at(-1) +
         "/posts/" +
-        post.id.split("/").at(-1) +
+        post.post_id.split("/").at(-1) +
         "/comments",
       state: post,
     });
