@@ -68,7 +68,7 @@ function MyPostList() {
   useEffect(() => {
     var newList = [];
     axios
-      .get(`${baseUrl2}/author/${userid}/posts/`, {
+      .get(`${baseUrl2}/mypots/${userid}/`, {
         auth: {
           username: "admin",
           password: "admin",
