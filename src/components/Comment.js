@@ -15,6 +15,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useHistory, useLocation } from "react-router-dom";
 
+import FollowProfile from "./FollowProfile";
 import Popup from "./Popup";
 import Profile from "./Profile";
 import "./font/style.css";
@@ -328,9 +329,7 @@ function Comments(props) {
         <Grid item>
           <Avatar
             src={comment.author.profileImage}
-            onClick={() =>
-              open(comment.author.displayName, comment.author.github_name)
-            }
+            onClick={() => open(comment.author.id, comment.author.github_name)}
           ></Avatar>
         </Grid>
         <Grid item>
@@ -382,11 +381,7 @@ function Comments(props) {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <Profile
-          user={user}
-          post_github_user={github_user}
-          is_follow={true}
-        ></Profile>
+        <FollowProfile follow_user_url={user} />
       </Popup>
 
       <Grid
