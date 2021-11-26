@@ -69,7 +69,7 @@ const Inbox = () => {
       summary: localStorage.getItem("user_name") + " Likes your post",
       type: "Like",
       author: liker.data,
-      object: post.id,
+      object: post.post_id,
     };
     // post likes
     let single_node = nodes.filter(
@@ -254,6 +254,7 @@ const Inbox = () => {
                 date: single.published,
                 image: single.image,
                 post_id: single.id,
+                author_item: single.author,
                 user_name: single.author.displayName,
                 author: single.author,
                 github_name: single.author.github.split("/").at(-1),

@@ -94,7 +94,7 @@ function Comments(props) {
 
       .then((res) => {
         axios
-          .get(`${post.id}/comments/`, {
+          .get(`${post.comments}`, {
             auth: {
               username: post.username,
               password: post.password,
@@ -273,7 +273,7 @@ function Comments(props) {
     } else {
       axios
         .post(
-          `${post.id}/comments/`,
+          `${post.comments}`,
           {
             author: currentUser,
             comment: newComment,
