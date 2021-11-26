@@ -30,9 +30,9 @@ const images = {
 const EditPost = () => {
   const history = useHistory();
   const location = useLocation();
-  console.log(location.state);
+  //console.log(location.state);
   const [item1, setItem] = React.useState(location.state);
-  console.log("data:" + item1.contentType + item1.content);
+  //console.log("data:" + item1.contentType + item1.content);
   const [preview, setPreview] = React.useState(() => {
     if (
       item1.contentType === "image/png;base64" ||
@@ -51,18 +51,21 @@ const EditPost = () => {
       return true;
     }
   });
-  const [fileBase64String, setFileBase64String] = React.useState(() => {
-    if (
-      item1.contentType === "image/png;base64" ||
-      item1.contentType === "image/jpeg;base64"
-    ) {
-      console.log(`data:${item1.contentType},${item1.content}`);
-      setPreview(`data:${item1.contentType},${item1.content}`);
-      return `data:${item1.contentType},${item1.content}`;
-    } else {
-      return noimage;
-    }
-  });
+  const [fileBase64String, setFileBase64String] = React.useState(
+    `data:${item1.contentType},${item1.content}`
+  );
+  //   () => {
+  //   if (
+  //     item1.contentType === "image/png;base64" ||
+  //     item1.contentType === "image/jpeg;base64"
+  //   ) {
+  //     console.log(`data:${item1.contentType},${item1.content}`);
+  //     setPreview(`data:${item1.contentType},${item1.content}`);
+  //     return `data:${item1.contentType},${item1.content}`;
+  //   } else {
+  //     return noimage;
+  //   }
+  // });
 
   const [image, setImage] = React.useState(
     `data:${item1.contentType},${item1.content}`
@@ -73,6 +76,7 @@ const EditPost = () => {
   const [title, setTitle] = React.useState(item1.title);
   const [common, setCommon] = React.useState(item1.content);
   const [date, setDate] = React.useState(item1.date);
+  const [codeNeedToSend, setCodeNeedToSend] = React.useState(item1.content);
   const [categories, setCategories] = React.useState(item1.categories);
   const [unlisted, setUnlisted] = React.useState(item1.unlisted);
   const [category, setCategory] = React.useState("");
@@ -82,27 +86,33 @@ const EditPost = () => {
 
   const uploadImage = (files) => {
     //accept = 'image/*';
+
     const file = files[0];
+    console.log(file);
     if (file) {
-      setImage(file);
       encodeFileBase64(image);
-    } else {
-      setImage(noimage);
+      setImage(file);
+      //setPreview(codeNeedToSend);
     }
   };
   const encodeFileBase64 = (file) => {
-    console.log(file);
     var reader = new FileReader();
     if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
+      console.log("did I went here");
+      //reader.readAsDataURL(file);
+      reader.onloadend = (e) => {
+        setFileBase64String(e.reader.result);
+        console.log(e.reader.result);
         const imagePrefix = reader.result.split("base64,")[0].split(":")[1];
         if (imagePrefix === "image/jpeg;") {
-          setFileBase64String(reader.result.split("base64,")[1]);
+          //console.log("did I went here");
+          setCodeNeedToSend(reader.result.split("base64,")[1]);
         } else if (imagePrefix === "image/png;") {
-          setFileBase64String(reader.result.split("base64,")[1]);
+          //console.log("did I went here");
+          setCodeNeedToSend(reader.result.split("base64,")[1]);
         } else {
           console.log(imagePrefix);
+          console.log(fileBase64String);
           // alert("unsupported image");
         }
       };
@@ -110,24 +120,21 @@ const EditPost = () => {
   };
 
   useEffect(() => {
+    //console.log(fileBase64String);
+    setPreview(fileBase64String);
     if (image && isImage) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-        encodeFileBase64(image);
-      };
+      console.log("did I went here");
+      // const reader = new FileReader();
+      // reader.onloadend = () => {
+      //   console.log(reader.result);
+      //   encodeFileBase64(image);
+      // };
       //reader.readAsDataURL(image);
     } else {
-      //setPreview(noimage);
-      setPreview(`data:${item1.contentType},${item1.content}`);
+      //setPreview(noimage);`data:${item1.contentType},${item1.content}`
+      setPreview(noimage);
     }
   }, [image]);
-
-  const imageUpload = () => {
-    //encodeFileBase64(image);
-    console.log("hi", fileBase64String);
-    setPreview(fileBase64String);
-  };
 
   const submited = async () => {
     const authorID = localStorage.getItem("current_user_id");
@@ -170,7 +177,7 @@ const EditPost = () => {
         alert("Image field is empty!");
         return;
       }
-      postTemplate.content = fileBase64String;
+      postTemplate.content = codeNeedToSend;
     }
     const newPost = await axios.post(`${item1.id}/`, postTemplate, {
       auth: {

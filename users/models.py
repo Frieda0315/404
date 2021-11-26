@@ -12,8 +12,8 @@ class User(models.Model):
         max_length=160, default="https://i-connect.herokuapp.com/")
     displayName = models.CharField(max_length=120)
     url = models.CharField(max_length=300)
-    github = models.CharField(max_length=120 , null= True, blank= True)
-    profileImage = models.CharField(max_length=300, null= True, blank=True)
+    github = models.CharField(max_length=120, null=True, blank=True)
+    profileImage = models.CharField(max_length=300, null=True, blank=True)
 
     # unique id
     uuid = models.CharField(blank=True, null=True, max_length=120)
