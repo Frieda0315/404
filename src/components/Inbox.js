@@ -236,7 +236,11 @@ const Inbox = () => {
                     },
                   })
                   .then((response) => {
-                    post.like_num = response.data.length;
+                    if (response.data instanceof Array) {
+                      post.like_num = response.data.length;
+                    } else {
+                      post.like_num = response.data.items.length;
+                    }
                   })
               );
               newList.push(post);
