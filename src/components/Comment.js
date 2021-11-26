@@ -117,17 +117,12 @@ function Comments(props) {
               );
               commentPromises.push(
                 axios
-                  .get(
-                    `${post.id}/comments/${commentItem.id
-                      .split("/")
-                      .at(-1)}/likes`,
-                    {
-                      auth: {
-                        username: fileteredNode[0].user_name,
-                        password: fileteredNode[0].password,
-                      },
-                    }
-                  )
+                  .get(`${commentItem.id}/likes`, {
+                    auth: {
+                      username: fileteredNode[0].user_name,
+                      password: fileteredNode[0].password,
+                    },
+                  })
                   .then((response) => {
                     if (response.data instanceof Array) {
                       commentItem.like_num = response.data.length;
