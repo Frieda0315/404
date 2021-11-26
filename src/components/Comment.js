@@ -111,6 +111,9 @@ function Comments(props) {
                   item.url.includes(commentItem.author.host) ||
                   commentItem.author.host.includes(item.url)
               );
+              console.log(
+                "id: " + post.id + "    pass: " + fileteredNode[0].user_name
+              );
               commentPromises.push(
                 axios
                   .get(
@@ -132,6 +135,7 @@ function Comments(props) {
                     }
                     commentItem.username = fileteredNode[0].user_name;
                     commentItem.password = fileteredNode[0].password;
+                    console.log(commentItem.username);
                     console.log(commentItem.password);
                   })
               );
@@ -164,9 +168,10 @@ function Comments(props) {
       author: currentUser,
       object: commment.id,
     };
-    console.log(likeData);
+    console.log(commment);
 
     // post likes
+    console.log("like,", commment.author.ids);
     await axios
       .post(`${commment.author.id}/inbox/`, likeData, {
         auth: {
