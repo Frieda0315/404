@@ -4,8 +4,8 @@ from .models import AdminUser, User
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.CharField()
-    profileImage = serializers.CharField(required=False, allow_null=True)
-    github = serializers.CharField(required=False, allow_null=True)
+    profileImage = serializers.CharField(required=False, allow_null=True,allow_blank=True)
+    github = serializers.CharField(required=False, allow_null=True,allow_blank=True)
 
     def create(self, validated_data):
         # print(validated_data.pop("id"))
