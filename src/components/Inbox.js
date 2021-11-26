@@ -108,7 +108,7 @@ const Inbox = () => {
       })
       .then((response) => {
         axios
-          .get(`${post.id}/`, {
+          .get(`${post.id}`, {
             auth: {
               username: post.username,
               password: post.password,
@@ -261,12 +261,17 @@ const Inbox = () => {
               );
               like_promises.push(
                 axios
-                  .get(`${single.author.id}/posts/${post.post_id}/likes`, {
-                    auth: {
-                      username: single_node.user_name,
-                      password: single_node.password,
-                    },
-                  })
+                  .get(
+                    `${single.author.id}/posts/${post.post_id
+                      .split("/")
+                      .at(-1)}/likes`,
+                    {
+                      auth: {
+                        username: single_node.user_name,
+                        password: single_node.password,
+                      },
+                    }
+                  )
                   .then((response) => {
                     if (response.data instanceof Array) {
                       post.like_num = response.data.length;
