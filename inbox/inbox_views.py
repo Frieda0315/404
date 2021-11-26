@@ -35,7 +35,7 @@ def handleFollowRequest(json_data, receiver):
     try:
         actor = User.objects.get(id=json_data["actor"]["id"])
     except User.DoesNotExist:
-        actor_serializer = UserSerializer(json_data["actor"])
+        actor_serializer = UserSerializer(data=json_data["actor"])
         if actor_serializer.is_valid():
             save_method(actor_serializer)
         else:
@@ -61,7 +61,7 @@ def handlePostRequest(json_data, receiver):
     try:
         post = Post.objects.get(pk=json_data["id"])
     except Post.DoesNotExist:
-        shared_post_serializer = PostSerializer(json_data)
+        shared_post_serializer = PostSerializer(data=json_data)
         if shared_post_serializer.is_valid():
             save_method(shared_post_serializer)
         else:
@@ -84,7 +84,7 @@ def handleLikeRequest(json_data, receiver):
     try:
         liker = User.objects.get(id=liker_object["id"])
     except User.DoesNotExist:
-        liker_serializer = UserSerializer(liker_object)
+        liker_serializer = UserSerializer(data=liker_object)
         if liker_serializer.is_valid():
             save_method(liker_serializer)
         else:
