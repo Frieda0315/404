@@ -32,7 +32,15 @@ const EditPost = () => {
   const location = useLocation();
   console.log(location.state);
   const [item1, setItem] = React.useState(location.state);
-  const [preview, setPreview] = React.useState();
+  console.log("data:" + item1.contentType + item1.content);
+  const [preview, setPreview] = React.useState(() => {
+    if (
+      item1.contentType === "image/png;base64" ||
+      item1.contentType === "image/jpeg;base64"
+    ) {
+      return `data:${item1.contentType},${item1.content}`;
+    }
+  });
   const [isImage, setIsImage] = React.useState(() => {
     if (
       item1.contentType !== "image/png;base64" &&
@@ -52,11 +60,13 @@ const EditPost = () => {
       setPreview(`data:${item1.contentType},${item1.content}`);
       return `data:${item1.contentType},${item1.content}`;
     } else {
-      return null;
+      return noimage;
     }
   });
 
-  const [image, setImage] = React.useState();
+  const [image, setImage] = React.useState(
+    `data:${item1.contentType},${item1.content}`
+  );
   const [textChoice, setTextChoice] = React.useState(item1.contentType);
   const [visibility, setVisibility] = React.useState(item1.visibility);
 
@@ -106,9 +116,10 @@ const EditPost = () => {
         setPreview(reader.result);
         encodeFileBase64(image);
       };
-      reader.readAsDataURL(image);
+      //reader.readAsDataURL(image);
     } else {
-      setPreview(noimage);
+      //setPreview(noimage);
+      setPreview(`data:${item1.contentType},${item1.content}`);
     }
   }, [image]);
 
