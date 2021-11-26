@@ -40,7 +40,17 @@ const Inbox = () => {
 
   const [openPopup2, setOpenPopup2] = React.useState(false);
   const [shareBuffer, setShareBuffer] = React.useState({});
-
+  const handleComment = (post) => {
+    history.push({
+      pathname:
+        "/author/" +
+        post.author.id.split("/").at(-1) +
+        "/posts/" +
+        post.post_id.split("/").at(-1) +
+        "/comments",
+      state: post,
+    });
+  };
   //const open_share = () => setOpenPopup2(true);
   const handleLike = async (post) => {
     const liker = await axios.get(
@@ -109,7 +119,7 @@ const Inbox = () => {
       })
       .then((response) => {
         axios
-          .get(`${post.id}/`, {
+          .get(`${post.id}`, {
             auth: {
               username: post.username,
               password: post.password,
@@ -262,12 +272,17 @@ const Inbox = () => {
               );
               like_promises.push(
                 axios
-                  .get(`${single.author.id}/posts/${post.post_id}/likes`, {
-                    auth: {
-                      username: single_node.user_name,
-                      password: single_node.password,
-                    },
-                  })
+                  .get(
+                    `${single.author.id}/posts/${post.post_id
+                      .split("/")
+                      .at(-1)}/likes`,
+                    {
+                      auth: {
+                        username: single_node.user_name,
+                        password: single_node.password,
+                      },
+                    }
+                  )
                   .then((response) => {
                     if (response.data instanceof Array) {
                       post.like_num = response.data.length;
@@ -417,7 +432,11 @@ const Inbox = () => {
               </IconButton>
             </Grid>
             <Grid item>
-              <IconButton edge="end" aria-label="comment">
+              <IconButton
+                edge="end"
+                aria-label="comment"
+                onClick={() => handleComment(item)}
+              >
                 <Comment />
               </IconButton>
             </Grid>
