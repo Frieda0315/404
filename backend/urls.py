@@ -23,6 +23,8 @@ urlpatterns = [
     # posts this author can see
     path('service/posts/<str:author_id>/',
          post_views.stream_public_post, name='stream_public_post'),
+    path('service/myposts/<str:author_id>/',
+         post_views.my_post, name='my_post'),
 
 
     path('service/authors/', user_views.author_list, name='author_list'),
