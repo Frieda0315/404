@@ -109,8 +109,8 @@ function Comments(props) {
             response.data.comments.map((commentItem) => {
               const fileteredNode = res.data.filter(
                 (item) =>
-                  item.url.includes(commentItem.author.host) ||
-                  commentItem.author.host.includes(item.url)
+                  item.url.includes(post.author_item.host) ||
+                  post.author_item.host.includes(item.url)
               );
               console.log(fileteredNode);
               if (fileteredNode.length === 0) {
@@ -172,7 +172,7 @@ function Comments(props) {
     // post likes
     console.log("like,", commment.author.ids);
     await axios
-      .post(`${commment.author.id}/inbox/`, likeData, {
+      .post(`${post.author_item.id}/inbox/`, likeData, {
         auth: {
           username: commment.username,
           password: commment.password,
@@ -306,7 +306,6 @@ function Comments(props) {
             }
           },
           (error) => {
-            alert("error ");
             console.log(error);
             return;
           }
@@ -346,7 +345,6 @@ function Comments(props) {
             setNewComment("");
           },
           (error) => {
-            alert("error ");
             console.log(error);
           }
         );

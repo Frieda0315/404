@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 
 const FollowProfile = ({ follow_user_url }) => {
-  console.log(follow_user_url);
   const useStyles = makeStyles(() => ({
     editbutton: {
       marginLeft: "-10px",
@@ -142,12 +141,13 @@ const FollowProfile = ({ follow_user_url }) => {
         }
       )
       .then((res) => {
+        console.log(res.data);
         if (
           follow_user_url.split("/").at(-1) ===
           localStorage.getItem("current_user_id")
         ) {
           setIsfollowed(true);
-        } else if (res.data.result) {
+        } else if (res.data.result || res.data === "true") {
           setIsfollowed(true);
         } else {
           setIsfollowed(false);
