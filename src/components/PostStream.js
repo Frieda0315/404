@@ -1,3 +1,5 @@
+// Reference: https://stackoverflow.com/a/67496798
+// Author: https://stackoverflow.com/users/2916090/mohagali
 import Grid from "@material-ui/core/Grid";
 import { Avatar, IconButton } from "@material-ui/core";
 import { Card } from "reactstrap";
