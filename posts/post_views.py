@@ -74,7 +74,7 @@ def stream_public_post(request, author_id):
     public_post_list = Post.objects.filter(
         visibility="PUBLIC", unlisted=False).order_by('-published')
     all_post_list += public_post_list
-    size = request.GET.get('size', 5)
+    size = request.GET.get('size', 5000)
     paginator = Paginator(all_post_list, size)
     page = request.GET.get('page', 1)
     try:
@@ -102,7 +102,7 @@ def post_list(request, author_id):
 
         posts = Post.objects.filter(
             author=author_exist, unlisted=False).order_by('-published')
-        size = request.GET.get('size', 5)
+        size = request.GET.get('size', 5000)
         paginator = Paginator(posts, size)
         page = request.GET.get('page', 1)
 
