@@ -173,7 +173,7 @@ function PostStream(props) {
       })
       .then((response) => {
         // update the like number accordingly
-        if (response.status === 201) {
+        if (response.status === 201 || response.status === 200) {
           let newPostList = [];
           postlist.map((item) => {
             if (item.id === post.id) {
