@@ -1,4 +1,5 @@
 # I-connect
+
 heroku link : https://i-connect.herokuapp.com/
 
 CMPUT404-project-social-distribution-app
@@ -22,6 +23,7 @@ This project's background, description and requirement are based on Abram Hindle
 </table>
 
 Welcome to join us by joining our [slack channel](https://join.slack.com/t/i-connecttalk/shared_invite/zt-xqfp0679-DqE8bQSH0PDebsXG1r_Rzg)!
+
 # Please use npm ci instead of npm install to install all the dependency for the front end
 
 # Development Process(from root dir)
@@ -30,7 +32,7 @@ Welcome to join us by joining our [slack channel](https://join.slack.com/t/i-con
 virtualenv venv --python=python3.7 (if you did not get the virtual env)
 source venv/bin/activate
 pip install -r requirements.txt (to install all required libraries for backend using pip)
-python manager.py runserver
+python manage.py runserver
 
 # open another terminal
 npm ci
@@ -61,5 +63,49 @@ password: admin
 
 ### Online documentation
 
+[Documentation Link](https://i-connect-doc.herokuapp.com/docs/)
+
 It is deployed by Heroku, you can view the doc [here](https://i-connect-doc.herokuapp.com/docs/). The source code of the documentation is [here](https://github.com/xichen1/i-connect-doc).
-The API documentation is developed by [swagger editor](https://editor.swagger.io/) and [swagger ui](https://github.com/swagger-api/swagger-ui). They are under Apache 2.0 LICENSE.\
+The API documentation is developed by [swagger editor](https://editor.swagger.io/) and [swagger ui](https://github.com/swagger-api/swagger-ui). They are under Apache 2.0 LICENSE.
+
+### Pagination
+
+- We enables pagination for authors, comments and posts
+- Use query string for get method to realize pagination `posts?page=4&size=40`
+
+### Connection with other groups
+
+- Team 4:
+
+  - API endpoint: https://social-distribution-fall2021.herokuapp.com/api/
+  - Username for Basic Auth: team16
+  - Password for Basic Auth: secret16
+
+- Team 6:
+  - API endpoint: https://newconnection-server.herokuapp.com/api/v1/
+  - Username for Basic Auth: admin
+  - Password for Basic Auth: NewConnectionAdmin
+
+## Reference
+
+### Special reference
+
+- The references used for single cases are decleared in code.
+
+### General reference
+
+- Basic Auth: https://www.django-rest-framework.org/api-guide/authentication/#how-authentication-is-determined
+- Serialization: https://www.django-rest-framework.org/tutorial/1-serialization/
+- Django Query: https://docs.djangoproject.com/en/3.2/topics/db/queries/
+- React Hooks: https://reactjs.org/docs/hooks-state.html and https://reactjs.org/docs/hooks-effect.html
+- Material UI: https://mui.com/components/cards/ , https://mui.com/components/material-icons/ and https://mui.com/components/grid/
+- Reactstrap: https://reactstrap.github.io/
+- Axios: https://axios-http.com/docs/intro
+
+## AJAX design
+
+- We used the library Axios, which is an AJAX and promises-based HTTP Client for node.JS and browser. It implements all API requests with AJAX call.
+
+- In this way, we can only retrieve necessary data from the server and handle the data on the client-side with JavaScript which improved the performance a lot compared with the original web application.
+
+- We used Axios for all requests so all of our requests are based on AJAX. For detail of each AJAX request, you can view our online documentation.
