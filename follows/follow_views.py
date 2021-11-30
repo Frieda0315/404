@@ -38,10 +38,15 @@ def follower_detail(request, author_id, foreign_author_id):
         return JsonResponse({"error": "You cannot follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         following = User.objects.get(uuid=author_id)
-        follower = User.objects.filter(
-            id__contains="author/"+str(foreign_author_id))[0]
+        followers = User.objects.filter(
+            id__contains="author/"+str(foreign_author_id))
     except User.DoesNotExist:
         return JsonResponse({"error": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if not followers and request.method == "GET":
+        return JsonResponse({"result": False}, status=status.HTTP_200_OK)
+    else:
+        follower = followers[0]
 
     # try to find the follow relationship
     follow = Follow.objects.filter(following=following, follower=follower)
