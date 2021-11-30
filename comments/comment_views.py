@@ -23,7 +23,7 @@ def comment_list(request, author_id, post_id):
         if not comments:
             return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
         # pagination
-        size = request.GET.get('size', 5)
+        size = request.GET.get('size', 10000)
         paginator = Paginator(comments, size)
         page = request.GET.get('page', 1)
         try:
@@ -32,7 +32,7 @@ def comment_list(request, author_id, post_id):
             comments = paginator.page(1)
         except EmptyPage:
             comments = paginator.page(paginator.num_pages)
-        
+
         serializer = CommentsSerializer(comments[0])
         return JsonResponse(serializer.data, safe=False)
     elif request.method == 'POST':

@@ -25,7 +25,7 @@ def author_list(request):
     users = User.objects.filter(host="https://i-connect.herokuapp.com")
 
     # pagination
-    size = request.GET.get('size', 5)
+    size = request.GET.get('size', 2000)
     paginator = Paginator(users, size)
     page = request.GET.get('page', 1)
     try:
