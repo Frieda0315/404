@@ -97,15 +97,23 @@ const FollowProfile = ({ follow_user_url }) => {
     }
   };
   useEffect(async () => {
+    let node_username;
+    let node_password;
     await axios
       .get(`${baseUrl2}/admin/nodes/`, {
         auth: { username: "admin", password: "admin" },
       })
       .then((response) => {
         const nodeList = response.data;
+        const follow_user_url_prefix = follow_user_url.split("/author/")[0];
         nodeList.map((item) => {
-          if (item.url === follow_user_url.split("/author/")[0]) {
+          if (
+            item.url.includes(follow_user_url_prefix) ||
+            follow_user_url_prefix.includes(item.url)
+          ) {
             setNode({ username: item.user_name, password: item.password });
+            node_username = item.user_name;
+            node_password = item.password;
           }
         });
       })
@@ -115,8 +123,8 @@ const FollowProfile = ({ follow_user_url }) => {
     // get followee
     const follow_user_res = await axios.get(follow_user_url, {
       auth: {
-        username: node.username,
-        password: node.password,
+        username: node_username,
+        password: node_password,
       },
     });
     setFollowUser(follow_user_res.data);
@@ -128,8 +136,8 @@ const FollowProfile = ({ follow_user_url }) => {
         )}`,
         {
           auth: {
-            username: node.username,
-            password: node.password,
+            username: node_username,
+            password: node_password,
           },
         }
       )

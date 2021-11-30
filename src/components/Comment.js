@@ -112,7 +112,11 @@ function Comments(props) {
                   item.url.includes(commentItem.author.host) ||
                   commentItem.author.host.includes(item.url)
               );
-              console.log(commentItem);
+              console.log(fileteredNode);
+              if (fileteredNode.length === 0) {
+                const node = { user_name: "admin", password: "admin" };
+                fileteredNode.push(node);
+              }
               commentPromises.push(
                 axios
                   .get(`${commentItem.id}/likes`, {
@@ -176,7 +180,7 @@ function Comments(props) {
       })
       .then((response) => {
         // update the like number accordingly
-        if (response.status === 201) {
+        if (response.status === 201 || response.status === 200) {
           let newCommentList = [];
           comments.map((item) => {
             if (item.id === commment.id) {
@@ -205,14 +209,36 @@ function Comments(props) {
     setGit_user(git);
     setOpenPopup(true);
   };
+  const afterSubmit = (iosString) => {
+    const newComments = comments.concat([
+      {
+        author: currentUser,
+        comment: newComment,
+        published: iosString,
+        id: post.id,
+        // "https://i-connect.herokuapp.com/service/author/" +
+        // localStorage.getItem("current_user_id") +
+        // "/posts/" +
+        // window.location.pathname.split("/").at(-2) +
+        // "/comments/" +
+        // uuidv4(),
+        type: "comment",
+        username: "admin",
+        password: "admin",
+        contentType: textChoice,
+        like_num: 0,
+      },
+    ]);
+
+    setComments(newComments);
+    setNewComment("");
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const now = new Date();
     const isoString = now.toISOString();
     if (
-      post.author_item.host === "https://newconnection-server.herokuapp.com/" ||
-      post.author_item.host ===
-        "https://social-distribution-fall2021.herokuapp.com/api/"
+      post.author_item.host === "https://newconnection-server.herokuapp.com/"
     ) {
       axios
         .post(
@@ -236,28 +262,44 @@ function Comments(props) {
           (response) => {
             if (200 <= response.status < 300) {
               response.data.like_num = 0;
-              const newComments = comments.concat([
-                {
-                  author: currentUser,
-                  comment: newComment,
-                  published: isoString,
-                  id: post.id,
-                  // "https://i-connect.herokuapp.com/service/author/" +
-                  // localStorage.getItem("current_user_id") +
-                  // "/posts/" +
-                  // window.location.pathname.split("/").at(-2) +
-                  // "/comments/" +
-                  // uuidv4(),
-                  type: "comment",
-                  username: "admin",
-                  password: "admin",
-                  contentType: textChoice,
-                  like_num: 0,
-                },
-              ]);
-
-              setComments(newComments);
+              afterSubmit(isoString);
+            } else {
+              alert("failed to comment this post QAQ");
               setNewComment("");
+            }
+          },
+          (error) => {
+            console.log(error);
+            return;
+          }
+        );
+    } else if (
+      post.author_item.host ===
+      "https://social-distribution-fall2021.herokuapp.com/api/"
+    ) {
+      axios
+        .post(
+          `${post.author_item.id}/inbox/`,
+          {
+            author: currentUser,
+            comment: newComment,
+            published: isoString,
+            object: post.id,
+            type: "comment",
+            contentType: textChoice,
+          },
+          {
+            auth: {
+              username: post.username,
+              password: post.password,
+            },
+          }
+        )
+        .then(
+          (response) => {
+            if (200 <= response.status < 300) {
+              response.data.like_num = 0;
+              afterSubmit(isoString);
             } else {
               alert("failed to comment this post QAQ");
               setNewComment("");
@@ -270,15 +312,7 @@ function Comments(props) {
           }
         );
     } else {
-      let url = "";
-      if (
-        post.author_item.host ===
-        "https://social-distribution-fall2021.herokuapp.com/api/"
-      ) {
-        url = post.comments;
-      } else {
-        url = post.comments + "/";
-      }
+      let url = post.comments;
       axios
         .post(
           `${url}`,
