@@ -5,6 +5,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckIcon from "@mui/icons-material/Check";
 import head1 from "../../static/1.JPG";
 import "../font/style.css";
+import { CardMedia } from "@mui/material";
 
 const AdminAuthorList = ({
   authors,
@@ -14,7 +15,7 @@ const AdminAuthorList = ({
 }) => {
   return authors.map((author) => (
     <Grid
-      key={author.user_name}
+      key={author.displayName}
       item
       justifyContent="flex-start"
       alignItems="flex-start"
@@ -29,7 +30,11 @@ const AdminAuthorList = ({
         justifyContent="center"
       >
         <Grid item>
-          <Avatar alt={`head1`} src={head1} sx={{ width: 56, height: 56 }} />
+          <Avatar
+            alt={`head1`}
+            src={author.profileImage}
+            sx={{ width: 56, height: 56 }}
+          />
         </Grid>
 
         <Grid item alignContent="space-between" marginRight={2}>
@@ -37,10 +42,10 @@ const AdminAuthorList = ({
             <Typography>ID: {author.id}</Typography>
           </Grid>
           <Grid item marginLeft={1}>
-            <Typography>Username: {author.user_name}</Typography>
+            <Typography>Username: {author.displayName}</Typography>
           </Grid>
           <Grid item marginLeft={1}>
-            <Typography>GitHub: {author.github_name}</Typography>
+            <Typography>GitHub: {author.github}</Typography>
           </Grid>
         </Grid>
         <Grid item>
