@@ -261,7 +261,7 @@ function Comments(props) {
         .then(
           (response) => {
             if (200 <= response.status < 300) {
-              response.data.like_num = 0;
+              //response.data.like_num = 0;
               afterSubmit(isoString);
             } else {
               alert("failed to comment this post QAQ");
@@ -298,7 +298,7 @@ function Comments(props) {
         .then(
           (response) => {
             if (200 <= response.status < 300) {
-              response.data.like_num = 0;
+              //response.data.like_num = 0;
               afterSubmit(isoString);
             } else {
               alert("failed to comment this post QAQ");
