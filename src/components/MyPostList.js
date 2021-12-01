@@ -85,10 +85,13 @@ function MyPostList() {
             content: single.content,
             author: single.author,
             count: single.count,
+            author_item: single.author,
             commentsSrc: single.commentsSrc,
             title: single.title,
+            username: "admin",
+            password: "admin",
             visibility: single.visibility,
-            author_id: single.author.uuid,
+            author_id: single.author.id,
             comments: single.comments,
             categories: single.categories,
             unlisted: single.unlisted,
@@ -102,16 +105,19 @@ function MyPostList() {
       });
   }, []);
 
-  // const viewComments = (post) => {
-  //   setComments(post);
-  // };
-  // if (Object.keys(comments).length !== 0) {
-  //   return (
-  //     <Redirect
-  //       to={comments.id.substring(30, comments.id.length) + "/comments"}
-  //     ></Redirect>
-  //   );
-  // }
+  const handleComment = (post) => {
+    console.log(comments);
+
+    history.push({
+      pathname:
+        "/author/" +
+        post.author_id.split("/").at(-1) +
+        "/posts/" +
+        post.id.split("/").at(-1) +
+        "/comments",
+      state: post,
+    });
+  };
 
   const handleRemove = (e) => {
     const id = e.id;
@@ -219,6 +225,16 @@ function MyPostList() {
               onClick={() => open_share(post)}
             >
               <ShareRounded />
+            </IconButton>
+          </Grid>
+
+          <Grid item>
+            <IconButton
+              edge="end"
+              aria-label="comment"
+              onClick={() => handleComment(post)}
+            >
+              <Comment />
             </IconButton>
           </Grid>
 
