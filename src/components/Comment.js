@@ -223,8 +223,8 @@ function Comments(props) {
         // "/comments/" +
         // uuidv4(),
         type: "comment",
-        username: "admin",
-        password: "admin",
+        username: post.username,
+        password: post.password,
         contentType: textChoice,
         like_num: 0,
       },
