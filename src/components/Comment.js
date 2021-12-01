@@ -162,7 +162,7 @@ function Comments(props) {
   const handle_like = async (commment) => {
     const likeData = {
       //"@context": "https://www.w3.org/ns/activitystreams",
-      summary: localStorage.getItem("user_name") + " Likes your comment",
+      summary: localStorage.getItem("user_name") + " Likes the comment",
       type: "Like",
       author: currentUser,
       object: commment.id,
@@ -314,7 +314,7 @@ function Comments(props) {
       let url = post.comments;
       axios
         .post(
-          `${url}`,
+          `${url}/`,
           {
             author: currentUser,
             comment: newComment,
