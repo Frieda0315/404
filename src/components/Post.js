@@ -186,6 +186,7 @@ const Post = () => {
 
     if (postTemplate.visibility !== "FRIENDS") {
       history.push({ pathname: "/" });
+      return;
     }
     const followers = await axios.get(
       `${baseUrl2}/author/${userid}/followers`,
