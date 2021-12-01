@@ -183,8 +183,53 @@ const Post = () => {
         password: "admin",
       },
     });
-    console.log(newPost.data);
-    history.push({ pathname: "/" });
+
+    const followers = await axios.get(
+      `${baseUrl2}/author/${userid}/followers`,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+    const followerList = followers.data.items;
+    console.log(followers.data.items);
+    if (followerList.length === 0) {
+      return;
+    }
+    const nodes = await axios.get(`${baseUrl2}/admin/nodes/`, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    const nodeList = nodes.data;
+    let followerInboxList = [];
+    followerList.map((follower) => {
+      const auths = nodeList.filter((node) => {
+        console.log(follower.host);
+        console.log(node);
+        return (
+          node.url.includes(follower.host) || follower.host.includes(node.url)
+        );
+      });
+      console.log(auths);
+      followerInboxList.push(
+        axios.post(`${follower.id}/inbox/`, postTemplate, {
+          auth: {
+            username: auths[0].user_name,
+            password: auths[0].password,
+          },
+        })
+      );
+    });
+    Promise.all(followerInboxList).then((res) => {
+      history.push({ pathname: "/" });
+    });
+
+    // console.log(newPost.data);
+    //
   };
 
   const history = useHistory();
