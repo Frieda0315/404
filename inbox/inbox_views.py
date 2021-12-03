@@ -90,13 +90,15 @@ def handleCommentRequest(json_data, receiver):
     post_id = post_id.split("/comments")[0]
 
     author_id = json_data["id"].split("author/")[1]
-    author_id = post_id.split("/posts")[0]
+    author_id = author_id.split("/posts")[0]
 
     query_string = "author/"+str(author_id)+"/posts/"+str(post_id)
+    print(query_string)
     try:
         post = Post.objects.get(uuid=post_id)
     except Post.DoesNotExist:
         return JsonResponse({"error": "comment not found"}, status=status.HTTP_404_NOT_FOUND)
+    print(post)
     comment_lists = Comments.objects.filter(
         post__contains=query_string)
     if not comment_lists:
