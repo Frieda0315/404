@@ -157,7 +157,7 @@ def post_detail(request, author_id, id):  # this id here is postID
         except:
             return JsonResponse({"Error": "No such arthor or Post"}, status=status.HTTP_404_NOT_FOUND)
 
-        if(post.author == author_exists and post.visibility == 'PUBLIC'):
+        if(post.author == author_exists):
             if post.contentType == "image/png;base64":
                 binary = base64.b64decode(post.content)
                 return HttpResponse(binary, content_type='image/png')
@@ -167,7 +167,7 @@ def post_detail(request, author_id, id):  # this id here is postID
             serializer = PostSerializer(post)
             return JsonResponse(serializer.data)
         else:
-            return JsonResponse({"Error": "This post is not public or not owned by this author"}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({"Error": "This post is not owned by this author"}, status=status.HTTP_404_NOT_FOUND)
 
     elif request.method == 'PUT':
         # create a new post with this id
