@@ -10,6 +10,7 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import axios from "axios";
 import Post from "./Post";
 import PostItemInList from "./PostItemInList";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const useStyles = makeStyles(() => ({
   FollowItem: {
@@ -25,6 +26,7 @@ const Inbox = () => {
 
   const styleClasses = useStyles();
   const [InboxList1, setInboxList] = React.useState([]);
+  const [dataFetched, setDataFetched] = React.useState(false);
 
   // 0 for post;
   // 1 for likes;
@@ -242,6 +244,7 @@ const Inbox = () => {
           date: single.published,
           image: single.image,
           post_id: single.id,
+          id: single.id,
           author_item: single.author,
           user_name: single.author.displayName,
           author: single.author,
@@ -282,6 +285,7 @@ const Inbox = () => {
       });
       await Promise.all(like_promises).then((res) => {
         console.log(res);
+        setDataFetched(true);
         console.log(newList);
       });
     }
@@ -559,15 +563,28 @@ const Inbox = () => {
           </Fab>
         </Grid>
       </Grid>
-      <Grid
-        container
-        spacing={10}
-        direction="column"
-        alignSelf="right"
-        marginTop={2}
-      >
-        {listItems}
-      </Grid>
+
+      {dataFetched ? (
+        <Grid
+          container
+          spacing={10}
+          direction="column"
+          alignSelf="right"
+          marginTop={2}
+        >
+          {listItems}
+        </Grid>
+      ) : (
+        <Grid
+          container
+          spacing={2}
+          className={styleClasses.stream}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <CircularProgress />
+        </Grid>
+      )}
     </div>
   );
 };
