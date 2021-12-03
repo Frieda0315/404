@@ -19,9 +19,47 @@ function Share(props) {
   const [info, setInfo] = React.useState(null);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
-  const handleShare = (user) => {
+  const handleShare = async (user) => {
     console.log(postToShare);
-    axios
+    const authorResponse = await axios.get(
+      `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+      {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      }
+    );
+
+    const finishedPost = postToShare;
+    const newId =
+      "https://i-connect.herokuapp.com/service/author/" +
+      localStorage.getItem("current_user_id") +
+      "/posts/" +
+      newUUID;
+    const newCommentsSrc = {
+      type: "comments",
+      page: 1,
+      size: 5,
+      post: newId,
+      id: newId + "/comments",
+      comments: [],
+    };
+    finishedPost["author"] = authorResponse.data;
+    finishedPost["id"] = newId;
+    finishedPost["source"] = newId;
+    finishedPost["comments"] = newId;
+    finishedPost["commentsSrc"] = newCommentsSrc;
+    finishedPost["published"] = new Date().toISOString();
+    finishedPost["visibility"] = "FRIENDS";
+
+    await axios.put(`${finishedPost.id}/`, finishedPost, {
+      auth: {
+        username: "admin",
+        password: "admin",
+      },
+    });
+    await axios
       .get(`${baseUrl2}/admin/nodes/`, {
         auth: {
           username: "admin",
@@ -29,50 +67,11 @@ function Share(props) {
         },
       })
       .then(async (res) => {
-        const sharedPost = await axios
-          .get(
-            `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
-            {
-              auth: {
-                username: "admin",
-                password: "admin",
-              },
-            }
-          )
-          .then((res) => {
-            const finishedPost = postToShare;
-            const newId =
-              "https://i-connect.herokuapp.com/service/author/" +
-              localStorage.getItem("current_user_id") +
-              "/posts/" +
-              newUUID;
-            const newCommentsSrc = {
-              type: "comments",
-              page: 1,
-              size: 5,
-              post: newId,
-              id: newId + "/comments",
-              comments: [],
-            };
-            finishedPost["author"] = res.data;
-            finishedPost["id"] = newId;
-            finishedPost["source"] = newId;
-            finishedPost["comments"] = newId;
-            finishedPost["commentsSrc"] = newCommentsSrc;
-            finishedPost["published"] = new Date().toISOString();
-            finishedPost["visibility"] = "FRIENDS";
-          });
-        await axios.put(`${sharedPost.id}/`, sharedPost, {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        });
         const fileteredNode = res.data.filter(
           (item) => item.url.includes(user.host) || user.host.includes(item.url)
         );
         await axios
-          .post(`${user.id}/inbox/`, sharedPost, {
+          .post(`${user.id}/inbox/`, finishedPost, {
             auth: {
               username: fileteredNode[0].user_name,
               password: fileteredNode[0].password,
