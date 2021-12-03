@@ -12,6 +12,7 @@ import {
   Input,
   Typography,
   CardMedia,
+  Box,
 } from "@mui/material";
 
 const FollowProfile = ({ follow_user_url }) => {
@@ -41,6 +42,7 @@ const FollowProfile = ({ follow_user_url }) => {
   const [followUser, setFollowUser] = useState({ profileImage: "abc" });
   const [isfollowed, setIsfollowed] = useState(true);
   const [node, setNode] = useState({ username: "admin", password: "admin" });
+  const [info, setInfo] = useState(null);
   const styleClasses = useStyles();
   const handleFollow = async () => {
     const followerId = followUser.id.split("/").at(-1);
@@ -90,9 +92,11 @@ const FollowProfile = ({ follow_user_url }) => {
             },
           }
         );
-      } catch (err) {
-        console.log("errors");
-      }
+        setInfo("Request sent!");
+        setTimeout(() => {
+          setInfo(null);
+        }, 3000);
+      } catch (err) {}
     }
   };
   useEffect(async () => {
@@ -183,41 +187,47 @@ const FollowProfile = ({ follow_user_url }) => {
       >
         <Grid item>
           <Card>
-            <CardContent>
-              <CardMedia
-                className={styleClasses.pic}
-                component="img"
-                image={followUser.profileImage}
-                alt="no img"
-              />
-
+            {info === null ? (
               <CardContent>
-                <Typography variant="body1" color="text.secondary">
-                  Username:
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {followUser.displayName}
-                </Typography>
-                <Typography variant="body1" color="text.secondary" mt-10>
-                  Github Link:
-                </Typography>
-                <Typography variant="body1" color="text.secondary" mt-10>
-                  <Link href={followUser.github}> {followUser.github}</Link>
-                </Typography>
+                <CardMedia
+                  className={styleClasses.pic}
+                  component="img"
+                  image={followUser.profileImage}
+                  alt="no img"
+                />
 
-                <CardActions className={styleClasses.editbutton}>
-                  <Button
-                    className={styleClasses.button1}
-                    variant="contained"
-                    size="small"
-                    disabled={isfollowed}
-                    onClick={handleFollow}
-                  >
-                    Follow
-                  </Button>
-                </CardActions>
+                <CardContent>
+                  <Typography variant="body1" color="text.secondary">
+                    Username:
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {followUser.displayName}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" mt-10>
+                    Github Link:
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" mt-10>
+                    <Link href={followUser.github}> {followUser.github}</Link>
+                  </Typography>
+
+                  <CardActions className={styleClasses.editbutton}>
+                    <Button
+                      className={styleClasses.button1}
+                      variant="contained"
+                      size="small"
+                      disabled={isfollowed}
+                      onClick={handleFollow}
+                    >
+                      Follow
+                    </Button>
+                  </CardActions>
+                </CardContent>
               </CardContent>
-            </CardContent>
+            ) : (
+              <CardContent>
+                <Box sx={{ typography: "h2", fontWeight: 500 }}>{info}</Box>
+              </CardContent>
+            )}
           </Card>
         </Grid>
       </Grid>
