@@ -9,12 +9,15 @@ import Avatar from "@mui/material/Avatar";
 import ava from "./assets/avator.png";
 import { CardActionArea } from "@material-ui/core";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 function Share(props) {
   const postToShare = props.post;
+  const newUUID = uuidv4();
   console.log(postToShare);
   const [authorList, setAuthorList] = React.useState([]);
   const [info, setInfo] = React.useState(null);
+  const [changedPost, setChangedPost] = React.useState(postToShare);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
@@ -31,7 +34,7 @@ function Share(props) {
           (item) => item.url.includes(user.host) || user.host.includes(item.url)
         );
         axios
-          .post(`${user.id}/inbox/`, postToShare, {
+          .post(`${user.id}/inbox/`, changedPost, {
             auth: {
               username: fileteredNode[0].user_name,
               password: fileteredNode[0].password,
@@ -49,6 +52,12 @@ function Share(props) {
           .catch((error) => {
             console.log(error);
           });
+        axios.put(`${changedPost.id}/`, changedPost, {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        });
       });
   };
   React.useEffect(() => {
@@ -78,6 +87,38 @@ function Share(props) {
       .then((response) => {
         console.log(response.data);
         setAuthorList(response.data["items"]);
+      });
+
+    axios
+      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
+        auth: {
+          username: "admin",
+          password: "admin",
+        },
+      })
+      .then((res) => {
+        const finishedPost = changedPost;
+        const newId =
+          "https://i-connect.herokuapp.com/service/author/" +
+          localStorage.getItem("current_user_id") +
+          "/posts/" +
+          newUUID;
+        const newCommentsSrc = {
+          type: "comments",
+          page: 1,
+          size: 5,
+          post: newId,
+          id: newId + "/comments",
+          comments: [],
+        };
+        finishedPost["author"] = res.data;
+        finishedPost["id"] = newId;
+        finishedPost["source"] = newId;
+        finishedPost["comments"] = newId;
+        finishedPost["commentsSrc"] = newCommentsSrc;
+        finishedPost["published"] = new Date().toISOString();
+        finishedPost["visibility"] = "FRIENDS";
+        setChangedPost(finishedPost);
       });
   }, []);
   //console.log(props.post);
