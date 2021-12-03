@@ -339,7 +339,10 @@ function Comments(props) {
         .then(
           (response) => {
             response.data.like_num = 0;
-            const newComments = comments.concat([response.data]);
+            const newComment = response.data;
+            newComment["username"] = "admin";
+            newComment["password"] = "admin";
+            const newComments = comments.concat([newComment]);
 
             setComments(newComments);
             setNewComment("");
