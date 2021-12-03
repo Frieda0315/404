@@ -48,7 +48,7 @@ function Share(props) {
     finishedPost["author"] = authorResponse.data;
     finishedPost["id"] = newId;
     finishedPost["source"] = newId;
-    finishedPost["comments"] = newId;
+    finishedPost["comments"] = newId + "/comments";
     finishedPost["commentsSrc"] = newCommentsSrc;
     finishedPost["published"] = new Date().toISOString();
     finishedPost["visibility"] = "FRIENDS";
