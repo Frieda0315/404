@@ -17,7 +17,6 @@ function Share(props) {
   console.log(postToShare);
   const [authorList, setAuthorList] = React.useState([]);
   const [info, setInfo] = React.useState(null);
-  const [changedPost, setChangedPost] = React.useState(postToShare);
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = (user) => {
@@ -30,7 +29,40 @@ function Share(props) {
         },
       })
       .then(async (res) => {
-        await axios.put(`${changedPost.id}/`, changedPost, {
+        const sharedPost = await axios
+          .get(
+            `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
+            {
+              auth: {
+                username: "admin",
+                password: "admin",
+              },
+            }
+          )
+          .then((res) => {
+            const finishedPost = postToShare;
+            const newId =
+              "https://i-connect.herokuapp.com/service/author/" +
+              localStorage.getItem("current_user_id") +
+              "/posts/" +
+              newUUID;
+            const newCommentsSrc = {
+              type: "comments",
+              page: 1,
+              size: 5,
+              post: newId,
+              id: newId + "/comments",
+              comments: [],
+            };
+            finishedPost["author"] = res.data;
+            finishedPost["id"] = newId;
+            finishedPost["source"] = newId;
+            finishedPost["comments"] = newId;
+            finishedPost["commentsSrc"] = newCommentsSrc;
+            finishedPost["published"] = new Date().toISOString();
+            finishedPost["visibility"] = "FRIENDS";
+          });
+        await axios.put(`${sharedPost.id}/`, sharedPost, {
           auth: {
             username: "admin",
             password: "admin",
@@ -40,7 +72,7 @@ function Share(props) {
           (item) => item.url.includes(user.host) || user.host.includes(item.url)
         );
         await axios
-          .post(`${user.id}/inbox/`, changedPost, {
+          .post(`${user.id}/inbox/`, sharedPost, {
             auth: {
               username: fileteredNode[0].user_name,
               password: fileteredNode[0].password,
@@ -60,7 +92,7 @@ function Share(props) {
           });
       });
   };
-  React.useEffect(async () => {
+  React.useEffect(() => {
     /**
      * For now (2021-10-29), the users API returns something like
      * [{
@@ -72,7 +104,7 @@ function Share(props) {
      * TODO: change the following code accordingly once the author
      *       APIs are updated
      */
-    await axios
+    axios
       .get(
         `${baseUrl2}/author/${localStorage.getItem(
           "current_user_id"
@@ -87,38 +119,6 @@ function Share(props) {
       .then((response) => {
         console.log(response.data);
         setAuthorList(response.data["items"]);
-      });
-
-    await axios
-      .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
-        auth: {
-          username: "admin",
-          password: "admin",
-        },
-      })
-      .then((res) => {
-        const finishedPost = changedPost;
-        const newId =
-          "https://i-connect.herokuapp.com/service/author/" +
-          localStorage.getItem("current_user_id") +
-          "/posts/" +
-          newUUID;
-        const newCommentsSrc = {
-          type: "comments",
-          page: 1,
-          size: 5,
-          post: newId,
-          id: newId + "/comments",
-          comments: [],
-        };
-        finishedPost["author"] = res.data;
-        finishedPost["id"] = newId;
-        finishedPost["source"] = newId;
-        finishedPost["comments"] = newId;
-        finishedPost["commentsSrc"] = newCommentsSrc;
-        finishedPost["published"] = new Date().toISOString();
-        finishedPost["visibility"] = "FRIENDS";
-        setChangedPost(finishedPost);
       });
   }, []);
   //console.log(props.post);
