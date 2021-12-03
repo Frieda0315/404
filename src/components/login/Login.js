@@ -215,15 +215,6 @@ class Login extends React.Component {
                     </Grid>
                   </form>
                 </Grid>
-                <Grid item>
-                  <RadioGroup onChange={this.handleRadio} value={selected}>
-                    <FormControlLabel
-                      value="yes"
-                      control={<Radio />}
-                      label="Keep me Logged in"
-                    />
-                  </RadioGroup>
-                </Grid>
 
                 <Grid item>
                   <Link href="/signup" variant="body2">
