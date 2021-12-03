@@ -29,11 +29,17 @@ function Share(props) {
           password: "admin",
         },
       })
-      .then((res) => {
+      .then(async (res) => {
+        await axios.put(`${changedPost.id}/`, changedPost, {
+          auth: {
+            username: "admin",
+            password: "admin",
+          },
+        });
         const fileteredNode = res.data.filter(
           (item) => item.url.includes(user.host) || user.host.includes(item.url)
         );
-        axios
+        await axios
           .post(`${user.id}/inbox/`, changedPost, {
             auth: {
               username: fileteredNode[0].user_name,
@@ -52,15 +58,9 @@ function Share(props) {
           .catch((error) => {
             console.log(error);
           });
-        axios.put(`${changedPost.id}/`, changedPost, {
-          auth: {
-            username: "admin",
-            password: "admin",
-          },
-        });
       });
   };
-  React.useEffect(() => {
+  React.useEffect(async () => {
     /**
      * For now (2021-10-29), the users API returns something like
      * [{
@@ -72,7 +72,7 @@ function Share(props) {
      * TODO: change the following code accordingly once the author
      *       APIs are updated
      */
-    axios
+    await axios
       .get(
         `${baseUrl2}/author/${localStorage.getItem(
           "current_user_id"
@@ -89,7 +89,7 @@ function Share(props) {
         setAuthorList(response.data["items"]);
       });
 
-    axios
+    await axios
       .get(`${baseUrl2}/author/${localStorage.getItem("current_user_id")}`, {
         auth: {
           username: "admin",
