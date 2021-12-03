@@ -257,7 +257,9 @@ function PostStream(props) {
 
           const username = single_node[0].user_name;
           const password = single_node[0].password;
-
+          if (single.host === "https://social-distance-api.herokuapp.com/") {
+            single.id = single.id.slice(0, -1);
+          }
           requestList3.push(
             axios.get(`${single.id}/posts`, {
               auth: {
@@ -337,8 +339,21 @@ function PostStream(props) {
               let like_promises = [];
 
               const responseOne = responses[0];
-
               res.map((single) => {
+                let postId = single.id.split("/").at(-1);
+
+                let get_like_url = `${single.author.id}/posts/${postId}/likes`;
+
+                if (
+                  single.author.host ===
+                  "https://social-distance-api.herokuapp.com/"
+                ) {
+                  postId = single.id.split("/").at(-2);
+                  single.id = single.id.slice(0, -1);
+                  single.author.id = single.author.id.slice(0, -1);
+                  get_like_url = `${single.author.id}/post/${postId}/likes`;
+                }
+
                 let postItem = {
                   id: single.id,
                   published: single.published,
@@ -362,10 +377,10 @@ function PostStream(props) {
 
                 // get the like numbers for each post
                 //const authorId = single.author.id.split("/").at(-1);
-                const postId = single.id.split("/").at(-1);
+
                 like_promises.push(
                   axios
-                    .get(`${single.author.id}/posts/${postId}/likes`, {
+                    .get(get_like_url, {
                       auth: {
                         username: single.username,
                         password: single.password,
