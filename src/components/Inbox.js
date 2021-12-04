@@ -476,7 +476,7 @@ const Inbox = () => {
               <Grid item>
                 <Grid container direction="column">
                   <Grid item>
-                    <Typography>{item.summary}</Typography>
+                    <Typography>Summary: {item.summary}</Typography>
                   </Grid>
                   <Grid item>
                     <Typography>{item.date}</Typography>
@@ -490,9 +490,9 @@ const Inbox = () => {
             <Typography variant="h5">{item.title}</Typography>
           </Grid>
 
-          <Grid item spacing={2}>
+          {/* <Grid item spacing={2}>
             <Typography>{item.content}</Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
       )
     );
