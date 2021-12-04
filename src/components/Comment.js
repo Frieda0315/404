@@ -318,7 +318,7 @@ function Comments(props) {
         );
     } else {
       // t16 and t1 send comment
-      let url = post.comments;
+      let url = post.comments.split("?")[0];
       axios
         .post(
           `${url}/`,
