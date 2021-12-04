@@ -350,6 +350,7 @@ function PostStream(props) {
                 ) {
                   postId = single.id.split("/").at(-2);
                   single.id = single.id.slice(0, -1);
+                  single.comments = single.comments.slice(0, -1);
                   single.author.id = single.author.id.slice(0, -1);
                   get_like_url = `${single.author.id}/posts/${postId}/likes`;
                 }
