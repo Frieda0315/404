@@ -256,19 +256,24 @@ const Inbox = () => {
             single.author.host.includes(item.url)
         );
         console.log(single_node);
+        let postId = single.id.split("/").at(-1);
+        let get_like_url = `${single.author.id}/posts/${postId}/likes`;
+        if (
+          single.author.host === "https://social-distance-api.herokuapp.com/"
+        ) {
+          postId = single.id.split("/").at(-2);
+          single.id = single.id.slice(0, -1);
+          single.author.id = single.author.id.slice(0, -1);
+          get_like_url = `${single.author.id}/posts/${postId}/likes`;
+        }
         like_promises.push(
           axios
-            .get(
-              `${single.author.id}/posts/${post.post_id
-                .split("/")
-                .at(-1)}/likes`,
-              {
-                auth: {
-                  username: single_node[0].user_name,
-                  password: single_node[0].password,
-                },
-              }
-            )
+            .get(get_like_url, {
+              auth: {
+                username: single_node[0].user_name,
+                password: single_node[0].password,
+              },
+            })
             .then((response) => {
               if (response.data instanceof Array) {
                 post.like_num = response.data.length;

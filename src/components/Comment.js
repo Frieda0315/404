@@ -107,6 +107,12 @@ function Comments(props) {
             let commentPromises = [];
             let newComments = [];
             response.data.comments.map((commentItem) => {
+              if (
+                post.author_item.host ===
+                "https://social-distance-api.herokuapp.com/"
+              ) {
+                commentItem.id = commentItem.id.slice(0, -1);
+              }
               const fileteredNode = res.data.filter(
                 (item) =>
                   item.url.includes(post.author_item.host) ||
@@ -311,7 +317,8 @@ function Comments(props) {
           }
         );
     } else {
-      let url = post.comments;
+      // t16 and t1 send comment
+      let url = post.comments.split("?")[0];
       axios
         .post(
           `${url}/`,
@@ -340,8 +347,14 @@ function Comments(props) {
           (response) => {
             response.data.like_num = 0;
             const newComment = response.data;
-            newComment["username"] = "admin";
-            newComment["password"] = "admin";
+            if (post.author_item.host === "https://i-connect.herokuapp.com") {
+              newComment["username"] = "admin";
+              newComment["password"] = "admin";
+            } else {
+              newComment["username"] = "team16";
+              newComment["password"] = "socialdistance";
+            }
+
             const newComments = comments.concat([newComment]);
 
             setComments(newComments);
