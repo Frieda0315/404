@@ -52,6 +52,9 @@ function Share(props) {
     finishedPost["commentsSrc"] = newCommentsSrc;
     finishedPost["published"] = new Date().toISOString();
     finishedPost["visibility"] = "FRIENDS";
+    if (typeof postToShare["categories"] === "undefined") {
+      finishedPost["categories"] = [""];
+    }
 
     await axios.put(`${finishedPost.id}/`, finishedPost, {
       auth: {

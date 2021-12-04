@@ -297,12 +297,21 @@ const Inbox = () => {
 
     responseTwo.data.map((single) => {
       console.log(single);
-      newList.push({
-        type: "follower",
-        summary: single.summary,
-        follower_user_name: single.actor.user_name,
-        follower_id: single.actor.id.split("/").at(-1),
-      });
+      if (single.actor.host === "https://social-distance-api.herokuapp.com/") {
+        newList.push({
+          type: "follower",
+          summary: single.summary,
+          follower_user_name: single.actor.displayName,
+          follower_id: single.actor.id.split("/").at(-2),
+        });
+      } else {
+        newList.push({
+          type: "follower",
+          summary: single.summary,
+          follower_user_name: single.actor.displayName,
+          follower_id: single.actor.id.split("/").at(-1),
+        });
+      }
     });
 
     responseThree.data.map(async (single) => {
