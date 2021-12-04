@@ -13,10 +13,6 @@ from admin_servers import admin_servers_views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
 urlpatterns = [
     # TODO: update urls for post and authors

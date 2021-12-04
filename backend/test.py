@@ -286,24 +286,97 @@ class URLTests(TestCase):
         self.assertEqual(resolve(url).func, inbox_list)
 
 
-client = APIClient()
+#client = APIClient()
 
 
-def client_with_auth(user, client):
-    refresh = RefreshToken.for_user(user)
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-    return client
+# def client_bundle_to_token(user, client):
+#     token = RefreshToken.for_user(user)
+#     client.credentials(HTTP_AUTHORIZATION=f'Bearer {token.access_token}')
+#     return client
+
+
+# class AuthorTests(TestCase):
+#     def setUp(self):
+#         self.auth1 = UUser.objects.create_superuser(
+#             username="admin", email="", password="admin")
+#         print(self.auth1)
+#         # print(self.client.login(self.auth1))
+#         # self.client = client_with_auth(self.testUserAuthed, client)
+#         #print(self.client.login(username="admin", password="admin"))
+#         # self.testUser2Authed = UUser.objects.create_superuser(
+#         #     'admin1', '1@2.com', 'admin1')
+#         #self.client = client_bundle_to_token(self.testUserAuthed, client)
+
+#         self.testUser1 = {
+#             "type": "author",
+#             "id": "10",
+#             "host": "http://127.0.0.1:8000/",
+#             "displayName": "TestUser1",
+#             "url": "http://127.0.0.1:8000/author/10",
+#             "github": "https://github.com/testUser10",
+#             "profileImage": "None",
+#             "uuid": "10",
+#             "password": "1234",
+#             "pending": "False",
+#         }
+
+#         self.testUser2 = {
+#             "type": "author",
+#             "id": "20",
+#             "host": "http://127.0.0.1:8000/",
+#             "displayName": "TestUser2",
+#             "url": "http://127.0.0.1:8000/author/20",
+#             "github": "https://github.com/testUser20",
+#             "profileImage": "None",
+#             "uuid": "20",
+#             "password": "1234",
+#             "pending": "False",
+#         }
+
+#         # self.testUser3 = {
+#         #     "type": "author",
+#         #     "id": "http://127.0.0.1:8000/author/3",
+#         #     "host": "http://127.0.0.1:8000/",
+#         #     "displayName": "TestUser3",
+#         #     "url": "http://127.0.0.1:8000/author/3",
+#         #     "github": "https://github.com/testUser3",
+#         #     "profileImage": "None",
+#         #     "is_active": True
+#         # }
+
+#         self.testUser1Obj = User.objects.create(**self.testUser1)
+#         self.testUser2Obj = User.objects.create(**self.testUser2)
+#         # self.testUser3Obj = User.objects.create(**self.testUser3)
+#         return None
+
+#     def test_get_all_authors(self):
+#         user = UUser.objects.get(username='admin')
+#         #new_client = client_bundle_to_token(user, client)
+#         #self.client.login(username="admin1", password="admin1")
+#         print(self.client.login(username="admin", password="admin"))
+#         r = self.client.get(
+#             'http://127.0.0.1:8000/service/authors/')
+#         print(r.status_code)
+#         try:
+#             result = r.json()
+#             print("result is "+str(result))
+#         except:
+#             self.assertTrue(False, "result does not contain JSON data")
 
 
 class AuthorTests(TestCase):
     def setUp(self):
-        self.testUserAuthed = UUser.objects.create(
-            id=1, username="admin", password="admin")
+        self.auth1 = UUser.objects.create_superuser(
+            username="admin", email="", password="admin")
+
+        self.client = Client()
+        print(self.client.login(username="admin", password="admin"))
+        # print(self.client.login(self.auth1))
         # self.client = client_with_auth(self.testUserAuthed, client)
-        # self.client.login(username="admin", password="admin")
-        self.testUser2Authed = UUser.objects.create_superuser(
-            'admin1', '1@2.com', 'admin1')
-        self.client = client_with_auth(self.testUser2Authed, client)
+        #print(self.client.login(username="admin", password="admin"))
+        # self.testUser2Authed = UUser.objects.create_superuser(
+        #     'admin1', '1@2.com', 'admin1')
+        #self.client = client_bundle_to_token(self.testUserAuthed, client)
 
         self.testUser1 = {
             "type": "author",
@@ -331,51 +404,18 @@ class AuthorTests(TestCase):
             "pending": "False",
         }
 
-        # self.testUser3 = {
-        #     "type": "author",
-        #     "id": "http://127.0.0.1:8000/author/3",
-        #     "host": "http://127.0.0.1:8000/",
-        #     "displayName": "TestUser3",
-        #     "url": "http://127.0.0.1:8000/author/3",
-        #     "github": "https://github.com/testUser3",
-        #     "profileImage": "None",
-        #     "is_active": True
-        # }
-
         self.testUser1Obj = User.objects.create(**self.testUser1)
         self.testUser2Obj = User.objects.create(**self.testUser2)
         # self.testUser3Obj = User.objects.create(**self.testUser3)
         return None
 
     def test_get_all_authors(self):
-        user = UUser.objects.get(username='admin1')
-        new_client = client_with_auth(user, client)
-        #new_client.login(username="admin1", password="admin1")
-        #print(new_client.login(username="admin1", password="admin1"))
-
-        # print(new_client.force_login(user))
-        r = new_client.get(
-            'http://127.0.0.1:8000/service/authors/', format='json')
+        #print(self.client.login(username="admin", password="admin"))
+        r = self.client.get(
+            'http://127.0.0.1:8000/service/authors/')
         print(r.status_code)
         try:
             result = r.json()
             print("result is "+str(result))
         except:
             self.assertTrue(False, "result does not contain JSON data")
-
-        # self.assertEquals(type(result), dict)
-
-        # self.assertTrue('type' in result.keys())
-        # self.assertTrue('items' in result.keys())
-
-        # self.assertEquals(result['type'].strip(), 'authors')
-
-        # authors = result['items']
-
-        # self.assertEquals(len(authors), 2)
-
-        # self.assertEquals(authors[0]['id'], authors[0]['url'])
-        # self.assertEquals(authors[1]['id'], authors[1]['url'])
-
-        # self.assertEquals(authors[0]['url'], self.testUser1['url'])
-        # self.assertEquals(authors[1]['url'], self.testUser2['url'])
