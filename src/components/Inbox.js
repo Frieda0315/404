@@ -144,7 +144,7 @@ const Inbox = () => {
         const newList1 = InboxList1.filter(
           (item) => item.type !== "follower" && item.follower_id !== id
         );
-        setInboxList(newList);
+        setInboxList(newList1);
       })
       .catch((error) => {
         console.log(error);
@@ -167,7 +167,7 @@ const Inbox = () => {
           (item) => item.type !== "follower" && item.follower_id !== id
         );
         console.log("new", newList1);
-        setInboxList(newList);
+        setInboxList(newList1);
       });
   };
   const userid = localStorage.getItem("current_user_id");
