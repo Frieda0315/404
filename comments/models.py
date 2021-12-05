@@ -10,7 +10,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
     contentType = models.CharField(max_length=120)
-    published = models.DateTimeField(auto_now=True, null=True)
+    published = models.DateTimeField(auto_now=True, null=True, blank=True)
     id = models.CharField(primary_key=True, unique=True,
                           max_length=180, editable=False)
     uuid = models.UUIDField(blank=True, null=True, max_length=120)
