@@ -756,7 +756,8 @@ class LikeTests(TestCase):
             },
             "object": "http://127.0.0.1:8000/author/20/posts/20"
         }
-        #inboxObj = Inbox.objects.create(**inbox_data)
+
+        # URL: ://service/author/{author_id}/inbox/
         r = client.post(
             'http://127.0.0.1:8000/service/author/20/inbox/', inbox_data, format='json')
         result = r.json()
@@ -770,11 +771,71 @@ class LikeTests(TestCase):
         self.testUser1.pop("pending")
         self.assertEqual(result["author"], self.testUser1)
 
+        # URL: ://service/author/{author_id}/post/{post_id}/likes GET a list of likes from other authors on author_id’s post post_id
         r = client.get(
             "http://127.0.0.1:8000/service/author/20/posts/20/likes/")
         result = r.json()
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(type(result), list)
         self.assertEqual(result[0]["author"], self.testUser1)
+
+        comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "10",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser1",
+                "url": "http://127.0.0.1:8000/author/10",
+                "github": "https://github.com/testUser10",
+                "profileImage": "None",
+            },
+            "comment": "test_comment",
+            "contentType": "text/markdown",
+            "published": "2015-03-09T13:07:04+00:00",
+            # ID of the Comment (UUID)
+            "id": "http://127.0.0.1:8000/author/20/posts/20/comments/123e4567-e89b-12d3-a456-426614174000",
+        }
+        r = client.post("http://127.0.0.1:8000/service/author/20/posts/20/comments/",
+                        comment_data, format="json")
+        self.assertEqual(r.status_code, 201)
+
+        # URL: ://service/author/{author_id}/post/{post_id}/comments/{comment_id}/likes
+        # GET a list of likes from other authors on author_id’s post post_id comment comment_id
+        comment_like_data = {
+            "summary": "TestUser1 Likes your comment",
+            "type": "Like",
+            "author": {
+                "type": "author",
+                "id": "10",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser1",
+                "url": "http://127.0.0.1:8000/author/10",
+                "github": "https://github.com/testUser10",
+                "profileImage": "None",
+            },
+            "object": "http://127.0.0.1:8000/author/20/posts/20/comments/123e4567-e89b-12d3-a456-426614174000/"
+        }
+
+        r = client.post("http://127.0.0.1:8000/service/author/20/inbox/",
+                        comment_like_data, format="json")
+
+        r = client.get(
+            "http://127.0.0.1:8000/service/author/20/posts/20/comments/123e4567-e89b-12d3-a456-426614174000/likes/")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(type(result), list)
+        self.assertEqual(result[0]["author"], self.testUser1)
+
+        # Liked
+#         URL: ://service/author/{author_id}/liked
+#         GET list what public things author_id liked.
+#         It’s a list of of likes originating from this author
+
+        r = client.get("http://127.0.0.1:8000/service/author/10/liked/")
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(result["type"], "liked")
+        self.assertEqual(type(result["items"]), list)
 
 # class InboxTests(TestCase):
 #     def setUp(self):

@@ -44,7 +44,6 @@ def post_like_list(request, author_id, post_id):
 def comment_like_list(request, author_id, post_id, comment_id):
     comment_re = r'/author\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/posts\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\/comments\/[-a-zA-Z0-9@:%._\+~#=]{2,256}'
     comment_search_string = "/comments/" + str(comment_id)
-    print(comment_search_string)
     try:
         User.objects.get(uuid=author_id)
     except User.DoesNotExist:
