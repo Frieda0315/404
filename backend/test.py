@@ -22,11 +22,8 @@ from comments.comment_views import *
 from follows.follow_views import *
 
 from django.test.client import Client
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.test import APIRequestFactory, APIClient
+from rest_framework.test import APIClient
 from django.contrib.auth.models import User as UUser
-from rest_framework.test import force_authenticate
-from requests.auth import HTTPBasicAuth
 
 
 class ModelTests(TestCase):
@@ -290,12 +287,6 @@ client = APIClient()
 client.credentials(HTTP_AUTHORIZATION='Basic YWRtaW46YWRtaW4=')
 
 
-# def client_bundle_to_token(user, client):
-#     token = RefreshToken.for_user(user)
-#     client.credentials(HTTP_AUTHORIZATION=f'Bearer {token.access_token}')
-#     return client
-
-
 class AuthorTests(TestCase):
 
     def setUp(self):
@@ -379,7 +370,7 @@ class AuthorTests(TestCase):
         }
 
         r = client.post(
-            'http://127.0.0.1:8000/service/author/30/', update_data)
+            'http://127.0.0.1:8000/service/author/30/', update_data, format='json')
         self.assertEqual(r.status_code, 404)
 
         r = client.post(
@@ -395,3 +386,278 @@ class AuthorTests(TestCase):
         r = client.get(
             'http://127.0.0.1:8000/service/author/20/')
         self.assertEqual(r.status_code, 404)
+
+
+class PostTests(TestCase):
+    def setUp(self):
+
+        self.auth1 = UUser.objects.create_superuser(
+            username="admin", email="", password="admin")
+
+        self.testUser1 = {
+            "type": "author",
+            "id": "10",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser1",
+            "url": "http://127.0.0.1:8000/author/10",
+            "github": "https://github.com/testUser10",
+            "profileImage": "None",
+            "uuid": "10",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        self.testUser2 = {
+            "type": "author",
+            "id": "20",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser2",
+            "url": "http://127.0.0.1:8000/author/20",
+            "github": "https://github.com/testUser20",
+            "profileImage": "None",
+            "uuid": "20",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        self.testUser1Obj = User.objects.create(**self.testUser1)
+        self.testUser2Obj = User.objects.create(**self.testUser2)
+
+    def test_post_no_id(self):
+        post_data = {
+            "type": "post",
+            "title": "post_title",
+            "id": "http://127.0.0.1:8000/author/10/posts/10",
+            "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+            # where is it actually from
+            "origin": "http://whereitcamefrom.com/posts/zzzzz",
+            # a brief description of the post
+            "description": "test_descr",
+            "contentType": "text/plain",
+            "content": "test_content",
+            "author": {
+                "type": "author",
+                "id": "10",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser1",
+                "url": "http://127.0.0.1:8000/author/10",
+                "github": "https://github.com/testUser10",
+                "profileImage": "None",
+            },
+            "categories": ["web", "tutorial"],
+            "count": 0,
+            "comments": "http://127.0.0.1:5454/author/10/posts/10/comments",
+            "commentsSrc": {
+                "type": "comments",
+                "page": 1,
+                "size": 5,
+                "post": "http://127.0.0.1:5454/author/10/posts/10",
+                "id": "http://127.0.0.1:5454/author/10/posts/10/comments",
+                "comments": [
+                ]
+            },
+            "published": "2015-03-09T13:07:04+00:00",
+            "visibility": "PUBLIC",
+            "unlisted": False
+        }
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/10/posts/', post_data, format='json')
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/10/posts/')
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.testUser1.pop("uuid")
+        self.testUser1.pop("password")
+        self.testUser1.pop("pending")
+        for i in range(len(result)):
+            self.assertEqual(result[i]["author"], self.testUser1)
+
+    def test_post_with_id(self):
+        post_data = {
+            "type": "post",
+            "title": "post_title",
+            "id": "http://127.0.0.1:8000/author/20/posts/20",
+            "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+            # where is it actually from
+            "origin": "http://whereitcamefrom.com/posts/zzzzz",
+            # a brief description of the post
+            "description": "test_descr",
+            "contentType": "text/plain",
+            "content": "test_content",
+            "author": {
+                "type": "author",
+                "id": "20",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser2",
+                "url": "http://127.0.0.1:8000/author/20",
+                "github": "https://github.com/testUser20",
+                "profileImage": "None",
+                "uuid": "20",
+                "password": "1234",
+                "pending": "False",
+            },
+            "categories": ["web", "tutorial"],
+            "count": 0,
+            "comments": "http://127.0.0.1:8000/author/20/posts/20/comments",
+            "commentsSrc": {
+                "type": "comments",
+                "page": 1,
+                "size": 5,
+                "post": "http://127.0.0.1:8000/author/20/posts/20",
+                "id": "http://127.0.0.1:8000/author/20/posts/20/comments",
+                "comments": [
+                ]
+            },
+            "published": "2015-03-09T13:07:04+00:00",
+            "visibility": "PUBLIC",
+            "unlisted": False
+        }
+
+        r = client.put(
+            'http://127.0.0.1:8000/service/author/20/posts/20/', post_data, format='json')
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(type(result), dict)
+        self.assertEqual(
+            result["id"], "http://127.0.0.1:8000/author/20/posts/20")
+
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/20/posts/20/')
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.testUser2.pop("uuid")
+        self.testUser2.pop("password")
+        self.testUser2.pop("pending")
+        self.assertEqual(result["author"], self.testUser2)
+
+        post_data["title"] = "update it's title"
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/20/posts/20/', post_data, format='json')
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(result["title"], "update it's title")
+
+        r = client.delete(
+            'http://127.0.0.1:8000/service/author/20/posts/20/')
+        self.assertEqual(r.status_code, 204)
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/20/posts/20/')
+        self.assertEqual(r.status_code, 404)
+
+
+class CommentTests(TestCase):
+    def setUp(self):
+
+        self.auth1 = UUser.objects.create_superuser(
+            username="admin", email="", password="admin")
+
+        self.testUser1 = {
+            "type": "author",
+            "id": "10",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser1",
+            "url": "http://127.0.0.1:8000/author/10",
+            "github": "https://github.com/testUser10",
+            "profileImage": "None",
+            "uuid": "10",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        self.testUser2 = {
+            "type": "author",
+            "id": "20",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser2",
+            "url": "http://127.0.0.1:8000/author/20",
+            "github": "https://github.com/testUser20",
+            "profileImage": "None",
+            "uuid": "20",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        post_data = {
+            "type": "post",
+            "title": "post_title",
+            "id": "http://127.0.0.1:8000/author/20/posts/20",
+            "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+            # where is it actually from
+            "origin": "http://whereitcamefrom.com/posts/zzzzz",
+            # a brief description of the post
+            "description": "test_descr",
+            "contentType": "text/plain",
+            "content": "test_content",
+            "author": {
+                "type": "author",
+                "id": "20",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser2",
+                "url": "http://127.0.0.1:8000/author/20",
+                "github": "https://github.com/testUser20",
+                "profileImage": "None",
+                "uuid": "20",
+                "password": "1234",
+                "pending": "False",
+            },
+            "categories": ["web", "tutorial"],
+            "count": 0,
+            "comments": "http://127.0.0.1:8000/author/20/posts/20/comments",
+            "commentsSrc": {
+                "type": "comments",
+                "page": 1,
+                "size": 5,
+                "post": "http://127.0.0.1:8000/author/20/posts/20",
+                "id": "http://127.0.0.1:8000/author/20/posts/20/comments",
+                "comments": [
+                ]
+            },
+            "published": "2015-03-09T13:07:04+00:00",
+            "visibility": "PUBLIC",
+            "unlisted": False
+        }
+
+        self.testUser1Obj = User.objects.create(**self.testUser1)
+        self.testUser2Obj = User.objects.create(**self.testUser2)
+
+        r = client.put(
+            'http://127.0.0.1:8000/service/author/20/posts/20/', post_data, format='json')
+
+    def test_comment(self):
+        comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "20",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser2",
+                "url": "http://127.0.0.1:8000/author/20",
+                "github": "https://github.com/testUser20",
+                "profileImage": "None",
+            },
+            "comment": "test_comment",
+            "contentType": "text/markdown",
+            "published": "2015-03-09T13:07:04+00:00",
+            # ID of the Comment (UUID)
+            "id": "http://127.0.0.1:8000/author/20/posts/20/comments/123e4567-e89b-12d3-a456-426614174000",
+        }
+
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/20/posts/20/comments/', comment_data, format='json')
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+
+        # published time will always have 1-2seconds diff, so eliminate them
+        comment_data.pop("published")
+        result.pop("published")
+        self.assertEqual(comment_data, result)
+
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/20/posts/20/comments/')
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        result["comments"][0].pop("published")
+        self.assertEqual(comment_data, result["comments"][0])

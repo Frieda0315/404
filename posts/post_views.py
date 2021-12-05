@@ -182,7 +182,6 @@ def post_detail(request, author_id, id):  # this id here is postID
             return JsonResponse({"Error": "Post with this ID already exists"}, status=status.HTTP_400_BAD_REQUEST)
         uuid_data = post_id_parser(json_data)
         serializer = PostSerializer(data=json_data)
-        print(serializer)
         if serializer.is_valid():
             # give POST object an attribute of author
             new_post = serializer.save()
