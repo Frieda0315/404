@@ -7,7 +7,6 @@ from users.models import User
 class CommentSerializer(serializers.ModelSerializer):
 
     author = UserSerializer()
-    published = serializers.DateTimeField(allow_null=True)
     id = serializers.CharField()
 
     def create(self, validated_data):
