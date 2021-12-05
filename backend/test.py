@@ -872,11 +872,13 @@ class FollowerTests(TestCase):
         self.testUser2Obj = User.objects.create(**self.testUser2)
 
     def test_followers(self):
+        # havn't done yet
 
         # user20 follows user10
-        r = client.put("http://127.0.0.1:8000/service/author/10/followers/20/")
-        print(r.status_code)
-
+        # r = client.put("http://127.0.0.1:8000/service/author/10/followers/20/")
+        # print(r.status_code)
+        # print(r.json())
+        # print("haha")
         r = client.get("http://127.0.0.1:8000/service/author/10/followers/")
         self.assertEqual(r.status_code, 200)
 
