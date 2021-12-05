@@ -97,7 +97,6 @@ class ModelTests(TestCase):
         p = self.init_post()
         p.save()
         instance.post.add(p)
-        print(type(instance))
         return instance
 
     def init_follow(self, id=uuid.uuid4(), follower=None, following=None):
@@ -177,9 +176,7 @@ class ModelTests(TestCase):
 
     def test_like(self):
         like = self.init_likes()
-        print(type(like))
         self.assertTrue(isinstance(like.author, User))
-
         self.assertEqual(like.summary, "testingSummary")
         self.assertEqual(like.type, 'testingType')
         self.assertEqual(like.object, "testingObject")
@@ -305,8 +302,6 @@ class AuthorTests(TestCase):
 
         self.auth1 = UUser.objects.create_superuser(
             username="admin", email="", password="admin")
-        print(self.auth1)
-        print()
 
         self.testUser1 = {
             "type": "author",
@@ -351,7 +346,6 @@ class AuthorTests(TestCase):
         self.assertEqual(result["type"], "authors")
         self.assertEqual(type(result["items"]), list)
         self.assertEqual(len(result["items"]), 2)
-        print(result["items"][0])
         self.testUser1.pop("password")
         self.testUser1.pop("uuid")
         self.testUser1.pop("pending")
@@ -361,13 +355,43 @@ class AuthorTests(TestCase):
         self.assertEqual(self.testUser1, result["items"][0])
         self.assertEqual(self.testUser2, result["items"][1])
 
-    # def test_get_a_author(self):
-    #     r = client.get(
-    #         'http://127.0.0.1:8000/service/author/10')
+    def test_author_detail(self):
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/20/')
 
-    #     try:
-    #         result = r.json()
-    #         print(type(result))
-    #         print("result is "+str(result))
-    #     except:
-    #         self.assertTrue(False, "result cannot convert into JSON")
+        print(r.status_code)
+        try:
+            result = r.json()
+        except:
+            self.assertTrue(False, "result cannot convert into JSON")
+
+        self.assertEqual(type(result), dict)
+        self.assertEqual(result["id"], "20")
+        self.assertEqual(result["displayName"], "TestUser2")
+        update_data = {
+            "type": "author",
+            "id": "20",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser2",
+            "url": "http://127.0.0.1:8000/author/20",
+            "github": "https://github.com/testUser20_updated",
+            "profileImage": "None",
+        }
+
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/30/', update_data)
+        self.assertEqual(r.status_code, 404)
+
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/20/', update_data, format='json')
+
+        result = r.json()
+        self.assertEqual(result["github"],
+                         "https://github.com/testUser20_updated")
+
+        r = client.delete(
+            'http://127.0.0.1:8000/service/author/20/')
+        self.assertEqual(r.status_code, 204)
+        r = client.get(
+            'http://127.0.0.1:8000/service/author/20/')
+        self.assertEqual(r.status_code, 404)
