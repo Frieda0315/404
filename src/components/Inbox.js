@@ -144,7 +144,7 @@ const Inbox = () => {
         const newList1 = InboxList1.filter(
           (item) => item.type !== "follower" && item.follower_id !== id
         );
-        setInboxList(newList);
+        setInboxList(newList1);
       })
       .catch((error) => {
         console.log(error);
@@ -167,7 +167,7 @@ const Inbox = () => {
           (item) => item.type !== "follower" && item.follower_id !== id
         );
         console.log("new", newList1);
-        setInboxList(newList);
+        setInboxList(newList1);
       });
   };
   const userid = localStorage.getItem("current_user_id");
@@ -297,12 +297,21 @@ const Inbox = () => {
 
     responseTwo.data.map((single) => {
       console.log(single);
-      newList.push({
-        type: "follower",
-        summary: single.summary,
-        follower_user_name: single.actor.user_name,
-        follower_id: single.actor.id.split("/").at(-1),
-      });
+      if (single.actor.host === "https://social-distance-api.herokuapp.com/") {
+        newList.push({
+          type: "follower",
+          summary: single.summary,
+          follower_user_name: single.actor.displayName,
+          follower_id: single.actor.id.split("/").at(-2),
+        });
+      } else {
+        newList.push({
+          type: "follower",
+          summary: single.summary,
+          follower_user_name: single.actor.displayName,
+          follower_id: single.actor.id.split("/").at(-1),
+        });
+      }
     });
 
     responseThree.data.map(async (single) => {
@@ -467,7 +476,7 @@ const Inbox = () => {
               <Grid item>
                 <Grid container direction="column">
                   <Grid item>
-                    <Typography>{item.summary}</Typography>
+                    <Typography>Summary: {item.summary}</Typography>
                   </Grid>
                   <Grid item>
                     <Typography>{item.date}</Typography>
@@ -481,9 +490,9 @@ const Inbox = () => {
             <Typography variant="h5">{item.title}</Typography>
           </Grid>
 
-          <Grid item spacing={2}>
+          {/* <Grid item spacing={2}>
             <Typography>{item.content}</Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
       )
     );

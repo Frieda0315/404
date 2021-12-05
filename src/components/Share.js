@@ -20,6 +20,9 @@ function Share(props) {
   //const [success, setSuccess] = React.useState(false);
   const baseUrl2 = process.env.REACT_APP_API_ENDPOINT;
   const handleShare = async (user) => {
+    if (user.host === "https://social-distance-api.herokuapp.com/") {
+      user.id = user.id.slice(0, -1);
+    }
     console.log(postToShare);
     const authorResponse = await axios.get(
       `${baseUrl2}/author/${localStorage.getItem("current_user_id")}`,
@@ -52,6 +55,9 @@ function Share(props) {
     finishedPost["commentsSrc"] = newCommentsSrc;
     finishedPost["published"] = new Date().toISOString();
     finishedPost["visibility"] = "FRIENDS";
+    if (typeof postToShare["categories"] === "undefined") {
+      finishedPost["categories"] = [""];
+    }
 
     await axios.put(`${finishedPost.id}/`, finishedPost, {
       auth: {
