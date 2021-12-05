@@ -14,7 +14,7 @@ class PostSerializer(serializers.ModelSerializer):
     commentsSrc = CommentsSerializer(required=False, allow_null=True)
     categories = serializers.JSONField()
     count = serializers.IntegerField()
-    published = serializers.DateTimeField()
+    published = serializers.DateTimeField(allow_null=True)
     unlisted = serializers.BooleanField()
 
     def create(self, validated_data):
