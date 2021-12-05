@@ -661,3 +661,202 @@ class CommentTests(TestCase):
         self.assertEqual(r.status_code, 200)
         result["comments"][0].pop("published")
         self.assertEqual(comment_data, result["comments"][0])
+
+
+class LikeTests(TestCase):
+    def setUp(self) -> None:
+        self.auth1 = UUser.objects.create_superuser(
+            username="admin", email="", password="admin")
+
+        self.testUser1 = {
+            "type": "author",
+            "id": "10",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser1",
+            "url": "http://127.0.0.1:8000/author/10",
+            "github": "https://github.com/testUser10",
+            "profileImage": "None",
+            "uuid": "10",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        self.testUser2 = {
+            "type": "author",
+            "id": "20",
+            "host": "https://i-connect.herokuapp.com",
+            "displayName": "TestUser2",
+            "url": "http://127.0.0.1:8000/author/20",
+            "github": "https://github.com/testUser20",
+            "profileImage": "None",
+            "uuid": "20",
+            "password": "1234",
+            "pending": "False",
+        }
+
+        # suppose author2 post a post
+        post_data = {
+            "type": "post",
+            "title": "post_title",
+            "id": "http://127.0.0.1:8000/author/20/posts/20",
+            "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+            # where is it actually from
+            "origin": "http://whereitcamefrom.com/posts/zzzzz",
+            # a brief description of the post
+            "description": "test_descr",
+            "contentType": "text/plain",
+            "content": "test_content",
+            "author": {
+                "type": "author",
+                "id": "20",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser2",
+                "url": "http://127.0.0.1:8000/author/20",
+                "github": "https://github.com/testUser20",
+                "profileImage": "None",
+                "uuid": "20",
+                "password": "1234",
+                "pending": "False",
+            },
+            "categories": ["web", "tutorial"],
+            "count": 0,
+            "comments": "http://127.0.0.1:8000/author/20/posts/20/comments",
+            "commentsSrc": {
+                "type": "comments",
+                "page": 1,
+                "size": 5,
+                "post": "http://127.0.0.1:8000/author/20/posts/20",
+                "id": "http://127.0.0.1:8000/author/20/posts/20/comments",
+                "comments": [
+                ]
+            },
+            "published": "2015-03-09T13:07:04+00:00",
+            "visibility": "PUBLIC",
+            "unlisted": False
+        }
+
+        self.testUser1Obj = User.objects.create(**self.testUser1)
+        self.testUser2Obj = User.objects.create(**self.testUser2)
+
+        r = client.put(
+            'http://127.0.0.1:8000/service/author/20/posts/20/', post_data, format='json')
+
+    def test_likes(self):
+        inbox_data = {
+            "summary": "TestUser1 Likes your post",
+            "type": "Like",
+            "author": {
+                "type": "author",
+                "id": "10",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser1",
+                "url": "http://127.0.0.1:8000/author/10",
+                "github": "https://github.com/testUser10",
+                "profileImage": "None",
+            },
+            "object": "http://127.0.0.1:8000/author/20/posts/20"
+        }
+        #inboxObj = Inbox.objects.create(**inbox_data)
+        r = client.post(
+            'http://127.0.0.1:8000/service/author/20/inbox/', inbox_data, format='json')
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(result["type"], "Like")
+        self.assertEqual(result["summary"], 'TestUser1 Likes your post')
+        self.assertEqual(result["object"],
+                         "http://127.0.0.1:8000/author/20/posts/20")
+        self.testUser1.pop("password")
+        self.testUser1.pop("uuid")
+        self.testUser1.pop("pending")
+        self.assertEqual(result["author"], self.testUser1)
+
+        r = client.get(
+            "http://127.0.0.1:8000/service/author/20/posts/20/likes/")
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(result[0]["author"], self.testUser1)
+
+# class InboxTests(TestCase):
+#     def setUp(self):
+
+#         self.auth1 = UUser.objects.create_superuser(
+#             username="admin", email="", password="admin")
+
+#         self.testUser1 = {
+#             "type": "author",
+#             "id": "10",
+#             "host": "https://i-connect.herokuapp.com",
+#             "displayName": "TestUser1",
+#             "url": "http://127.0.0.1:8000/author/10",
+#             "github": "https://github.com/testUser10",
+#             "profileImage": "None",
+#             "uuid": "10",
+#             "password": "1234",
+#             "pending": "False",
+#         }
+
+#         self.testUser2 = {
+#             "type": "author",
+#             "id": "20",
+#             "host": "https://i-connect.herokuapp.com",
+#             "displayName": "TestUser2",
+#             "url": "http://127.0.0.1:8000/author/20",
+#             "github": "https://github.com/testUser20",
+#             "profileImage": "None",
+#             "uuid": "20",
+#             "password": "1234",
+#             "pending": "False",
+#         }
+
+#         self.post_data = {
+#             "type": "post",
+#             "title": "post_title",
+#             "id": "http://127.0.0.1:8000/author/20/posts/20",
+#             "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+#             # where is it actually from
+#             "origin": "http://whereitcamefrom.com/posts/zzzzz",
+#             # a brief description of the post
+#             "description": "test_descr",
+#             "contentType": "text/plain",
+#             "content": "test_content",
+#             "author": {
+#                 "type": "author",
+#                 "id": "20",
+#                 "host": "https://i-connect.herokuapp.com",
+#                 "displayName": "TestUser2",
+#                 "url": "http://127.0.0.1:8000/author/20",
+#                 "github": "https://github.com/testUser20",
+#                 "profileImage": "None",
+#                 "uuid": "20",
+#                 "password": "1234",
+#                 "pending": "False",
+#             },
+#             "categories": ["web", "tutorial"],
+#             "count": 0,
+#             "comments": "http://127.0.0.1:8000/author/20/posts/20/comments",
+#             "commentsSrc": {
+#                 "type": "comments",
+#                 "page": 1,
+#                 "size": 5,
+#                 "post": "http://127.0.0.1:8000/author/20/posts/20",
+#                 "id": "http://127.0.0.1:8000/author/20/posts/20/comments",
+#                 "comments": [
+#                 ]
+#             },
+#             "published": "2015-03-09T13:07:04+00:00",
+#             "visibility": "PUBLIC",
+#             "unlisted": False
+#         }
+
+#         self.testUser1Obj = User.objects.create(**self.testUser1)
+#         self.testUser2Obj = User.objects.create(**self.testUser2)
+
+#         r = client.put(
+#             'http://127.0.0.1:8000/service/author/20/posts/20/', self.post_data, format='json')
+
+#     def test_inbox(self):
+#         r = client.get(
+#             'http://127.0.0.1:8000/service/author/10/inbox/')
+#         # r = client.post(
+#         #     'http://127.0.0.1:8000/service/author/10/inbox/', self.post_data, format='json')
+#         # print(r.json())
