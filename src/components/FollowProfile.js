@@ -132,11 +132,6 @@ const FollowProfile = ({ follow_user_url }) => {
     });
     setFollowUser(follow_user_res.data);
     // get current user
-    if (
-      follow_user_res.data.host === "https://social-distance-api.herokuapp.com/"
-    ) {
-      follow_user_res.data.id = follow_user_res.data.id.slice(0, -1);
-    }
     axios
       .get(
         `${follow_user_res.data.id}/followers/${localStorage.getItem(
