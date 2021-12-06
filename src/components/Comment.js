@@ -128,6 +128,8 @@ function Comments(props) {
                   "https://newconnection-server.herokuapp.com/api/v1/author/"
                 )
               ) {
+                console.log(post.id);
+                console.log(commentItem.id);
                 commentItem.id =
                   post.id +
                   "/comments/" +
