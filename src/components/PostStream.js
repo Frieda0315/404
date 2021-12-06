@@ -263,7 +263,6 @@ function PostStream(props) {
           const password = single_node[0].password;
           let getPostApi = `${single.id}/posts`;
           if (single.host === "https://social-distance-api.herokuapp.com/") {
-            single.id = single.id.slice(0, -1);
             getPostApi = `${single.id}/posts?page=1&size=1000`;
           }
           requestList3.push(
