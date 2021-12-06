@@ -1,12 +1,10 @@
-import re
-from django.test import TestCase, testcases
+from django.test import TestCase
 import uuid
 from comments.comment_views import comment_list
 from comments.models import Comment
 from inbox.inbox_views import inbox_list
 from likes.like_views import author_like_list, comment_like_list, post_like_list
 from users import *
-import users
 from users.models import User
 from posts.models import Post
 from likes.models import Like
@@ -21,7 +19,6 @@ from users.user_views import *
 from comments.comment_views import *
 from follows.follow_views import *
 
-from django.test.client import Client
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User as UUser
 
@@ -179,13 +176,6 @@ class ModelTests(TestCase):
         self.assertEqual(like.object, "testingObject")
         self.assertEqual(like.inbox, True)
 
-    # def test_inbox(self):
-    #     inbox = self.init_inbox()
-    #     # print(type(inbox.post))
-    #     # print("haha")
-    #     self.assertTrue(isinstance(inbox.receive_author, User))
-    #     #self.assertTrue(isinstance(inbox.post, Post))
-
     def test_follow(self):
         follow = self.init_follow()
         self.assertTrue(isinstance(follow.follower, User))
@@ -283,6 +273,9 @@ class URLTests(TestCase):
         self.assertEqual(resolve(url).func, inbox_list)
 
 
+'''Below is the API Backend TestCase'''
+
+
 client = APIClient()
 client.credentials(HTTP_AUTHORIZATION='Basic YWRtaW46YWRtaW4=')
 
@@ -350,7 +343,6 @@ class AuthorTests(TestCase):
         r = client.get(
             'http://127.0.0.1:8000/service/author/20/')
 
-        print(r.status_code)
         try:
             result = r.json()
         except:
@@ -845,7 +837,7 @@ class FollowerTests(TestCase):
 
         self.testUser1 = {
             "type": "author",
-            "id": "10",
+            "id": "http://127.0.0.1:8000/author/10",
             "host": "https://i-connect.herokuapp.com",
             "displayName": "TestUser1",
             "url": "http://127.0.0.1:8000/author/10",
@@ -858,7 +850,7 @@ class FollowerTests(TestCase):
 
         self.testUser2 = {
             "type": "author",
-            "id": "20",
+            "id": "http://127.0.0.1:8000/author/20",
             "host": "https://i-connect.herokuapp.com",
             "displayName": "TestUser2",
             "url": "http://127.0.0.1:8000/author/20",
@@ -872,97 +864,82 @@ class FollowerTests(TestCase):
         self.testUser2Obj = User.objects.create(**self.testUser2)
 
     def test_followers(self):
-        # havn't done yet
-
         # user20 follows user10
-        # r = client.put("http://127.0.0.1:8000/service/author/10/followers/20/")
-        # print(r.status_code)
-        # print(r.json())
-        # print("haha")
+
+        # first, we need user20 to send a friend request to user10
+        friend_request_data = {
+            "type": "Follow",
+            "summary": "TestUser2 wants to follow TestUser1",
+            "actor": {
+                "type": "author",
+                "id": "http://127.0.0.1:8000/author/20",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser2",
+                "url": "http://127.0.0.1:8000/author/20",
+                "github": "https://github.com/testUser20",
+                "profileImage": "None",
+            },
+            "object": {
+                "type": "author",
+                "id": "http://127.0.0.1:8000/author/10",
+                "host": "https://i-connect.herokuapp.com",
+                "displayName": "TestUser1",
+                "url": "http://127.0.0.1:8000/author/10",
+                "github": "https://github.com/testUser10",
+                "profileImage": "None",
+            }
+        }
+
+        # it will send to user10's inbox friend request
+        r = client.post("http://127.0.0.1:8000/service/author/10/inbox/",
+                        friend_request_data, format="json")
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(result["type"], "Follow")
+        self.assertEqual(type(result), dict)
+        self.assertEqual(result["actor"], friend_request_data["actor"])
+        self.assertEqual(result["object"], friend_request_data["object"])
+        self.assertEqual(result["summary"],
+                         'TestUser2 wants to follow TestUser1')
+
+        # Followers PUT
+        r = client.put("http://127.0.0.1:8000/service/author/10/followers/20/")
+        result = r.json()
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(type(result), dict)
+        self.assertEqual(result["follower"], friend_request_data["actor"])
+        self.assertEqual(result["following"], friend_request_data["object"])
+        self.assertEqual(len(result), 2)
+
+        # Followers GET //service/author/{AUTHOR_ID}/followers
         r = client.get("http://127.0.0.1:8000/service/author/10/followers/")
+        result = r.json()
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(type(result), dict)
+        self.assertEqual(type(result["items"]), list)
+        self.assertEqual(len(result["items"]), 1)
+        # check if this is User2 followed it
+        self.assertEqual(result["items"][0], friend_request_data["actor"])
 
-        # class InboxTests(TestCase):
-        #     def setUp(self):
+        # GET ://service/author/{AUTHOR_ID}/followers/{FOREIGN_AUTHOR_ID
+        r = client.get(
+            "http://127.0.0.1:8000/service/author/10/followers/20/")
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(result["result"], True)
 
-        #         self.auth1 = UUser.objects.create_superuser(
-        #             username="admin", email="", password="admin")
+        # Followers DELETE
+        r = client.delete(
+            "http://127.0.0.1:8000/service/author/10/followers/20/")
+        self.assertEqual(r.status_code, 204)
 
-        #         self.testUser1 = {
-        #             "type": "author",
-        #             "id": "10",
-        #             "host": "https://i-connect.herokuapp.com",
-        #             "displayName": "TestUser1",
-        #             "url": "http://127.0.0.1:8000/author/10",
-        #             "github": "https://github.com/testUser10",
-        #             "profileImage": "None",
-        #             "uuid": "10",
-        #             "password": "1234",
-        #             "pending": "False",
-        #         }
+        # after delete we should no longer get this follower
+        r = client.get(
+            "http://127.0.0.1:8000/service/author/10/followers/20/")
+        result = r.json()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(result["result"], False)
 
-        #         self.testUser2 = {
-        #             "type": "author",
-        #             "id": "20",
-        #             "host": "https://i-connect.herokuapp.com",
-        #             "displayName": "TestUser2",
-        #             "url": "http://127.0.0.1:8000/author/20",
-        #             "github": "https://github.com/testUser20",
-        #             "profileImage": "None",
-        #             "uuid": "20",
-        #             "password": "1234",
-        #             "pending": "False",
-        #         }
 
-        #         self.post_data = {
-        #             "type": "post",
-        #             "title": "post_title",
-        #             "id": "http://127.0.0.1:8000/author/20/posts/20",
-        #             "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
-        #             # where is it actually from
-        #             "origin": "http://whereitcamefrom.com/posts/zzzzz",
-        #             # a brief description of the post
-        #             "description": "test_descr",
-        #             "contentType": "text/plain",
-        #             "content": "test_content",
-        #             "author": {
-        #                 "type": "author",
-        #                 "id": "20",
-        #                 "host": "https://i-connect.herokuapp.com",
-        #                 "displayName": "TestUser2",
-        #                 "url": "http://127.0.0.1:8000/author/20",
-        #                 "github": "https://github.com/testUser20",
-        #                 "profileImage": "None",
-        #                 "uuid": "20",
-        #                 "password": "1234",
-        #                 "pending": "False",
-        #             },
-        #             "categories": ["web", "tutorial"],
-        #             "count": 0,
-        #             "comments": "http://127.0.0.1:8000/author/20/posts/20/comments",
-        #             "commentsSrc": {
-        #                 "type": "comments",
-        #                 "page": 1,
-        #                 "size": 5,
-        #                 "post": "http://127.0.0.1:8000/author/20/posts/20",
-        #                 "id": "http://127.0.0.1:8000/author/20/posts/20/comments",
-        #                 "comments": [
-        #                 ]
-        #             },
-        #             "published": "2015-03-09T13:07:04+00:00",
-        #             "visibility": "PUBLIC",
-        #             "unlisted": False
-        #         }
-
-        #         self.testUser1Obj = User.objects.create(**self.testUser1)
-        #         self.testUser2Obj = User.objects.create(**self.testUser2)
-
-        #         r = client.put(
-        #             'http://127.0.0.1:8000/service/author/20/posts/20/', self.post_data, format='json')
-
-        #     def test_inbox(self):
-        #         r = client.get(
-        #             'http://127.0.0.1:8000/service/author/10/inbox/')
-        #         # r = client.post(
-        #         #     'http://127.0.0.1:8000/service/author/10/inbox/', self.post_data, format='json')
-        #         # print(r.json())
+# The inbox is separately tested inside Post, Followers, Comment Test.
+# So no need to set up an individual InboxTest to test again.
