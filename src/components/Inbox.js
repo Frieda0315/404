@@ -263,7 +263,6 @@ const Inbox = () => {
         ) {
           postId = single.id.split("/").at(-2);
           single.id = single.id.slice(0, -1);
-          single.author.id = single.author.id.slice(0, -1);
           get_like_url = `${single.author.id}/posts/${postId}/likes`;
         }
         like_promises.push(
@@ -302,7 +301,7 @@ const Inbox = () => {
           type: "follower",
           summary: single.summary,
           follower_user_name: single.actor.displayName,
-          follower_id: single.actor.id.split("/").at(-2),
+          follower_id: single.actor.id.split("/").at(-1),
         });
       } else {
         newList.push({

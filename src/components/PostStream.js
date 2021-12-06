@@ -358,7 +358,7 @@ function PostStream(props) {
                   single.id = single.id.slice(0, -1);
                   single.comments =
                     single.comments.slice(0, -1) + "?size=1000&page=1";
-                  single.author.id = single.author.id.slice(0, -1);
+                  // single.author.id = single.author.id.slice(0, -1);
                   get_like_url = `${single.author.id}/posts/${postId}/likes`;
                 }
 
