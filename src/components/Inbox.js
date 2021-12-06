@@ -261,7 +261,7 @@ const Inbox = () => {
         if (
           single.author.host === "https://social-distance-api.herokuapp.com/"
         ) {
-          postId = single.id.split("/").at(-2);
+          postId = single.id.split("/").at(-1);
           single.id = single.id.slice(0, -1);
           get_like_url = `${single.author.id}/posts/${postId}/likes`;
         }

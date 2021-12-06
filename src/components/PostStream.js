@@ -353,7 +353,7 @@ function PostStream(props) {
                   single.author.host ===
                   "https://social-distance-api.herokuapp.com/"
                 ) {
-                  postId = single.id.split("/").at(-2);
+                  postId = single.id.split("/").at(-1);
                   single.id = single.id.slice(0, -1);
                   single.comments =
                     single.comments.slice(0, -1) + "?size=1000&page=1";
