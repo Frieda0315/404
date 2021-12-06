@@ -107,12 +107,12 @@ function Comments(props) {
             let commentPromises = [];
             let newComments = [];
             response.data.comments.map((commentItem) => {
-              if (
-                post.author_item.host ===
-                "https://social-distance-api.herokuapp.com/"
-              ) {
-                commentItem.id = commentItem.id.slice(0, -1);
-              }
+              // if (
+              //   post.author_item.host ===
+              //   "https://social-distance-api.herokuapp.com/"
+              // ) {
+              //   commentItem.id = commentItem.id.slice(0, -1);
+              // }
               const fileteredNode = res.data.filter(
                 (item) =>
                   item.url.includes(post.author_item.host) ||
