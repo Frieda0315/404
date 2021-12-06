@@ -26,6 +26,10 @@ Welcome to join us by joining our [slack channel](https://join.slack.com/t/i-con
 
 # Please use npm ci instead of npm install to install all the dependency for the front end
 
+# Demo video
+
+YouTube Link: https://youtu.be/znyX1znNkLc
+
 # Development Process(from root dir)
 
 ```
@@ -38,6 +42,15 @@ python manage.py runserver
 npm ci
 npm start
 #open browser and go to url localhost:8000 and/or localhost:3000 and start coding
+```
+
+# Run all tests
+
+```
+virtualenv venv --python=python3.7 (if you did not get the virtual env)
+source venv/bin/activate
+pip install -r requirements.txt (to install all required libraries for backend using pip)
+python manage.py test
 ```
 
 # Documentation
@@ -75,6 +88,12 @@ The API documentation is developed by [swagger editor](https://editor.swagger.io
 
 ### Connection with other groups
 
+- Team 1:
+
+  - API endpoint: https://social-distance-api.herokuapp.com/
+  - Username for Basic Auth: team16
+  - Password for Basic Auth: socialdistance
+
 - Team 4:
 
   - API endpoint: https://social-distribution-fall2021.herokuapp.com/api/
@@ -101,6 +120,7 @@ The API documentation is developed by [swagger editor](https://editor.swagger.io
 - Material UI: https://mui.com/components/cards/ , https://mui.com/components/material-icons/ and https://mui.com/components/grid/
 - Reactstrap: https://reactstrap.github.io/
 - Axios: https://axios-http.com/docs/intro
+- Test: https://www.django-rest-framework.org/api-guide/testing/
 
 ## AJAX design
 
