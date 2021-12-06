@@ -123,6 +123,18 @@ function Comments(props) {
                 const node = { user_name: "admin", password: "admin" };
                 fileteredNode.push(node);
               }
+              if (
+                post.id.startsWith(
+                  "https://newconnection-server.herokuapp.com/api/v1/author/"
+                )
+              ) {
+                console.log(post.id);
+                console.log(commentItem.id);
+                commentItem.id =
+                  post.id +
+                  "/comments/" +
+                  commentItem.id.split("/comments/")[1];
+              }
               commentPromises.push(
                 axios
                   .get(`${commentItem.id}/likes`, {
