@@ -142,6 +142,27 @@ def post_list(request, author_id):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def image_detail(request, author_id, id):
+    try:
+        post = Post.objects.get(uuid=id)
+        author_exists = User.objects.get(uuid=author_id)
+    except:
+        return JsonResponse({"Error": "No such arthor or Post"}, status=status.HTTP_404_NOT_FOUND)
+
+    if(post.author == author_exists):
+        if post.contentType == "image/png;base64":
+            binary = base64.b64decode(post.content)
+            return HttpResponse(binary, content_type='image/png')
+        elif post.contentType == "image/jpeg;base64":
+            binary = base64.b64decode(post.content)
+            return HttpResponse(binary, content_type='image/jpeg')
+        else:
+            return JsonResponse({"error": "unsupported contentType"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return JsonResponse({"Error": "This post is not owned by this author"}, status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
