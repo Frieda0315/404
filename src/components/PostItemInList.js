@@ -29,12 +29,16 @@ const PostItemInList = ({ post }) => {
     post.contentType === "image/png;base64" ||
     post.contentType === "image/jpeg;base64"
   ) {
+    let imageId = post.id;
+    if (post.author_item.host === "https://i-connect.herokuapp.com") {
+      imageId = post.id.replace("posts", "image");
+    }
     if (post.content.startsWith("data:")) {
       return (
         <Grid container style={{ marginLeft: "48px" }}>
           <Grid item xs>
             <Typography variant="body1" color="text.secondary">
-              Image ID: {post.id}
+              Image ID: {imageId}
             </Typography>
             <img style={{ maxWidth: "75%" }} src={post.content} />
           </Grid>

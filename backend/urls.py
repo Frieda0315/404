@@ -21,6 +21,8 @@ urlpatterns = [
          post_views.post_list, name='post_list'),
     path('service/author/<str:author_id>/posts/<str:id>/',
          post_views.post_detail, name='post_detail'),
+    path('service/author/<str:author_id>/images/<str:id>/',
+         post_views.image_detail, name='image_detail'),
     # posts this author can see
     path('service/posts/<str:author_id>/',
          post_views.stream_public_post, name='stream_public_post'),
