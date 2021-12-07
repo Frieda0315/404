@@ -31,7 +31,7 @@ const PostItemInList = ({ post }) => {
   ) {
     let imageId = post.id;
     if (post.author_item.host === "https://i-connect.herokuapp.com") {
-      imageId = post.id.replace("posts", "image");
+      imageId = imageId.replaceAll("posts", "images");
     }
     if (post.content.startsWith("data:")) {
       return (
@@ -49,7 +49,7 @@ const PostItemInList = ({ post }) => {
       <Grid container style={{ marginLeft: "48px" }}>
         <Grid item xs>
           <Typography variant="body1" color="text.secondary">
-            Image ID: {post.id}
+            Image ID: {imageId}
           </Typography>
           <img
             style={{ maxWidth: "75%" }}
